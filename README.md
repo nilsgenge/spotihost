@@ -1,4 +1,4 @@
-SpotiHost
+# SpotiHost
 
 A self-hosted Spotify statistics dashboard similar to stats.fm or trackify.am
 
