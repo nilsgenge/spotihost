@@ -1,0 +1,1 @@
+export const minutesToHours = (minutes: number): string => (minutes / 60).toFixed(0);

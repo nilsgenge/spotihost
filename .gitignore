@@ -1,0 +1,14 @@
+.env
+node_modules/
+imports/*
+database
+
+backend/__pycache__/
+backend/venv/
+backend/app/venv/
+backend/app/__pycache__/
+backend/app/routers/__pycache__/
+backend/app/utils/__pycache__/
+backend/scripts
+
+frontend/node_modules

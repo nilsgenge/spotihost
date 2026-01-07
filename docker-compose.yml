@@ -1,0 +1,51 @@
+
+services:
+  db:
+    image: postgres:15
+    container_name: spotihost-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432" # DB Host Port
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: spotihost_backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000" # Backend Host Port
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+  
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: spotihost_frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      VITE_PORT: 3000 # same as frontend port
+    ports:
+      - "3000:3000" # Frontend Host Port
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
