@@ -35,34 +35,37 @@ const Dashboard: FC = () => {
 
       {/* Stats */}
       <div className="row mb-4">
-        <div className="col-6">
-          <StatsStreakBlock />
-        </div>
-        <div className="col-6">
-          <StatsDatabaseEntriesBlock />
-        </div>
-      </div>
+        <div className="col d-flex flex-wrap gap-3">
+          <div className="stat-sm ">
+            <StatsStreakBlock />
+          </div>
 
-      <div className="row mb-4">
-        <div className="col-3">
-          <StatsPlaysBlock
-            startDate={startISO}
-            endDate={endISO}
-            selectedRange={selectedRange}
-          />
-        </div>
-        <div className="col-3">
-          <StatsMinutesBlock startDate={startISO} endDate={endISO} />
-        </div>
-        <div className="col-3">
-          <StatsArtistsBlock
-            startDate={startISO}
-            endDate={endISO}
-            selectedRange={selectedRange}
-          />
-        </div>
-        <div className="col-3">
-          <StatsLastActiveBlock />
+          <div className="stat-sm">
+            <StatsPlaysBlock
+              startDate={startISO}
+              endDate={endISO}
+              selectedRange={selectedRange}
+            />
+          </div>
+
+          <div className="stat-sm">
+            <StatsMinutesBlock startDate={startISO} endDate={endISO} />
+          </div>
+
+          <div className="stat-sm">
+            <StatsArtistsBlock
+              startDate={startISO}
+              endDate={endISO}
+              selectedRange={selectedRange}
+            />
+          </div>
+          <div className="stat-lg">
+            <StatsDatabaseEntriesBlock />
+          </div>
+
+          <div className="stat-lg">
+            <StatsLastActiveBlock />
+          </div>
         </div>
       </div>
 
@@ -76,32 +79,32 @@ const Dashboard: FC = () => {
       </div>
 
       {/* Top */}
-      <div className="row mb-4 text-center align-items-stretch">
-        <div className="col d-flex">
-          <TopRankingBlock
-            type="artists"
-            limit={5}
-            startDate={startISO}
-            endDate={endISO}
-          />
-        </div>
-
-        <div className="col d-flex">
-          <TopRankingBlock
-            type="tracks"
-            limit={5}
-            startDate={startISO}
-            endDate={endISO}
-          />
-        </div>
-
-        <div className="col d-flex">
-          <TopRankingBlock
-            type="albums"
-            limit={5}
-            startDate={startISO}
-            endDate={endISO}
-          />
+      <div className="row mb-4 text-center">
+        <div className="col d-flex flex-wrap gap-3 align-items-stretch">
+          <div className="flex-fill" style={{ minWidth: "300px" }}>
+            <TopRankingBlock
+              type="artists"
+              limit={5}
+              startDate={startISO}
+              endDate={endISO}
+            />
+          </div>
+          <div className="flex-fill" style={{ minWidth: "300px" }}>
+            <TopRankingBlock
+              type="tracks"
+              limit={5}
+              startDate={startISO}
+              endDate={endISO}
+            />
+          </div>
+          <div className="flex-fill" style={{ minWidth: "300px" }}>
+            <TopRankingBlock
+              type="albums"
+              limit={5}
+              startDate={startISO}
+              endDate={endISO}
+            />
+          </div>
         </div>
       </div>
 
