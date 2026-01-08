@@ -8,13 +8,13 @@ import ContentBlock from "../components/ui/ContentBlock";
 import LineDiagram from "../components/blocks/MinutesDiagram";
 import PlayingStatus from "../components/blocks/PlayingStatusRow";
 import HistoryBlock from "../components/blocks/HistoryBlock";
-import { TopRankingBlock } from "../components/blocks/TopRankingBlock";
+import TopRankingBlock from "../components/blocks/TopRankingBlock";
 import StatsLastActiveBlock from "../components/blocks/StatsLastActiveBlock";
 import StatsDatabaseEntriesBlock from "../components/blocks/StatsDatabaseEntriesBlock";
 import StatsStreakBlock from "../components/blocks/StatsStreakBlock";
-import { StatsArtistsBlock } from "../components/blocks/StatsArtistsBlock";
-import { StatsMinutesBlock } from "../components/blocks/StatsMinutesBlock";
-import { StatsPlaysBlock } from "../components/blocks/StatsPlaysBlock";
+import StatsArtistsBlock from "../components/blocks/StatsArtistsBlock";
+import StatsMinutesBlock from "../components/blocks/StatsMinutesBlock";
+import StatsPlaysBlock from "../components/blocks/StatsPlaysBlock";
 
 const Dashboard: FC = () => {
   const { selectedRange, startDate, endDate } = useDateRange();

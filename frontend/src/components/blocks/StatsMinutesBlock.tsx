@@ -9,7 +9,7 @@ interface StatsMinutesBlockProps {
   endDate: string;
 }
 
-export const StatsMinutesBlock: FC<StatsMinutesBlockProps> = ({
+const StatsMinutesBlock: FC<StatsMinutesBlockProps> = ({
   startDate,
   endDate,
 }) => {
@@ -32,3 +32,5 @@ export const StatsMinutesBlock: FC<StatsMinutesBlockProps> = ({
     />
   );
 };
+
+export default StatsMinutesBlock;

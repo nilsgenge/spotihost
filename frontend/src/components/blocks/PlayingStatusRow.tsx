@@ -21,6 +21,18 @@ const PlayingStatus = () => {
     contextUrl,
   } = usePlayerDetails();
 
+  if (error)
+    return (
+      <>
+        <div className="row mb-4">
+          <div className="col">
+            <StatBlock icon={<FaGlobe />} title=" " value="Error"></StatBlock>
+          </div>
+        </div>
+        <Seperator />
+      </>
+    );
+
   if (isLoading)
     return (
       <>

@@ -14,7 +14,7 @@ interface TopRankingBlockProps {
   endDate: string;
 }
 
-export const TopRankingBlock: FC<TopRankingBlockProps> = ({
+const TopRankingBlock: FC<TopRankingBlockProps> = ({
   type,
   limit = 5,
   startDate,
@@ -115,3 +115,5 @@ export const TopRankingBlock: FC<TopRankingBlockProps> = ({
     </ContentBlock>
   );
 };
+
+export default TopRankingBlock;

@@ -9,7 +9,7 @@ interface StatsPlaysBlockProps {
   selectedRange: string;
 }
 
-export const StatsPlaysBlock: FC<StatsPlaysBlockProps> = ({
+const StatsPlaysBlock: FC<StatsPlaysBlockProps> = ({
   startDate,
   endDate,
   selectedRange,
@@ -39,3 +39,5 @@ export const StatsPlaysBlock: FC<StatsPlaysBlockProps> = ({
     />
   );
 };
+
+export default StatsPlaysBlock;
