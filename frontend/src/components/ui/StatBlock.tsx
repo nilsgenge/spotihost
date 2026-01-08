@@ -5,7 +5,6 @@ import Block from "./Block";
 interface StatBlockProps {
   icon?: React.ReactNode;
   imageUrl?: string;
-  badgeText?: string;
   title?: string;
   value: string | undefined | null;
   change?: number;
@@ -17,7 +16,6 @@ interface StatBlockProps {
 const StatBlock: React.FC<StatBlockProps> = ({
   icon,
   imageUrl,
-  badgeText,
   title,
   value,
   change,
@@ -38,31 +36,23 @@ const StatBlock: React.FC<StatBlockProps> = ({
     "icon-square d-flex align-items-center justify-content-center";
 
   const renderVisual = () => {
-    if (!imageUrl && !badgeText && !icon) return null;
+    if (!imageUrl && !icon) return null;
 
-    let content: React.ReactNode;
-
-    if (imageUrl) {
-      content = (
-        <div
-          className={`${baseClasses} rounded-2`}
-          style={{
-            backgroundImage: `url(${imageUrl})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-          }}
-        />
-      );
-    } else if (badgeText) {
-      content = <div className="stat-text-badge">{badgeText}</div>;
-    } else {
-      content = (
-        <div className={`${baseClasses} rounded bg-primary text-white`}>
-          {icon}
-        </div>
-      );
-    }
+    const content = imageUrl ? (
+      <div
+        className={`${baseClasses} rounded-2`}
+        style={{
+          backgroundImage: `url(${imageUrl})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
+    ) : (
+      <div className={`${baseClasses} rounded bg-primary text-white`}>
+        {icon}
+      </div>
+    );
 
     return url ? (
       <a

@@ -3,6 +3,7 @@ import StatBlock from "../ui/StatBlock";
 import { usePlayerDetails } from "../../hooks/usePlayerDetails";
 import { FaFile, FaGlobe, FaUsers } from "react-icons/fa";
 import Seperator from "./Separator";
+import Status from "../ui/Status";
 
 const PlayingStatus = () => {
   const {
@@ -84,23 +85,17 @@ const PlayingStatus = () => {
       </div>
 
       <div className="row mb-4">
-        <div className="col">
-          <StatBlock
-            badgeText="Shuffle"
-            value={shuffleState.valueOf() ? "On" : "Off"}
+        <div className="col d-flex gap-2 flex-wrap">
+          <Status
+            text="Shuffle"
+            status={shuffleState.valueOf() ? "activated" : "deactivated"}
           />
-        </div>
-        <div className="col">
-          <StatBlock badgeText="Repeat" value={repeatState.valueOf()} />
-        </div>
-        <div className="col">
-          <StatBlock
-            badgeText="Explicit"
-            value={isExplicit.valueOf() ? "Yes" : "No"}
+          <Status
+            text="Repeat"
+            status={repeatState == "off" ? "deactivated" : "activated"}
           />
-        </div>
-        <div className="col-4">
-          <StatBlock badgeText="Device" value={deviceType.valueOf()} />
+          <Status text={deviceType.valueOf()} status="neutral" />
+          {isExplicit && <Status text="Explicit" status="neutral" />}
         </div>
       </div>
 

@@ -149,17 +149,38 @@ body {
   justify-content: center;
 }
 
-.stat-text-badge {
+.status {
   height: 2.5rem;
   padding: 0 0.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--primary-green);
-  color: var(--white);
   border-radius: 0.375rem;
   font-size: 1.2rem;
   font-weight: 600;
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+.status-color-activated {
+  background-color: var(--primary-green);
+  color: var(--white);
+}
+
+.status-color-deactivated {
+  background-color: rgb(220, 38, 38);
+  color: var(--white);
+}
+
+.status-color-neutral {
+  background-color: var(--bs-secondary);
+  color: var(--white);
+}
+
+.stat-lg {
+  flex: 1 1 250px;
+}
+
+.stat-sm {
+  flex: 1 1 250px;
 }
