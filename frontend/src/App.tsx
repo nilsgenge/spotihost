@@ -24,7 +24,7 @@ const App: React.FC = () => {
             <Route path="/callback" element={<Callback />} />
             <Route path="/" element={<Navigate to="/dashboard" />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/top" element={<Top />} />
+            <Route path="/top" element={<Navigate to="/top/artists" />} />
             <Route path="/top/:category" element={<Top />} />
           </Routes>
         </DateRangeProvider>
