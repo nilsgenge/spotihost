@@ -25,6 +25,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Navigate to="/dashboard" />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/top" element={<Top />} />
+            <Route path="/top/:category" element={<Top />} />
           </Routes>
         </DateRangeProvider>
       </div>

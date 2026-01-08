@@ -5,13 +5,15 @@ import { useTopArtists, type Artist } from "../../hooks/useTopArtists";
 import { useTopTracks, type Track } from "../../hooks/useTopTracks";
 import { useTopAlbums, type Album } from "../../hooks/useTopAlbums";
 
-type RankingType = "artists" | "tracks" | "albums";
+export type RankingType = "artists" | "tracks" | "albums";
 
 interface TopRankingBlockProps {
   type: RankingType;
   limit?: number;
   startDate: string;
   endDate: string;
+  buttonLabel?: string;
+  onButtonClick?: () => void;
 }
 
 const TopRankingBlock: FC<TopRankingBlockProps> = ({
@@ -19,6 +21,8 @@ const TopRankingBlock: FC<TopRankingBlockProps> = ({
   limit = 5,
   startDate,
   endDate,
+  buttonLabel,
+  onButtonClick,
 }) => {
   let data: (Artist | Track | Album)[] = [];
   let title = "";
@@ -86,8 +90,8 @@ const TopRankingBlock: FC<TopRankingBlockProps> = ({
   return (
     <ContentBlock
       title={title}
-      buttonLabel="Show more"
-      onButtonClick={() => window.open("https://spotify.com", "_blank")}
+      buttonLabel={buttonLabel}
+      onButtonClick={onButtonClick}
     >
       <div className="d-flex flex-column gap-2">
         {data.map((item) => (

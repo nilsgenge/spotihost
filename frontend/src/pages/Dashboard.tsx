@@ -1,4 +1,5 @@
 import { type FC } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useDateRange } from "../context/DateRangeContext";
 
@@ -17,6 +18,8 @@ import StatsMinutesBlock from "../components/blocks/StatsMinutesBlock";
 import StatsPlaysBlock from "../components/blocks/StatsPlaysBlock";
 
 const Dashboard: FC = () => {
+  const navigate = useNavigate();
+
   const { selectedRange, startDate, endDate } = useDateRange();
 
   const startISO = startDate.toISOString();
@@ -90,6 +93,8 @@ const Dashboard: FC = () => {
               limit={5}
               startDate={startISO}
               endDate={endISO}
+              buttonLabel="Show more"
+              onButtonClick={() => navigate("/top/artists")}
             />
           </div>
           <div
@@ -101,6 +106,8 @@ const Dashboard: FC = () => {
               limit={5}
               startDate={startISO}
               endDate={endISO}
+              buttonLabel="Show more"
+              onButtonClick={() => navigate("/top/tracks")}
             />
           </div>
           <div
@@ -112,6 +119,8 @@ const Dashboard: FC = () => {
               limit={5}
               startDate={startISO}
               endDate={endISO}
+              buttonLabel="Show more"
+              onButtonClick={() => navigate("/top/albums")}
             />
           </div>
         </div>

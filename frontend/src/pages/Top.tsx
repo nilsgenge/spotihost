@@ -1,35 +1,45 @@
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDateRange } from "../context/DateRangeContext";
-import DateRangePicker from "../components/ui/DateRangePicker";
+import DateRangePicker from "../components/blocks/DateRangePicker";
 import Separator from "../components/blocks/Separator";
-import ContentBlock from "../components/ui/ContentBlock";
-import ElementBlock from "../components/ui/ElementBlock";
-import { useTopArtists } from "../hooks/useTopArtists";
-import { useTopTracks } from "../hooks/useTopTracks";
-import { useTopAlbums } from "../hooks/useTopAlbums";
+import TopRankingBlock from "../components/blocks/TopRankingBlock";
+
+export type RankingType = "artists" | "tracks" | "albums";
 
 const Top = () => {
   const { startDate, endDate } = useDateRange();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const startISO = startDate.toISOString();
   const endISO = endDate.toISOString();
 
-  const limit = 30;
+  const categories: Record<RankingType, { label: string }> = {
+    artists: { label: "Artists" },
+    tracks: { label: "Tracks" },
+    albums: { label: "Albums" },
+  };
 
-  const {
-    topArtists,
-    loading: artistsLoading,
-    error: artistsError,
-  } = useTopArtists(startISO, endISO, limit);
-  const {
-    topTracks,
-    loading: tracksLoading,
-    error: tracksError,
-  } = useTopTracks(startISO, endISO, limit);
-  const {
-    topAlbums,
-    loading: albumsLoading,
-    error: albumsError,
-  } = useTopAlbums(startISO, endISO, limit);
+  const getPathCategory = (): RankingType => {
+    const path = location.pathname;
+    if (path.endsWith("artists")) return "artists";
+    if (path.endsWith("tracks")) return "tracks";
+    if (path.endsWith("albums")) return "albums";
+    return "artists";
+  };
+
+  const [selectedCategory, setSelectedCategory] =
+    useState<RankingType>(getPathCategory);
+
+  useEffect(() => {
+    setSelectedCategory(getPathCategory());
+  }, [location.pathname]);
+
+  const handleCategoryChange = (category: RankingType) => {
+    setSelectedCategory(category);
+    navigate(`/top/${category}`);
+  };
 
   return (
     <div className="container">
@@ -38,76 +48,37 @@ const Top = () => {
         <DateRangePicker />
       </div>
 
+      <div className="row mb-3 text-center">
+        <div className="col">
+          <div className="d-flex gap-2 flex-wrap">
+            {Object.entries(categories).map(([key, { label }]) => (
+              <button
+                key={key}
+                className={`btn ${
+                  selectedCategory === key
+                    ? "btn-primary"
+                    : "btn-outline-custom"
+                }`}
+                onClick={() => handleCategoryChange(key as RankingType)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <Separator />
 
-      <div className="row mb-4 text-center">
-        {/* --- Top Artists --- */}
+      <div className="row mb-3 text-center">
         <div className="col">
-          <ContentBlock
-            title={"Top Artists"}
-            buttonLabel="Show more"
-            onButtonClick={() => window.open("https://spotify.com", "_blank")}
-            loading={artistsLoading}
-            error={artistsError}
-          >
-            <div className="d-flex flex-column gap-2">
-              {topArtists.map((artist) => (
-                <ElementBlock
-                  key={artist.artist_id}
-                  image={artist.image_url}
-                  title={artist.name}
-                  label={""}
-                  stat={`${artist.listen_count} Listens`}
-                />
-              ))}
-            </div>
-          </ContentBlock>
-        </div>
-
-        {/* --- Top Songs --- */}
-        <div className="col">
-          <ContentBlock
-            title={"Top Songs"}
-            buttonLabel="Show more"
-            onButtonClick={() => window.open("https://spotify.com", "_blank")}
-            loading={tracksLoading}
-            error={tracksError}
-          >
-            <div className="d-flex flex-column gap-2">
-              {topTracks.map((track) => (
-                <ElementBlock
-                  key={track.track_id}
-                  image={track.cover_url}
-                  title={track.name}
-                  label={""}
-                  stat={`${track.listen_count} Listens`}
-                />
-              ))}
-            </div>
-          </ContentBlock>
-        </div>
-
-        {/* --- Top Albums --- */}
-        <div className="col">
-          <ContentBlock
-            title={"Top Albums"}
-            buttonLabel="Show more"
-            onButtonClick={() => window.open("https://spotify.com", "_blank")}
-            loading={albumsLoading}
-            error={albumsError}
-          >
-            <div className="d-flex flex-column gap-2">
-              {topAlbums.map((album) => (
-                <ElementBlock
-                  key={album.album_id}
-                  image={album.cover_url}
-                  title={album.name}
-                  label={""}
-                  stat={`${album.listen_count} Listens`}
-                />
-              ))}
-            </div>
-          </ContentBlock>
+          <TopRankingBlock
+            key={selectedCategory}
+            type={selectedCategory}
+            limit={30}
+            startDate={startISO}
+            endDate={endISO}
+          />
         </div>
       </div>
     </div>
