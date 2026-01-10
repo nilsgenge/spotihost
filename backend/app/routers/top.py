@@ -13,6 +13,7 @@ from app.models import (
     track_album, 
     album_artists
 )
+from app.utils.spotify import enrich_artist_images 
 
 router = APIRouter(prefix="/top", tags=["top"])
 
@@ -37,32 +38,32 @@ def get_top_artists(
         start_datetime = datetime.fromisoformat(start)
         end_datetime = datetime.fromisoformat(end)
 
-        top_artists = (
+        top_artists_data = (
             db.query(
-                Artist.artist_id,
-                Artist.name,
-                Artist.image_url_small,
+                Artist, 
                 func.count(Listen.listen_id).label("listen_count")
             )
             .join(track_artists, Artist.artist_id == track_artists.c.artist_id)
             .join(Track, Track.track_id == track_artists.c.track_id)
             .join(Listen, Listen.track_id == Track.track_id)
             .filter(Listen.played_at.between(start_datetime, end_datetime))
-            .group_by(Artist.artist_id, Artist.name, Artist.image_url_small)
+            .group_by(Artist)
             .order_by(func.count(Listen.listen_id).desc())
             .limit(limit)
             .all()
         )
     
-        result = [
-            {
+        result = []
+        for artist, listen_count in top_artists_data:
+            
+            enrich_artist_images(artist, db)
+
+            result.append({
                 "artist_id": artist.artist_id,
                 "name": artist.name,
-                "image_url": artist.image_url_small or PLACEHOLDER_IMAGE_URL,
-                "listen_count": artist.listen_count
-            }
-            for artist in top_artists
-        ]
+                "image_url": artist.image_url_small or "YOUR_PLACEHOLDER_IMAGE_URL_HERE",
+                "listen_count": listen_count
+            })
 
         return result
     except Exception as e:

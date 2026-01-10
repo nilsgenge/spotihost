@@ -93,7 +93,6 @@ class Listen(Base):
 
 class SpotifyToken(Base):
     __tablename__ = 'spotify_tokens'
-
     id = Column(Integer, primary_key=True, index=True)
     access_token = Column(String, nullable=False)
     refresh_token = Column(String, nullable=False)

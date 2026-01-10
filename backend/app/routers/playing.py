@@ -51,3 +51,45 @@ def get_currently_playing(db: Session = Depends(get_db)):
         logger.exception("Network error")
         raise HTTPException(status_code=503, detail="Spotify API unreachable")
 
+@router.get("/check-rate-limit")
+def check_rate_limit(db: Session = Depends(get_db)):
+    """
+    Checks if the Spotify API rate limit has been reached.
+    Returns:
+        is_reached (bool): True if rate limited
+        wait_time_minutes (float): Minutes to wait before retry
+    """
+    try:
+        token = get_valid_spotify_token(db)
+        
+        headers = {"Authorization": f"Bearer {token}"}
+
+        response = requests.get("https://api.spotify.com/v1/me", headers=headers)
+
+        if response.status_code == 429:
+            retry_after_seconds = int(response.headers.get("Retry-After", 60))
+            wait_minutes = round(retry_after_seconds / 60.0, 2)
+            
+            return {
+                "is_reached": True,
+                "wait_time_minutes": wait_minutes
+            }
+        
+        elif response.status_code == 200:
+            return {
+                "is_reached": False,
+                "wait_time_minutes": 0
+            }
+        
+        elif response.status_code == 401:
+            raise HTTPException(status_code=500, detail="Authentication failed. Please login again.")
+            
+        else:
+            return {
+                "is_reached": False,
+                "wait_time_minutes": 0,
+                "note": f"Unexpected status code: {response.status_code}"
+            }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
