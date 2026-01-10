@@ -30,10 +30,13 @@ class Artist(Base):
     artist_id = Column(Integer, primary_key=True, index=True)
     spotify_id = Column(String, unique=True, nullable=False)
     name = Column(String, nullable=False)
-    image_url = Column(String, nullable=True)
+    
+    image_url_small = Column(String, nullable=True)
+    image_url_medium = Column(String, nullable=True)
+    image_url_large = Column(String, nullable=True)
 
-    tracks = relationship("Track", secondary=track_artists, back_populates="artists")
-    albums = relationship("Album", secondary=album_artists, back_populates="artists")
+    tracks = relationship("Track", secondary="track_artists", back_populates="artists")
+    albums = relationship("Album", secondary="album_artists", back_populates="artists")
 
 class Album(Base):
     __tablename__ = 'albums'

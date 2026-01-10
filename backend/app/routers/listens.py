@@ -60,8 +60,7 @@ def get_recent_listens(
         for listen in listens:
             track = listen.track
             track_name = track.name if track else "Unknown Track"
-            cover_url = track.image_url_large
-            
+            cover_url = track.image_url_small if track else None           
             artist_names = "Unknown Artist"
             if track and track.artists:
                 artist_names = ", ".join(artist.name for artist in track.artists)

@@ -41,24 +41,24 @@ def get_top_artists(
             db.query(
                 Artist.artist_id,
                 Artist.name,
-                Artist.image_url,
+                Artist.image_url_small,
                 func.count(Listen.listen_id).label("listen_count")
             )
             .join(track_artists, Artist.artist_id == track_artists.c.artist_id)
             .join(Track, Track.track_id == track_artists.c.track_id)
             .join(Listen, Listen.track_id == Track.track_id)
             .filter(Listen.played_at.between(start_datetime, end_datetime))
-            .group_by(Artist.artist_id, Artist.name, Artist.image_url)
+            .group_by(Artist.artist_id, Artist.name, Artist.image_url_small)
             .order_by(func.count(Listen.listen_id).desc())
             .limit(limit)
             .all()
         )
-
+    
         result = [
             {
                 "artist_id": artist.artist_id,
                 "name": artist.name,
-                "image_url": artist.image_url or PLACEHOLDER_IMAGE_URL,
+                "image_url": artist.image_url_small or PLACEHOLDER_IMAGE_URL,
                 "listen_count": artist.listen_count
             }
             for artist in top_artists
