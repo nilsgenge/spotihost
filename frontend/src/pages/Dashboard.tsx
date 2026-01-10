@@ -16,6 +16,7 @@ import StatsStreakBlock from "../components/blocks/StatsStreakBlock";
 import StatsArtistsBlock from "../components/blocks/StatsArtistsBlock";
 import StatsMinutesBlock from "../components/blocks/StatsMinutesBlock";
 import StatsPlaysBlock from "../components/blocks/StatsPlaysBlock";
+import { usePlayerDetails } from "../hooks/usePlayerDetails";
 
 const Dashboard: FC = () => {
   const navigate = useNavigate();
@@ -24,6 +25,8 @@ const Dashboard: FC = () => {
 
   const startISO = startDate.toISOString();
   const endISO = endDate.toISOString();
+
+  const { playerActive } = usePlayerDetails();
 
   return (
     <div className="container">
@@ -34,7 +37,7 @@ const Dashboard: FC = () => {
 
       <Separator />
 
-      <PlayingStatus />
+      {playerActive && <PlayingStatus />}
 
       {/* Stats */}
       <div className="row mb-3">

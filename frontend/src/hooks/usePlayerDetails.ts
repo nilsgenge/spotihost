@@ -65,6 +65,7 @@ interface PlayerData {
 }
 
 export interface UsePlayerReturn {
+  playerActive: boolean,
   isLoading: boolean;
   error: string | null;
   isPlaying: boolean;
@@ -89,6 +90,7 @@ export const usePlayerDetails = (): UsePlayerReturn => {
     isLoading: true,
     error: null,
     data: {
+      playerActive: true,
       isLoading: true,
       error: null,
       isPlaying: false,
@@ -123,6 +125,7 @@ export const usePlayerDetails = (): UsePlayerReturn => {
             isLoading: false,
             error: null,
             data: {
+              playerActive: false,
               isLoading: false,
               error: null,
               isPlaying: false,
@@ -184,6 +187,7 @@ export const usePlayerDetails = (): UsePlayerReturn => {
           isLoading: false,
           error: null,
           data: {
+            playerActive: true,
             isLoading: false,
             error: null,
             isPlaying: data.is_playing,
