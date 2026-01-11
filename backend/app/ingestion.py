@@ -79,10 +79,9 @@ def process_item(db: Session, item: Dict[str, Any], created_cache: dict):
         raw_context = item.get("context", {})
         played_at_str = item.get("played_at")
 
-        # 1. Parse Timestamp
         played_at = datetime.fromisoformat(played_at_str.replace("Z", "+00:00")) # type: ignore
 
-        # 3. Process Artists
+        # Process Artists
         track_artist_ids = []
         for a in raw_track.get("artists", []):
             artist, _ = get_or_create(
@@ -105,7 +104,7 @@ def process_item(db: Session, item: Dict[str, Any], created_cache: dict):
             )
             album_artist_ids.append(artist)
 
-       # 4. Process Album
+       # Process Album
         s_sma, s_med, s_lrg = get_image_qualities(raw_album.get("images", []))
         rel_date = parse_date(raw_album.get("release_date"), raw_album.get("release_date_precision"))
         
@@ -124,7 +123,7 @@ def process_item(db: Session, item: Dict[str, Any], created_cache: dict):
             cache=created_cache
         )
 
-        # 5. Process Track
+        # Process Track
         t_sma, t_med, t_lrg = get_image_qualities(raw_track.get("images", []))
         t_sma = t_sma or s_sma
         t_med = t_med or s_med
@@ -144,22 +143,22 @@ def process_item(db: Session, item: Dict[str, Any], created_cache: dict):
             cache=created_cache
         )
 
-        # Track ↔ Artists
+        # Track Artists
         for artist in track_artist_ids:
             if artist not in track.artists:
                 track.artists.append(artist)
 
-        # Album ↔ Artists
+        # Album Artists
         for artist in album_artist_ids:
             if artist not in album.artists:
                 album.artists.append(artist)
 
-        # Track ↔ Album
+        # Track Album
         if album not in track.albums:
             track.albums.append(album)
 
 
-        # 7. Create Listen
+        # Create Listen
         new_listen = Listen(
             track_id=track.track_id,
             played_at=played_at,
@@ -186,7 +185,7 @@ def ingest_recent_listens():
         logger.info("Starting Spotify Ingestion...")
         url = "https://api.spotify.com/v1/me/player/recently-played?limit=50"
         
-        response = requests.get( # type: ignore
+        response = requests.get(
             url,
             headers={"Authorization": f"Bearer {token}"}
         )

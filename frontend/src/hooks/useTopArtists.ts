@@ -1,14 +1,8 @@
 import { useState, useEffect } from "react";
-
-export interface Artist {
-  artist_id: number;
-  name: string;
-  image_url: string;
-  listen_count: number;
-}
+import { type SimpleArtist } from "../types/types";
 
 interface TopArtistsResult {
-  topArtists: Artist[];
+  topArtists: SimpleArtist[];
   loading: boolean;
   error: string | null;
 }
@@ -18,7 +12,7 @@ export const useTopArtists = (
   end: string,
   limit: number = 10
 ): TopArtistsResult => {
-  const [topArtists, setTopArtists] = useState<Artist[]>([]);
+  const [topArtists, setTopArtists] = useState<SimpleArtist[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

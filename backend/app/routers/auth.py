@@ -96,10 +96,8 @@ def get_user_profile(db: Session = Depends(get_db)):
     - Fetches Profile Data (Name, Avatar) from Spotify.
     """
     try:
-        # 1. Get/Refresh valid token (This effectively "checks" the login status)
         token = get_valid_spotify_token(db)
         
-        # 2. Call Spotify API to get Profile Data
         headers = {"Authorization": f"Bearer {token}"}
         response = requests.get("https://api.spotify.com/v1/me", headers=headers)
         
@@ -107,15 +105,12 @@ def get_user_profile(db: Session = Depends(get_db)):
             data = response.json()
             return {
                 "name": data.get("display_name", "User"),
-                # Spotify returns an array of images, we take the first one
                 "image": data.get("images", [{}])[0].get("url"),
                 "id": data.get("id")
             }
         
-        # If Spotify says 401, the token was revoked/invalid
         raise HTTPException(status_code=401, detail="Invalid Token")
         
     except Exception as e:
-        # Handles: "No token found in DB", "Refresh Failed", etc.
         raise HTTPException(status_code=401, detail="User not authenticated")
     

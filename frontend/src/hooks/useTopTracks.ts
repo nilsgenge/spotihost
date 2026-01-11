@@ -1,15 +1,8 @@
 import { useState, useEffect } from "react";
-
-export interface Track {
-  track_id: number;
-  name: string;
-  cover_url: string;
-  listen_count: number;
-  artist_name: string;
-}
+import { type SimpleTrack } from "../types/types";
 
 interface TopTracksResult {
-  topTracks: Track[];
+  topTracks: SimpleTrack[];
   loading: boolean;
   error: string | null;
 }
@@ -19,7 +12,7 @@ export const useTopTracks = (
   end: string,
   limit: number = 10
 ): TopTracksResult => {
-  const [topTracks, setTopTracks] = useState<Track[]>([]);
+  const [topTracks, setTopTracks] = useState<SimpleTrack[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

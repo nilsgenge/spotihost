@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table, DateTime, Date, UniqueConstraint
-from sqlalchemy.orm import relationship
-from app.database import Base
 from datetime import datetime
+from sqlalchemy import Column, Integer, String, ForeignKey, Table, DateTime, Date, UniqueConstraint
+from app.database import Base
+from sqlalchemy import String, Integer
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 track_album = Table(
     'track_album',
@@ -25,71 +26,99 @@ album_artists = Table(
 )
 
 class Artist(Base):
-    __tablename__ = 'artists'
+    __tablename__ = "artists"
 
-    artist_id = Column(Integer, primary_key=True, index=True)
-    spotify_id = Column(String, unique=True, nullable=False)
-    name = Column(String, nullable=False)
-    
-    image_url_small = Column(String, nullable=True)
-    image_url_medium = Column(String, nullable=True)
-    image_url_large = Column(String, nullable=True)
+    artist_id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    spotify_id: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False)
 
-    tracks = relationship("Track", secondary="track_artists", back_populates="artists")
-    albums = relationship("Album", secondary="album_artists", back_populates="artists")
+    image_url_small: Mapped[str | None] = mapped_column(String, nullable=True)
+    image_url_medium: Mapped[str | None] = mapped_column(String, nullable=True)
+    image_url_large: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    tracks: Mapped[list["Track"]] = relationship(
+        secondary=track_artists,
+        back_populates="artists",
+    )
+
+    albums: Mapped[list["Album"]] = relationship(
+        secondary=album_artists,
+        back_populates="artists",
+    )
 
 class Album(Base):
-    __tablename__ = 'albums'
+    __tablename__ = "albums"
 
-    album_id = Column(Integer, primary_key=True, index=True)
-    spotify_id = Column(String, unique=True, nullable=False)
-    name = Column(String, nullable=False)
-    
-    release_date = Column(Date, nullable=True)
-    release_date_precision = Column(String, nullable=True)
-    
-    album_type = Column(String, nullable=True) 
-    total_tracks = Column(Integer, default=0)
-    
-    image_url_small = Column(String, nullable=True)
-    image_url_medium = Column(String, nullable=True)
-    image_url_large = Column(String, nullable=True)
+    album_id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    spotify_id: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False)
 
-    tracks = relationship("Track", secondary=track_album, back_populates="albums")
-    artists = relationship("Artist", secondary=album_artists, back_populates="albums")
+    release_date: Mapped[Date | None] = mapped_column(Date, nullable=True)
+    release_date_precision: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    album_type: Mapped[str | None] = mapped_column(String, nullable=True)
+    total_tracks: Mapped[int] = mapped_column(Integer, default=0)
+
+    image_url_small: Mapped[str | None] = mapped_column(String, nullable=True)
+    image_url_medium: Mapped[str | None] = mapped_column(String, nullable=True)
+    image_url_large: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    tracks: Mapped[list["Track"]] = relationship(
+        secondary=track_album,
+        back_populates="albums",
+    )
+
+    artists: Mapped[list["Artist"]] = relationship(
+        secondary=album_artists,
+        back_populates="albums",
+    )
 
 class Track(Base):
-    __tablename__ = 'tracks'
+    __tablename__ = "tracks"
 
-    track_id = Column(Integer, primary_key=True, index=True)
-    spotify_id = Column(String, unique=True, nullable=False)
-    name = Column(String, nullable=False)
-    duration = Column(Integer, nullable=True)
-    
-    image_url_small = Column(String, nullable=True)
-    image_url_medium = Column(String, nullable=True)
-    image_url_large = Column(String, nullable=True)
+    track_id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    spotify_id: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    duration: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
-    artists = relationship("Artist", secondary=track_artists, back_populates="tracks")
-    albums = relationship("Album", secondary=track_album, back_populates="tracks")
+    image_url_small: Mapped[str | None] = mapped_column(String, nullable=True)
+    image_url_medium: Mapped[str | None] = mapped_column(String, nullable=True)
+    image_url_large: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    artists: Mapped[list["Artist"]] = relationship(
+        secondary=track_artists,
+        back_populates="tracks",
+    )
+
+    albums: Mapped[list["Album"]] = relationship(
+        secondary=track_album,
+        back_populates="tracks",
+    )
+
 
 class Listen(Base):
-    __tablename__ = 'listens'
+    __tablename__ = "listens"
 
     __table_args__ = (
         UniqueConstraint(
             "track_id",
             "played_at",
-            name="uq_listen_track_played_at"
+            name="uq_listen_track_played_at",
         ),
     )
 
-    listen_id = Column(Integer, primary_key=True, index=True)
-    track_id = Column(Integer, ForeignKey('tracks.track_id'), nullable=False)
-    played_at = Column(DateTime(timezone=True), nullable=False)
-    context_type = Column(String, nullable=True)
+    listen_id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    track_id: Mapped[int] = mapped_column(
+        ForeignKey("tracks.track_id"),
+        nullable=False,
+    )
+    played_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+    )
+    context_type: Mapped[str | None] = mapped_column(String, nullable=True)
 
-    track = relationship("Track")
+    track: Mapped["Track"] = relationship()
 
 class SpotifyToken(Base):
     __tablename__ = 'spotify_tokens'

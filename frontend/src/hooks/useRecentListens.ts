@@ -1,15 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDateRange } from "../context/DateRangeContext";
-
-export interface Listen {
-  listen_id: number;
-  track_id: number;
-  played_at: string;
-  formatted_time: string;
-  track_name: string;
-  artist_names: string;
-  cover_url?: string;
-}
+import type { Listen } from "../types/types";
 
 interface RecentListensResult {
   listens: Listen[];
@@ -44,17 +35,9 @@ export const useRecentListens = (
 
         const rawData = await response.json();
 
-        const processed = rawData.listens.map((item: any) => {
-          console.log("RAW played_at from API:", item.played_at);
-
+        const processed = rawData.listens.map((item: Listen) => {
           const date = new Date(item.played_at);
-
-          console.log("Parsed Date (ISO):", date.toISOString());
-          console.log(
-            "Berlin time:",
-            date.toLocaleString("de-DE", { timeZone: "Europe/Berlin" })
-          );
-
+          
           return {
             ...item,
             formatted_time: date.toLocaleTimeString([], {
@@ -64,7 +47,6 @@ export const useRecentListens = (
             }),
           };
         });
-
 
         setListens(processed);
         setError(null);

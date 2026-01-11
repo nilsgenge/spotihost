@@ -100,3 +100,77 @@ class TopAlbum(BaseModel):
     artist_name: str
 
 
+
+class ArtistLink(BaseModel):
+    name: str
+    url: str
+
+
+
+class SimpleTrack(BaseModel):
+    track_id: int
+    spotify_id: str
+    name: str
+    cover_url: str
+    listen_count: int
+    artists: List[ArtistLink]
+
+class SimpleAlbum(BaseModel):
+    album_id: int
+    spotify_id: str
+    name: str
+    cover_url: str
+    listen_count: int
+    artists: List[ArtistLink]
+
+class SimpleArtist(BaseModel):
+    artist_id: int
+    spotify_id: str
+    name: str
+    image_url: str
+    listen_count: int
+
+class SimpleListen(BaseModel):
+    listen_id: int
+    track_id: int
+    track_spotify_id: str
+    played_at: str
+    track_name: str
+    cover_url: Optional[str] = None
+    artists: List[ArtistLink]
+
+class SimpleListenResponse(BaseModel):
+    listens: List[SimpleListen]
+
+
+
+
+class AdvancedTrack(BaseModel):
+    name: str
+    artists: List[SimpleArtist]
+    albums: List[SimpleAlbum]
+    image_url: str
+    duration_s: float
+    popularity: int
+    external_urls: dict
+    listen_count: int
+
+class AdvancedAlbum(BaseModel):
+    name: str
+    artists: List[SimpleArtist]
+    release_date: str
+    total_tracks: int
+    image_url: str
+    popularity: int
+    listen_count: int
+    tracks: List[SimpleTrack]
+
+class AdvancedArtist(BaseModel):
+    spotify_id: str
+    name: str
+    image_url: str
+    followers: int = 0
+    genres: List[str] = []
+    popularity: int = 0
+    listen_count: int
+

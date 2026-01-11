@@ -1,4 +1,5 @@
-import { useRecentListens, type Listen } from "../../hooks/useRecentListens";
+import { useRecentListens } from "../../hooks/useRecentListens";
+import type { Listen } from "../../types/types";
 import ContentBlock from "../ui/ContentBlock";
 import ElementBlock from "../ui/ElementBlock";
 
@@ -33,7 +34,8 @@ const HistoryBlock = () => {
             key={listen.listen_id}
             image={listen.cover_url}
             title={listen.track_name}
-            label={listen.artist_names}
+            title_url={`/track/${listen.track_spotify_id}`}
+            label={listen.artists}
             stat={listen.formatted_time}
           />
         ))}

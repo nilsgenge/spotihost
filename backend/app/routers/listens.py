@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from app.database import get_db
 from datetime import datetime, timedelta
-from app.schemas import ListenCreate
+from app.schemas import ArtistLink, ListenCreate, SimpleListen, SimpleListenResponse
 from app.models import Listen, Track, Artist, track_artists
 
 router = APIRouter(prefix="/listens", tags=["listens"])
@@ -41,7 +41,7 @@ def get_listens_count(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/recent")
+@router.get("/recent", response_model=SimpleListenResponse)
 def get_recent_listens(
     limit: int = Query(50, ge=1, le=500), 
     db: Session = Depends(get_db)
@@ -59,30 +59,41 @@ def get_recent_listens(
         formatted_listens = []
         for listen in listens:
             track = listen.track
-            track_name = track.name if track else "Unknown Track"
-            cover_url = track.image_url_small if track else None           
-            artist_names = "Unknown Artist"
-            if track and track.artists:
-                artist_names = ", ".join(artist.name for artist in track.artists)
+            
+            if not track:
+                continue
 
-            formatted_listens.append({
-                "listen_id": listen.listen_id,
-                "track_id": listen.track_id,
-                "played_at": listen.played_at.isoformat(), 
-                "track_name": track_name,
-                "artist_names": artist_names,
-                "cover_url": cover_url,
-            })
+            artists_info = []
+            if track.artists:
+                artists_info = [
+                    ArtistLink(
+                        name=artist.name, 
+                        url=f"/artist/{artist.spotify_id}"
+                    )
+                    for artist in track.artists
+                ]
 
-        return {"listens": formatted_listens}
+            formatted_listens.append(
+                SimpleListen(
+                    listen_id=listen.listen_id,
+                    track_id=listen.track_id,
+                    track_spotify_id=track.spotify_id,
+                    played_at=listen.played_at.isoformat(), 
+                    track_name=track.name,
+                    cover_url=track.image_url_small,
+                    artists=artists_info
+                )
+            )
+
+        return SimpleListenResponse(listens=formatted_listens)
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
     
 @router.get("/streak")
 def get_listening_streak(db: Session = Depends(get_db)):
     """
-    Optimized streak calculation.
-    Fetches all distinct dates in one query, then calculates streak in Python.
+    Fetches all distinct dates in one query, then calculates streak.
     """
     try:
         dates = db.query(
@@ -121,13 +132,11 @@ def get_activity_stats(
     """
     Returns minutes listened grouped by HOUR.
     The frontend handles aggregating these hours into days, weeks, or months.
-    This solves timezone alignment issues.
     """
     try:
         start_dt = datetime.fromisoformat(start)
         end_dt = datetime.fromisoformat(end)
 
-        # Always group by Hour for maximum granularity
         truncated_time = func.date_trunc('hour', Listen.played_at).label('timestamp')
 
         results = db.query(
@@ -145,7 +154,6 @@ def get_activity_stats(
 
         data = [
             {
-                # Send raw ISO time
                 "timestamp": r.timestamp.isoformat(),
                 "minutes": int(r.total_seconds / 60) if r.total_seconds else 0
             }
@@ -188,14 +196,11 @@ def get_listened_artists(
 ):
     """
     Count unique artists listened to in a time range.
-    Matches the frontend useListenedArtists hook.
     """
     try:
         start_datetime = datetime.fromisoformat(start)
         end_datetime = datetime.fromisoformat(end)
 
-        # Join: Listen -> Track -> track_artists (association) -> Artist
-        # Count distinct Artist IDs found in this range
         artist_count = db.query(func.count(func.distinct(Artist.artist_id))).join(
             track_artists, Artist.artist_id == track_artists.c.artist_id
         ).join(

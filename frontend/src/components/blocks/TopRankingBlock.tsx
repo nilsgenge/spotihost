@@ -1,11 +1,17 @@
 import { type FC } from "react";
 import ContentBlock from "../ui/ContentBlock";
 import ElementBlock from "../ui/ElementBlock";
-import { useTopArtists, type Artist } from "../../hooks/useTopArtists";
-import { useTopTracks, type Track } from "../../hooks/useTopTracks";
-import { useTopAlbums, type Album } from "../../hooks/useTopAlbums";
+import { useTopArtists } from "../../hooks/useTopArtists";
+import { useTopTracks } from "../../hooks/useTopTracks";
+import { useTopAlbums } from "../../hooks/useTopAlbums";
 
-export type RankingType = "artists" | "tracks" | "albums";
+import type {
+  SimpleArtist,
+  SimpleTrack,
+  SimpleAlbum,
+  RankingType,
+  ArtistLink,
+} from "../../types/types";
 
 interface TopRankingBlockProps {
   type: RankingType;
@@ -24,7 +30,7 @@ const TopRankingBlock: FC<TopRankingBlockProps> = ({
   buttonLabel,
   onButtonClick,
 }) => {
-  let data: (Artist | Track | Album)[] = [];
+  let data: (SimpleArtist | SimpleTrack | SimpleAlbum)[] = [];
   let title = "";
   let loading = false;
   let error: string | null = null;
@@ -94,27 +100,45 @@ const TopRankingBlock: FC<TopRankingBlockProps> = ({
       onButtonClick={onButtonClick}
     >
       <div className="d-flex flex-column gap-2">
-        {data.map((item) => (
-          <ElementBlock
-            key={
-              type === "tracks"
-                ? (item as Track).track_id
-                : type === "albums"
-                ? (item as Album).album_id
-                : (item as Artist).artist_id
-            }
-            image={
-              type === "tracks" || type === "albums"
-                ? (item as Track | Album).cover_url
-                : (item as Artist).image_url
-            }
-            title={item.name}
-            label={
-              type === "artists" ? "" : (item as Track | Album).artist_name
-            }
-            stat={`${item.listen_count.toString()} Listens`}
-          />
-        ))}
+        {data.map((item) => {
+          let title_url: string | undefined;
+          let image: string | undefined;
+          let label: ArtistLink[] | undefined;
+
+          if (type === "artists") {
+            const artist = item as SimpleArtist;
+            title_url = `/artist/${artist.spotify_id}`;
+            image = artist.image_url;
+          } else if (type === "tracks") {
+            const track = item as SimpleTrack;
+            title_url = `/track/${track.spotify_id}`;
+            image = track.cover_url;
+            label = track.artists;
+          } else if (type === "albums") {
+            const album = item as SimpleAlbum;
+            title_url = `/album/${album.spotify_id}`;
+            image = album.cover_url;
+            label = album.artists;
+          }
+
+          const key =
+            type === "tracks"
+              ? (item as SimpleTrack).track_id
+              : type === "albums"
+              ? (item as SimpleAlbum).album_id
+              : (item as SimpleArtist).artist_id;
+
+          return (
+            <ElementBlock
+              key={key}
+              image={image}
+              title={item.name}
+              title_url={title_url}
+              label={label}
+              stat={`${item.listen_count} Listens`}
+            />
+          );
+        })}
       </div>
     </ContentBlock>
   );

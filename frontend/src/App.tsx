@@ -11,6 +11,9 @@ import Dashboard from "./pages/Dashboard";
 import Top from "./pages/Top";
 import { DateRangeProvider } from "./context/DateRangeContext";
 import Callback from "./pages/Callback";
+import Artist from "./pages/Artist";
+import Track from "./pages/Track";
+import Album from "./pages/Album";
 
 const App: React.FC = () => {
   return (
@@ -26,6 +29,9 @@ const App: React.FC = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/top" element={<Navigate to="/top/artists" />} />
             <Route path="/top/:category" element={<Top />} />
+            <Route path="/track/:spotify_id" element={<Track />} />
+            <Route path="/artist/:spotify_id" element={<Artist />} />
+            <Route path="/album/:spotify_id" element={<Album />} />
           </Routes>
         </DateRangeProvider>
       </div>

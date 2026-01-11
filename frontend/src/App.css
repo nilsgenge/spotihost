@@ -6,6 +6,7 @@
   --dark-background: #121212; 
   --block-dark: #18181C;
   --navbar-height: 15px;
+  --text-soft: #9ca3af;
 }
 
 :root {
@@ -91,6 +92,10 @@ body {
 
 .text-custom-muted {
   color: var(--bs-secondary);
+}
+
+.text-soft {
+  color: var(--text-soft);
 }
 
 .max-width-page {
@@ -183,4 +188,31 @@ body {
 
 .stat-sm {
   flex: 1 1 250px;
+}
+
+.element-cover {
+  width: 3.2rem;
+  height: 3.2rem;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+}
+
+.hover-underline {
+  text-decoration: none;
+}
+
+.hover-underline:hover {
+  text-decoration: underline;
+}
+
+.spotify-btn {
+  color: #6c757d;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.spotify-btn:hover {
+  color: #ffffff;
+  transform: scale(1.05);
 }

@@ -7,7 +7,7 @@ import os
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.ingestion import ingest_recent_listens
-from app.routers import listens, albums, artists, database_stats, timezone, tracks, top, playing, auth
+from app.routers import listens, database_stats, timezone, top, playing, auth, track, album, artist
 
 app = FastAPI()
 
@@ -49,11 +49,13 @@ def shutdown_event():
     scheduler.shutdown()
 
 app.include_router(listens.router)
-app.include_router(albums.router)
-app.include_router(artists.router)
+app.include_router(album.router)
+app.include_router(artist.router)
 app.include_router(database_stats.router)
 app.include_router(timezone.router)
-app.include_router(tracks.router)
+app.include_router(track.router)
+app.include_router(album.router)
+app.include_router(artist.router)
 app.include_router(top.router)
 app.include_router(playing.router)
 app.include_router(auth.router)

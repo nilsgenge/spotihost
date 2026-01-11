@@ -1,15 +1,8 @@
 import { useState, useEffect } from "react";
-
-export interface Album {
-  album_id: number;
-  name: string;
-  cover_url: string;
-  listen_count: number;
-  artist_name: string;
-}
+import { type SimpleAlbum } from "../types/types";
 
 interface TopAlbumsResult {
-  topAlbums: Album[];
+  topAlbums: SimpleAlbum[];
   loading: boolean;
   error: string | null;
 }
@@ -19,7 +12,7 @@ export const useTopAlbums = (
   end: string,
   limit: number = 10
 ): TopAlbumsResult => {
-  const [topAlbums, setTopAlbums] = useState<Album[]>([]);
+  const [topAlbums, setTopAlbums] = useState<SimpleAlbum[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

@@ -17,9 +17,7 @@ def get_database_stats(db: Session = Depends(get_db)):
     try:
         total_entries = 0
         
-        # Iterate through every table defined in Base.metadata
         for table in Base.metadata.tables.values():
-            # Query count for this specific table
             count = db.query(func.count()).select_from(table).scalar()
             total_entries += count
 
