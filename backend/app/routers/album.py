@@ -49,7 +49,7 @@ def get_album_details(spotify_id: str, db: Session = Depends(get_db)):
                 artist_id=a.artist_id,
                 spotify_id=a.spotify_id,
                 name=a.name,
-                image_url=a.image_url_large or "",
+                image_url=a.image_url_small or "",
                 listen_count=0,
             )
         )
@@ -73,7 +73,7 @@ def get_album_details(spotify_id: str, db: Session = Depends(get_db)):
                 track_id=track.track_id,
                 spotify_id=track.spotify_id,
                 name=track.name,
-                cover_url=track.image_url_large or "",
+                cover_url=track.image_url_small or "",
                 listen_count=track_listen_count,
                 artists=track_artists_links,
             )
@@ -84,7 +84,7 @@ def get_album_details(spotify_id: str, db: Session = Depends(get_db)):
         artists=artists,
         release_date=album.release_date.isoformat() if album.release_date else "", # type: ignore
         total_tracks=album.total_tracks,
-        image_url=album.image_url_large or "",
+        image_url=album.image_url_medium or "",
         popularity=0,
         listen_count=album_listen_count,
         tracks=tracks,

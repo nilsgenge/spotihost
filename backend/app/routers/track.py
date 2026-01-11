@@ -100,7 +100,7 @@ def get_track_details(spotify_id: str, db: Session = Depends(get_db)):
         name=local_track.name,
         artists=artists,
         albums=albums,
-        image_url=local_track.image_url_large
+        image_url=local_track.image_url_medium
         or (albums[0].cover_url if albums else ""),
         duration_s=float(local_track.duration) if local_track.duration else 0.0,
         popularity=0,

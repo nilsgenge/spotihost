@@ -53,7 +53,7 @@ def get_artist_details(spotify_id: str, db: Session = Depends(get_db)):
     return AdvancedArtist(
         spotify_id=artist.spotify_id,
         name=artist.name,
-        image_url=artist.image_url_large or "",
+        image_url=artist.image_url_medium or "",
         followers=0,
         genres=[],
         popularity=0,
