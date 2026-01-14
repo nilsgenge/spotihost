@@ -6,12 +6,10 @@ import { useListeningStreak } from "../../hooks/useListeningStreak";
 const StatsStreakBlock: FC = () => {
   const { streak, loading, error } = useListeningStreak();
 
-  if (loading) {
-    return <StatBlock icon={<FaFire />} title="Loading.." value="" />;
-  }
-
   if (error) {
-    return <StatBlock icon={<FaFire />} title="Error" value="" />;
+    return (
+      <StatBlock icon={<FaFire />} title="Listening Streak" value="Error" />
+    );
   }
 
   return (
@@ -19,6 +17,7 @@ const StatsStreakBlock: FC = () => {
       icon={<FaFire />}
       title="Listening Streak"
       value={streak.toString()}
+      loading={loading}
     />
   );
 };

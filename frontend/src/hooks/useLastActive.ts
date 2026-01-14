@@ -24,6 +24,7 @@ const useLastActive = (
     try {
       if (playerData.isLoading) {
         setLoading(true);
+        setTitle("Last Active");
         return;
       }
       

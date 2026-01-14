@@ -66,21 +66,13 @@ const TopRankingBlock: FC<TopRankingBlockProps> = ({
 
   if (error) {
     return (
-      <ContentBlock title={title}>
+      <ContentBlock title={title} error={error}>
         {renderStatusMessage("Error loading data")}
       </ContentBlock>
     );
   }
 
-  if (loading) {
-    return (
-      <ContentBlock title={title}>
-        {renderStatusMessage("Loading...")}
-      </ContentBlock>
-    );
-  }
-
-  if (data.length === 0) {
+  if (data.length === 0 && !loading) {
     return (
       <ContentBlock title={title}>
         {renderStatusMessage("No data found")}
@@ -93,6 +85,7 @@ const TopRankingBlock: FC<TopRankingBlockProps> = ({
       title={title}
       buttonLabel={buttonLabel}
       onButtonClick={onButtonClick}
+      loading={loading}
     >
       <div className="d-flex flex-column gap-2">
         {data.map((item) => {

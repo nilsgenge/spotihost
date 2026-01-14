@@ -20,12 +20,8 @@ const StatsPlaysBlock: FC<StatsPlaysBlockProps> = ({
     selectedRange
   );
 
-  if (loading) {
-    return <StatBlock icon={<FaPlay />} title="Loading.." value="" />;
-  }
-
   if (error) {
-    return <StatBlock icon={<FaPlay />} title="Error" value="" />;
+    return <StatBlock icon={<FaPlay />} title="Plays" value="Error" />;
   }
 
   const change = listensCount - previousPlaysCount;
@@ -36,6 +32,7 @@ const StatsPlaysBlock: FC<StatsPlaysBlockProps> = ({
       title="Plays"
       value={listensCount.toString()}
       change={change !== 0 ? change : undefined}
+      loading={loading}
     />
   );
 };

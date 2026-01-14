@@ -1,6 +1,6 @@
 import React from "react";
 import Block from "./Block";
-
+import { Skeleton } from "./Skeleton";
 export interface ContentBlockProps {
   children: React.ReactNode;
   title: string;
@@ -21,12 +21,20 @@ const ContentBlock: React.FC<ContentBlockProps> = ({
   let displayTitle = title;
   let displayChildren = children;
 
-  if (loading) {
-    displayTitle = "Loading...";
-    displayChildren = null;
-  } else if (error) {
+  if (error) {
     displayTitle = "Error";
     displayChildren = null;
+  }
+
+  if (loading) {
+    displayTitle = title;
+    displayChildren = (
+      <div className="d-flex flex-column gap-2">
+        {[...Array(5)].map((_, i) => (
+          <Skeleton key={i} />
+        ))}
+      </div>
+    );
   }
 
   const handleClick = () => {
@@ -42,7 +50,9 @@ const ContentBlock: React.FC<ContentBlockProps> = ({
           <h4 className="fs-6">{displayTitle}</h4>
         </div>
 
-        {displayChildren && <div className="flex-grow-1 mb-3">{children}</div>}
+        {displayChildren && (
+          <div className="flex-grow-1 mb-3">{displayChildren}</div>
+        )}
 
         {buttonLabel && onButtonClick && (
           <div className="d-flex justify-content-end">

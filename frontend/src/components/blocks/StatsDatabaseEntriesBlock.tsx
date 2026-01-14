@@ -9,17 +9,18 @@ const StatsDatabaseEntriesBlock = () => {
     error: databaseEntriesError,
   } = useDatabaseStats();
 
+  if (databaseEntriesError) {
+    return (
+      <StatBlock icon={<FaDatabase />} title="Database Size" value="Error" />
+    );
+  }
+
   return (
     <StatBlock
       icon={<FaDatabase />}
       title="Database Size"
-      value={
-        databaseEntriesError
-          ? "Error"
-          : isDatabaseEntriesLoading
-          ? "Loading .."
-          : databaseTotalEntries.toString() + " Entries"
-      }
+      value={databaseTotalEntries.toString() + " Entries"}
+      loading={isDatabaseEntriesLoading}
     />
   );
 };

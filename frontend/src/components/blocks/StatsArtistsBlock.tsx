@@ -17,12 +17,10 @@ const StatsArtistsBlock: FC<StatsArtistsBlockProps> = ({
   const { artistCount, previousArtistCount, loading, error } =
     useListenedArtists(startDate, endDate, selectedRange);
 
-  if (loading) {
-    return <StatBlock icon={<FaUsers />} title="Loading.." value="" />;
-  }
-
   if (error) {
-    return <StatBlock icon={<FaUsers />} title="Error" value="" />;
+    return (
+      <StatBlock icon={<FaUsers />} title="Artists listened" value="Error" />
+    );
   }
 
   const change = artistCount - previousArtistCount;
@@ -33,6 +31,7 @@ const StatsArtistsBlock: FC<StatsArtistsBlockProps> = ({
       title="Artists listened"
       value={artistCount.toString()}
       change={change !== 0 ? change : undefined}
+      loading={loading}
     />
   );
 };

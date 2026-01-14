@@ -4,6 +4,8 @@ import { usePlayerDetails } from "../../hooks/usePlayerDetails";
 import { FaFile, FaGlobe, FaUsers } from "react-icons/fa";
 import Seperator from "../ui/Separator";
 import Status from "../ui/Status";
+import ContentBlock from "../ui/ContentBlock";
+import { Skeleton } from "../ui/Skeleton";
 
 const PlayingStatus = () => {
   const {
@@ -39,11 +41,9 @@ const PlayingStatus = () => {
       <>
         <div className="row mb-4">
           <div className="col">
-            <StatBlock
-              icon={<FaGlobe />}
-              title=" "
-              value="Loading..."
-            ></StatBlock>
+            <ContentBlock title="">
+              <Skeleton width="100px" height="32px" variant="text" />
+            </ContentBlock>
           </div>
         </div>
         <Seperator />

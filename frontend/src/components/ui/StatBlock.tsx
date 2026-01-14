@@ -1,6 +1,7 @@
 import React from "react";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import Block from "./Block";
+import { Skeleton } from "./Skeleton";
 
 interface StatBlockProps {
   icon?: React.ReactNode;
@@ -11,6 +12,7 @@ interface StatBlockProps {
   label?: string;
   url?: string | null;
   fixedHeight?: boolean;
+  loading?: boolean;
 }
 
 const StatBlock: React.FC<StatBlockProps> = ({
@@ -22,6 +24,7 @@ const StatBlock: React.FC<StatBlockProps> = ({
   label,
   url,
   fixedHeight = false,
+  loading = false,
 }) => {
   const hasTitle = Boolean(title && title.trim());
 
@@ -36,7 +39,40 @@ const StatBlock: React.FC<StatBlockProps> = ({
     "icon-square d-flex align-items-center justify-content-center";
 
   const renderVisual = () => {
-    if (!imageUrl && !icon) return null;
+    if (!imageUrl && !icon && !loading) return null;
+
+    if (loading) {
+      if (icon) {
+        const content = (
+          <div className={`${baseClasses} rounded bg-primary text-white`}>
+            {icon}
+          </div>
+        );
+
+        return url ? (
+          <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="text-decoration-none"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {content}
+          </a>
+        ) : (
+          content
+        );
+      }
+
+      return (
+        <Skeleton
+          variant="rectangular"
+          width="2.5rem"
+          height="2.5rem"
+          className="rounded-2"
+        />
+      );
+    }
 
     const content = imageUrl ? (
       <div
@@ -80,21 +116,27 @@ const StatBlock: React.FC<StatBlockProps> = ({
           )}
 
           <div className="fw-bold fs-3 stat-value">
-            {value}
+            {loading ? (
+              <Skeleton width="100px" height="32px" variant="text" />
+            ) : (
+              <>
+                {value}
 
-            {change !== undefined && change !== 0 && (
-              <span className={`${changeColor} fs-6`}>
-                {change > 0 ? (
-                  <FaArrowUp size={12} />
-                ) : (
-                  <FaArrowDown size={12} />
-                )}{" "}
-                {Math.abs(change)}
-              </span>
-            )}
+                {change !== undefined && change !== 0 && (
+                  <span className={`${changeColor} fs-6`}>
+                    {change > 0 ? (
+                      <FaArrowUp size={12} />
+                    ) : (
+                      <FaArrowDown size={12} />
+                    )}{" "}
+                    {Math.abs(change)}
+                  </span>
+                )}
 
-            {label && (
-              <span className="text-custom-muted fs-6 ms-2">{label}</span>
+                {label && (
+                  <span className="text-custom-muted fs-6 ms-2">{label}</span>
+                )}
+              </>
             )}
           </div>
         </div>

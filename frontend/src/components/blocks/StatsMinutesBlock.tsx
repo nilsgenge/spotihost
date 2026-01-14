@@ -15,12 +15,10 @@ const StatsMinutesBlock: FC<StatsMinutesBlockProps> = ({
 }) => {
   const { value, loading, error } = useMinutesListened(startDate, endDate);
 
-  if (loading) {
-    return <StatBlock icon={<FaClock />} title="Loading.." value="" />;
-  }
-
   if (error) {
-    return <StatBlock icon={<FaClock />} title="Error" value="" />;
+    return (
+      <StatBlock icon={<FaClock />} title="Minutes listened" value="Error" />
+    );
   }
 
   return (
@@ -29,6 +27,7 @@ const StatsMinutesBlock: FC<StatsMinutesBlockProps> = ({
       title="Minutes listened"
       value={value.toString()}
       label={`(${minutesToHours(value)}h)`}
+      loading={loading}
     />
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Skeleton } from "../ui/Skeleton";
 
 const LoginButton: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -49,7 +50,14 @@ const LoginButton: React.FC = () => {
   };
 
   if (loadingAuth) {
-    return <span className="text-custom-muted">Loading...</span>;
+    return (
+      <div className="d-flex align-items-center gap-3">
+        <div className="flex-grow-1">
+          <Skeleton width="50px" height="20px" className="mb-1" />
+        </div>
+        <Skeleton variant="circular" width="40px" height="40px" />
+      </div>
+    );
   }
 
   if (user) {

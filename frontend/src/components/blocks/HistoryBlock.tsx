@@ -6,15 +6,7 @@ import ElementBlock from "../ui/ElementBlock";
 const HistoryBlock = () => {
   const { listens, loading } = useRecentListens(20);
 
-  if (loading) {
-    return (
-      <ContentBlock title={"History"}>
-        <div className="p-3 text-secondary">Loading...</div>
-      </ContentBlock>
-    );
-  }
-
-  if (listens.length === 0) {
+  if (listens.length === 0 && !loading) {
     return (
       <ContentBlock title={"History"}>
         <div className="p-3 text-secondary">No recent history</div>
@@ -23,7 +15,7 @@ const HistoryBlock = () => {
   }
 
   return (
-    <ContentBlock title={"History"}>
+    <ContentBlock title={"History"} loading={loading}>
       <div className="d-flex flex-column gap-2">
         {listens.map((listen: Listen) => (
           <ElementBlock
