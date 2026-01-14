@@ -9,9 +9,7 @@ const HistoryBlock = () => {
   if (loading) {
     return (
       <ContentBlock title={"History"}>
-        <div style={{ padding: "10px", color: "var(--bs-secondary)" }}>
-          Loading...
-        </div>
+        <div className="p-3 text-secondary">Loading...</div>
       </ContentBlock>
     );
   }
@@ -19,9 +17,7 @@ const HistoryBlock = () => {
   if (listens.length === 0) {
     return (
       <ContentBlock title={"History"}>
-        <div style={{ padding: "10px", color: "var(--bs-secondary)" }}>
-          No recent history
-        </div>
+        <div className="p-3 text-secondary">No recent history</div>
       </ContentBlock>
     );
   }

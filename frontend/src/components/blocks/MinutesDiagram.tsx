@@ -74,38 +74,10 @@ const CustomTooltip = ({ active, payload, selectedRange }: any) => {
         headerText = data.xAxisLabel;
     }
 
-    const tooltipStyle: React.CSSProperties = {
-      backgroundColor: "var(--block-dark)",
-      border: `1px solid var(--bs-secondary)`,
-      borderRadius: "8px",
-      padding: "12px 16px",
-      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)",
-      color: "var(--white)",
-      minWidth: "140px",
-      textAlign: "center",
-    };
-
     return (
-      <div className="custom-tooltip" style={tooltipStyle}>
-        <div
-          style={{
-            fontSize: "14px",
-            marginBottom: "8px",
-            fontWeight: "500",
-            color: "var(--bs-secondary)",
-          }}
-        >
-          {headerText}
-        </div>
-        <div
-          style={{
-            fontSize: "18px",
-            fontWeight: "bold",
-            color: "var(--primary-green)",
-          }}
-        >
-          {data.minutes} min
-        </div>
+      <div className="chart-tooltip">
+        <div className="chart-tooltip-header">{headerText}</div>
+        <div className="chart-tooltip-value">{data.minutes} min</div>
       </div>
     );
   }
@@ -119,16 +91,7 @@ const LineDiagram = () => {
 
   if (loading) {
     return (
-      <div
-        style={{
-          width: "100%",
-          height: "400px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "var(--white)",
-        }}
-      >
+      <div className="chart-container d-flex align-items-center justify-content-center text-white">
         Loading chart data...
       </div>
     );

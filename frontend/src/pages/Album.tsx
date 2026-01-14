@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useAlbumDetails } from "../hooks/useAlbumDetails";
 import ElementBlock from "../components/ui/ElementBlock";
-import Separator from "../components/blocks/Separator";
+import Separator from "../components/ui/Separator";
 import { SpotifyButton } from "../components/ui/SpotifyButton";
 import { TrackBreadcrumb } from "../components/ui/Breadcrumbs";
 
@@ -28,12 +28,7 @@ const Album = () => {
           <img
             src={album.image_url}
             alt={album.name}
-            className="rounded-3 shadow"
-            style={{
-              width: "180px",
-              height: "180px",
-              objectFit: "cover",
-            }}
+            className="rounded-3 shadow detail-image"
           />
         </div>
 

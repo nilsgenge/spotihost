@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useArtistDetails } from "../hooks/useArtistDetails";
-import Separator from "../components/blocks/Separator";
+import Separator from "../components/ui/Separator";
 import { SpotifyButton } from "../components/ui/SpotifyButton";
 import { formatFollowers } from "../utils/utils";
 import { TrackBreadcrumb } from "../components/ui/Breadcrumbs";
@@ -28,12 +28,7 @@ const Artist = () => {
           <img
             src={artist.image_url}
             alt={artist.name}
-            className="rounded-3 shadow"
-            style={{
-              width: "180px",
-              height: "180px",
-              objectFit: "cover",
-            }}
+            className="rounded-3 shadow detail-image"
           />
         </div>
 

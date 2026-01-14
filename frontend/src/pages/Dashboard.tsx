@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDateRange } from "../context/DateRangeContext";
 
 import DateRangePicker from "../components/blocks/DateRangePicker";
-import Separator from "../components/blocks/Separator";
+import Separator from "../components/ui/Separator";
 import ContentBlock from "../components/ui/ContentBlock";
 import LineDiagram from "../components/blocks/MinutesDiagram";
 import PlayingStatus from "../components/blocks/PlayingStatusRow";
@@ -88,8 +88,8 @@ const Dashboard: FC = () => {
       <div className="row mb-3 text-center">
         <div className="col d-flex flex-wrap gap-3 align-items-stretch">
           <div
-            className="flex-item d-flex"
-            style={{ flex: "1 1 0", minWidth: "300px" }}
+            className=" d-flex flex-fill flex-item"
+            style={{ minWidth: "300px" }}
           >
             <TopRankingBlock
               type="artists"
@@ -101,8 +101,8 @@ const Dashboard: FC = () => {
             />
           </div>
           <div
-            className="flex-item d-flex"
-            style={{ flex: "1 1 0", minWidth: "300px" }}
+            className=" d-flex flex-fill flex-item"
+            style={{ minWidth: "300px" }}
           >
             <TopRankingBlock
               type="tracks"
@@ -114,8 +114,8 @@ const Dashboard: FC = () => {
             />
           </div>
           <div
-            className="flex-item d-flex"
-            style={{ flex: "1 1 0", minWidth: "300px" }}
+            className=" d-flex flex-fill flex-item"
+            style={{ minWidth: "300px" }}
           >
             <TopRankingBlock
               type="albums"

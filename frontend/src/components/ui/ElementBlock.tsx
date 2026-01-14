@@ -23,7 +23,7 @@ const ElementBlock: React.FC<ElementBlockProps> = ({
     if (image) {
       return (
         <div
-          className="element-cover rounded-2"
+          className="element-cover rounded-2 element-image"
           style={{ backgroundImage: `url(${image})` }}
         />
       );

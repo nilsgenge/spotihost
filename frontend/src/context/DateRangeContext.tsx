@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getBrowserTimeZone, toUtcIso } from "../utils/time";
 
-// Define VITE_API_URL to avoid hardcoded URLs
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 type DateRangeKey = "1d" | "1w" | "4w" | "3m" | "6m" | "1y" | "alltime";
@@ -37,7 +36,6 @@ export const DateRangeProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
-    // --- FIX: Use VITE_API_URL, not hardcoded localhost ---
     fetch(`${API_URL}/timezone`)
       .then((res) => res.json())
       .then((data) => {
@@ -46,7 +44,6 @@ export const DateRangeProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       })
       .catch(() => {
-        // Fallback if backend fails
         setTimeZone("UTC");
       });
   }, []);

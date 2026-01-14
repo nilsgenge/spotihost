@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDateRange } from "../context/DateRangeContext";
 import DateRangePicker from "../components/blocks/DateRangePicker";
-import Separator from "../components/blocks/Separator";
+import Separator from "../components/ui/Separator";
 import TopRankingBlock from "../components/blocks/TopRankingBlock";
 
 export type RankingType = "artists" | "tracks" | "albums";

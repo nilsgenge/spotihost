@@ -57,13 +57,8 @@ const TopRankingBlock: FC<TopRankingBlockProps> = ({
 
   const renderStatusMessage = (message: string) => (
     <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100px",
-        color: "var(--bs-secondary)",
-      }}
+      className="d-flex justify-content-center align-items-center text-secondary"
+      style={{ height: "100px" }}
     >
       {message}
     </div>

@@ -1,10 +1,10 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import LoginButton from "./LoginButton";
+import LoginButton from "../blocks/LoginButton";
 
 const Navbar: React.FC = () => {
   return (
-    <nav className="custom-navbar position-relative rounded d-flex align-items-center p-3 pe-4">
+    <nav className="custom-navbar">
       <NavLink className="navbar-brand fs-3" to="/dashboard">
         SpotiHost
       </NavLink>

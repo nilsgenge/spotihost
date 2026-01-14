@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useTrackDetails } from "../hooks/useTrackDetails";
 import ElementBlock from "../components/ui/ElementBlock";
-import Separator from "../components/blocks/Separator";
+import Separator from "../components/ui/Separator";
 import { SpotifyButton } from "../components/ui/SpotifyButton";
 import { TrackBreadcrumb } from "../components/ui/Breadcrumbs";
 import { formatDuration } from "../utils/utils";
@@ -30,12 +30,7 @@ const Track = () => {
           <img
             src={track.image_url}
             alt={track.name}
-            className="rounded-3 shadow"
-            style={{
-              width: "180px",
-              height: "180px",
-              objectFit: "cover",
-            }}
+            className="rounded-3 shadow detail-image"
           />
         </div>
 

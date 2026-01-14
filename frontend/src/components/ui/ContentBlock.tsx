@@ -37,7 +37,7 @@ const ContentBlock: React.FC<ContentBlockProps> = ({
 
   return (
     <Block fullWidth>
-      <div className="d-flex flex-column" style={{ height: "100%" }}>
+      <div className="d-flex flex-column h-100">
         <div className="mb-3 d-flex">
           <h4 className="fs-6">{displayTitle}</h4>
         </div>

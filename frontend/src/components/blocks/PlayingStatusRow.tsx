@@ -2,7 +2,7 @@ import StatBlock from "../ui/StatBlock";
 
 import { usePlayerDetails } from "../../hooks/usePlayerDetails";
 import { FaFile, FaGlobe, FaUsers } from "react-icons/fa";
-import Seperator from "./Separator";
+import Seperator from "../ui/Separator";
 import Status from "../ui/Status";
 
 const PlayingStatus = () => {

@@ -56,7 +56,7 @@ const LoginButton: React.FC = () => {
     return (
       <div className="d-flex align-items-center gap-2">
         <span
-          className="fw-bold truncate text-white"
+          className="fw-bold text-truncate text-white"
           title={user.name}
           style={{ maxWidth: "100px" }}
         >
@@ -65,13 +65,7 @@ const LoginButton: React.FC = () => {
         <img
           src={user.image}
           alt="Profile"
-          className="rounded-circle"
-          style={{
-            width: "40px",
-            height: "40px",
-            objectFit: "cover",
-            border: "2px solid var(--primary-green)",
-          }}
+          className="rounded-circle profile-img"
         />
       </div>
     );
@@ -79,7 +73,7 @@ const LoginButton: React.FC = () => {
 
   return (
     <div
-      className="bg-primary text-white rounded fw-bold py-2 px-4 cursor-pointer"
+      className="btn btn-primary btn-lg"
       onClick={handleLogin}
       role="button"
       tabIndex={0}

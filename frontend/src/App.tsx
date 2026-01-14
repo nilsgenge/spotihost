@@ -6,7 +6,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import Navbar from "./components/blocks/Navbar";
+import Navbar from "./components/ui/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Top from "./pages/Top";
 import { DateRangeProvider } from "./context/DateRangeContext";

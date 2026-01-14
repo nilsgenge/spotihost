@@ -40,13 +40,8 @@ const StatBlock: React.FC<StatBlockProps> = ({
 
     const content = imageUrl ? (
       <div
-        className={`${baseClasses} rounded-2`}
-        style={{
-          backgroundImage: `url(${imageUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
+        className={`${baseClasses} rounded-2 stat-image`}
+        style={{ backgroundImage: `url(${imageUrl})` }}
       />
     ) : (
       <div className={`${baseClasses} rounded bg-primary text-white`}>
