@@ -162,7 +162,7 @@ def process_item(db: Session, item: Dict[str, Any], created_cache: dict):
         new_listen = Listen(
             track_id=track.track_id,
             played_at=played_at,
-            context_type=raw_context.get("type")
+            context_type = raw_context.get("type") if raw_context else None
         )
         db.add(new_listen)
 
