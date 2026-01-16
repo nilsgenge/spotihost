@@ -8,11 +8,11 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5432:5432" # DB Host Port
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -25,7 +25,7 @@ services:
     volumes:
       - ./backend:/app
     ports:
-      - "8000:8000" # Backend Host Port
+      - "8000:8000"
     env_file:
       - .env
     depends_on:
@@ -40,10 +40,8 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    environment:
-      VITE_PORT: 3000 # same as frontend port
     ports:
-      - "3000:3000" # Frontend Host Port
+      - "3000:3000"
     depends_on:
       - backend
 
