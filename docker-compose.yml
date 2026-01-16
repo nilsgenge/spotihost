@@ -21,7 +21,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: spotihost_backend
+    container_name: spotihost-backend
     volumes:
       - ./backend:/app
     ports:
@@ -36,7 +36,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: spotihost_frontend
+    container_name: spotihost-frontend
     volumes:
       - ./frontend:/app
       - /app/node_modules
