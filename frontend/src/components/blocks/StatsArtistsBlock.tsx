@@ -19,7 +19,11 @@ const StatsArtistsBlock: FC<StatsArtistsBlockProps> = ({
 
   if (error) {
     return (
-      <StatBlock icon={<FaUsers />} title="Artists listened" value="Error" />
+      <StatBlock
+        icon={<FaUsers />}
+        title="Artists listened"
+        value={error.valueOf()}
+      />
     );
   }
 

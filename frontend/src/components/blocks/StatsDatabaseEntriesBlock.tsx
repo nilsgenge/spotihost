@@ -3,15 +3,15 @@ import StatBlock from "../ui/StatBlock";
 import useDatabaseStats from "../../hooks/useDatabaseStats";
 
 const StatsDatabaseEntriesBlock = () => {
-  const {
-    totalEntries: databaseTotalEntries,
-    loading: isDatabaseEntriesLoading,
-    error: databaseEntriesError,
-  } = useDatabaseStats();
+  const { totalEntries, loading, error } = useDatabaseStats();
 
-  if (databaseEntriesError) {
+  if (error) {
     return (
-      <StatBlock icon={<FaDatabase />} title="Database Size" value="Error" />
+      <StatBlock
+        icon={<FaDatabase />}
+        title="Database Size"
+        value={error.valueOf()}
+      />
     );
   }
 
@@ -19,8 +19,8 @@ const StatsDatabaseEntriesBlock = () => {
     <StatBlock
       icon={<FaDatabase />}
       title="Database Size"
-      value={databaseTotalEntries.toString() + " Entries"}
-      loading={isDatabaseEntriesLoading}
+      value={totalEntries.toString() + " Entries"}
+      loading={loading}
     />
   );
 };
