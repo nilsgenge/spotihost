@@ -12,3 +12,9 @@ export const formatFollowers = (num: number): string => {
     maximumFractionDigits: 1,
   }).format(num);
 };
+
+export const capitalizeFirstChar = (text: string): string => {
+  if (!text) return "";
+  
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};

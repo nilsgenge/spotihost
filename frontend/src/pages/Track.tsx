@@ -18,9 +18,9 @@ const Track = () => {
     <div className="container">
       <TrackBreadcrumb
         item1={{
-          name: track.albums[0].name,
+          name: track.album.name,
           type: "album",
-          spotify_id: track.albums[0].spotify_id,
+          spotify_id: track.album.spotify_id,
         }}
         item2={track.name}
       />
@@ -87,16 +87,14 @@ const Track = () => {
 
       <h2 className="h4 mb-3">Appears on</h2>
       <div className="d-flex flex-column gap-2">
-        {track.albums.map((album) => (
-          <ElementBlock
-            key={album.spotify_id}
-            image={album.cover_url}
-            title={album.name}
-            title_url={`/album/${album.spotify_id}`}
-            label={album.artists}
-            stat={`${album.listen_count} Listens`}
-          />
-        ))}
+        <ElementBlock
+          key={track.album.spotify_id}
+          image={track.album.cover_url}
+          title={track.album.name}
+          title_url={`/album/${track.album.spotify_id}`}
+          label={track.album.artists}
+          stat={`${track.album.listen_count} Listens`}
+        />
       </div>
     </div>
   );

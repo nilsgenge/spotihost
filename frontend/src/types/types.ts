@@ -17,7 +17,6 @@ export interface SimpleArtist {
 }
 
 export interface SimpleTrack {
-  track_id: number;
   spotify_id: string;
   name: string;
   cover_url: string;
@@ -32,11 +31,11 @@ export interface SimpleAlbum {
   cover_url: string;
   listen_count: number;
   artists: ArtistLink[];
+  album_type: string;
 }
 
 export interface Listen {
   listen_id: number;
-  track_id: number;
   track_spotify_id: string;
   played_at: string;
   formatted_time: string;
@@ -48,12 +47,12 @@ export interface Listen {
 export interface AdvancedTrack {
   name: string;
   artists: SimpleArtist[];
-  albums: SimpleAlbum[];
+  album: SimpleAlbum;
   image_url: string;
   duration_s: number;
   popularity: number;
-  external_urls: Record<string, string>;
   listen_count: number;
+  explicit: boolean;
 }
 
 export interface AdvancedAlbum {
@@ -65,6 +64,7 @@ export interface AdvancedAlbum {
   popularity: number;
   listen_count: number;
   tracks: SimpleTrack[];
+  album_type: string;
 }
 
 export interface AdvancedArtist {
@@ -75,4 +75,6 @@ export interface AdvancedArtist {
   genres: string[];
   popularity: number;
   listen_count: number;
+  albums: SimpleAlbum[];
+  tracks: SimpleTrack[];
 }

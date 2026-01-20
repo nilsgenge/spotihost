@@ -21,6 +21,7 @@ def create_listen(listen: ListenCreate, db: Session = Depends(get_db)):
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.get("/count")
 def get_listens_count(
     start: str = Query(..., description="Start datetime in ISO format"),
@@ -40,6 +41,7 @@ def get_listens_count(
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/recent", response_model=SimpleListenResponse)
 def get_recent_listens(
@@ -75,7 +77,6 @@ def get_recent_listens(
 
             formatted_listens.append(
                 SimpleListen(
-                    listen_id=listen.listen_id,
                     track_id=listen.track_id,
                     track_spotify_id=track.spotify_id,
                     played_at=listen.played_at.isoformat(), 

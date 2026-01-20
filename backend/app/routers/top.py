@@ -11,7 +11,6 @@ from app.models import (
     Track, 
     track_artists, 
     track_album, 
-    album_artists
 )
 from app.utils.spotify import enrich_artist_images
 from app.schemas import ArtistLink, SimpleAlbum, SimpleArtist, SimpleTrack 
@@ -24,9 +23,9 @@ PLACEHOLDER_IMAGE_URL = "https://dummyimage.com/100/fff/0011ff.png&text=Image+No
 
 @router.get("/top-artists", response_model=List[SimpleArtist])
 def get_top_artists(
-    start: str = Query(..., description="Start datetime in ISO format"),
-    end: str = Query(..., description="End datetime in ISO format"),
-    limit: int = Query(10, description="Number of top artists to return"),
+    start: str = Query(...),
+    end: str = Query(...),
+    limit: int = Query(10),
     db: Session = Depends(get_db)
 ):
     """Get the top artists within a time range."""
@@ -55,10 +54,9 @@ def get_top_artists(
 
             result.append(
                 SimpleArtist(
-                    artist_id=artist.artist_id,
                     spotify_id=artist.spotify_id,
                     name=artist.name,
-                    image_url=artist.image_url_small or "YOUR_PLACEHOLDER_IMAGE_URL_HERE",
+                    image_url=artist.image_url_small or PLACEHOLDER_IMAGE_URL,
                     listen_count=listen_count
                 )
             )
@@ -105,10 +103,9 @@ def get_top_tracks(
 
             result.append(
                 SimpleTrack(
-                    track_id=track.track_id,
                     spotify_id=track.spotify_id,
                     name=track.name,
-                    cover_url=track.image_url_small,
+                    cover_url=track.image_url_small or PLACEHOLDER_IMAGE_URL,
                     listen_count=listen_count,
                     artists=artist_links
                 )
@@ -121,9 +118,9 @@ def get_top_tracks(
 
 @router.get("/top-albums", response_model=List[SimpleAlbum])
 def get_top_albums(
-    start: str = Query(..., description="Start datetime in ISO format"),
-    end: str = Query(..., description="End datetime in ISO format"),
-    limit: int = Query(10, description="Number of top albums to return"),
+    start: str = Query(...),
+    end: str = Query(...),
+    limit: int = Query(10),
     db: Session = Depends(get_db)
 ):
     """Get the top albums within a time range."""
@@ -158,12 +155,12 @@ def get_top_albums(
 
             result.append(
                 SimpleAlbum(
-                    album_id=album.album_id,
                     spotify_id=album.spotify_id,
                     name=album.name,
-                    cover_url=album.image_url_small or "YOUR_PLACEHOLDER_IMAGE_URL_HERE",
+                    cover_url=album.image_url_small or PLACEHOLDER_IMAGE_URL,
                     listen_count=listen_count,
-                    artists=artists_info
+                    artists=artists_info,
+                    album_type=album.album_type or "Unknown"
                 )
             )
 

@@ -4,6 +4,7 @@ import Separator from "../components/ui/Separator";
 import { SpotifyButton } from "../components/ui/SpotifyButton";
 import { formatFollowers } from "../utils/utils";
 import { TrackBreadcrumb } from "../components/ui/Breadcrumbs";
+import ElementBlock from "../components/ui/ElementBlock";
 
 const Artist = () => {
   const { spotify_id } = useParams<{ spotify_id: string }>();
@@ -51,24 +52,55 @@ const Artist = () => {
                 <strong>Listens</strong>: {artist.listen_count}
               </div>
             </div>
+            {artist.genres && artist.genres.length > 0 && (
+              <div className="d-flex flex-wrap gap-4 mt-3">
+                <div>
+                  <strong>Genres</strong>: {artist.genres.join(", ")}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       <Separator />
 
-      <h2 className="h4 mb-3">Genres</h2>
-      {artist.genres.length > 0 ? (
-        <div className="d-flex flex-wrap gap-2 mb-4">
-          {artist.genres.map((genre) => (
-            <span key={genre} className="badge bg-primary">
-              {genre}
-            </span>
-          ))}
+      <div className="d-flex flex-row gap-4">
+        <div className="w-50">
+          <h2 className="h4 mb-3">Tracks</h2>
+          <div className="d-flex flex-column gap-2">
+            {artist.tracks.map((track) => (
+              <ElementBlock
+                key={track.spotify_id}
+                image={track.cover_url}
+                title={track.name}
+                title_url={`/track/${track.spotify_id}`}
+                label={track.artists}
+                stat={
+                  track.listen_count != 0 ? `${track.listen_count} Listens` : ""
+                }
+              />
+            ))}
+          </div>
         </div>
-      ) : (
-        <div className="text-muted small mb-4">No genres available</div>
-      )}
+
+        <div className="w-50">
+          <h2 className="h4 mb-3">Albums</h2>
+          <div className="d-flex flex-column gap-2">
+            {artist.albums.map((album) => (
+              <ElementBlock
+                key={album.spotify_id}
+                image={album.cover_url}
+                title={album.name}
+                title_url={`/album/${album.spotify_id}`}
+                stat={
+                  album.listen_count != 0 ? `${album.listen_count} Listens` : ""
+                }
+              />
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -108,7 +108,6 @@ class ArtistLink(BaseModel):
 
 
 class SimpleTrack(BaseModel):
-    track_id: int
     spotify_id: str
     name: str
     cover_url: str
@@ -116,22 +115,20 @@ class SimpleTrack(BaseModel):
     artists: List[ArtistLink]
 
 class SimpleAlbum(BaseModel):
-    album_id: int
     spotify_id: str
     name: str
     cover_url: str
     listen_count: int
     artists: List[ArtistLink]
+    album_type: str
 
 class SimpleArtist(BaseModel):
-    artist_id: int
     spotify_id: str
     name: str
     image_url: str
     listen_count: int
 
 class SimpleListen(BaseModel):
-    listen_id: int
     track_id: int
     track_spotify_id: str
     played_at: str
@@ -148,12 +145,12 @@ class SimpleListenResponse(BaseModel):
 class AdvancedTrack(BaseModel):
     name: str
     artists: List[SimpleArtist]
-    albums: List[SimpleAlbum]
+    album: SimpleAlbum
     image_url: str
     duration_s: float
     popularity: int
-    external_urls: dict
     listen_count: int
+    explicit: bool
 
 class AdvancedAlbum(BaseModel):
     name: str
@@ -164,6 +161,7 @@ class AdvancedAlbum(BaseModel):
     popularity: int
     listen_count: int
     tracks: List[SimpleTrack]
+    album_type: str
 
 class AdvancedArtist(BaseModel):
     spotify_id: str
@@ -173,4 +171,6 @@ class AdvancedArtist(BaseModel):
     genres: List[str] = []
     popularity: int = 0
     listen_count: int
+    albums: List[SimpleAlbum]
+    tracks: List[SimpleTrack]
 

@@ -4,6 +4,7 @@ import ElementBlock from "../components/ui/ElementBlock";
 import Separator from "../components/ui/Separator";
 import { SpotifyButton } from "../components/ui/SpotifyButton";
 import { TrackBreadcrumb } from "../components/ui/Breadcrumbs";
+import { capitalizeFirstChar } from "../utils/utils";
 
 const Album = () => {
   const { spotify_id } = useParams<{ spotify_id: string }>();
@@ -67,6 +68,9 @@ const Album = () => {
               <div>
                 <strong>Listens</strong>: {album.listen_count}
               </div>
+              <div>
+                <strong>Type</strong>: {capitalizeFirstChar(album.album_type)}
+              </div>
             </div>
           </div>
         </div>
@@ -82,12 +86,14 @@ const Album = () => {
             image={artist.image_url}
             title={artist.name}
             title_url={`/artist/${artist.spotify_id}`}
-            stat={`${artist.listen_count} Listens`}
+            stat={
+              artist.listen_count != 0 ? `${artist.listen_count} Listens` : ""
+            }
           />
         ))}
       </div>
 
-      <h2 className="h4 mb-3">Tracks from database</h2>
+      <h2 className="h4 mb-3">Tracks</h2>
       <div className="d-flex flex-column gap-2">
         {album.tracks.map((track) => (
           <ElementBlock
@@ -96,7 +102,9 @@ const Album = () => {
             title={track.name}
             title_url={`/track/${track.spotify_id}`}
             label={track.artists}
-            stat={`${track.listen_count} Listens`}
+            stat={
+              track.listen_count != 0 ? `${track.listen_count} Listens` : ""
+            }
           />
         ))}
       </div>

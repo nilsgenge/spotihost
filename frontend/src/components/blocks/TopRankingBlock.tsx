@@ -109,12 +109,8 @@ const TopRankingBlock: FC<TopRankingBlockProps> = ({
             label = album.artists;
           }
 
-          const key =
-            type === "tracks"
-              ? (item as SimpleTrack).track_id
-              : type === "albums"
-              ? (item as SimpleAlbum).album_id
-              : (item as SimpleArtist).artist_id;
+          const key = (item as SimpleTrack | SimpleAlbum | SimpleArtist)
+            .spotify_id;
 
           return (
             <ElementBlock
