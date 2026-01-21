@@ -85,48 +85,36 @@ const Dashboard: FC = () => {
       </div>
 
       {/* Top */}
-      <div className="row mb-3 text-center">
-        <div className="col d-flex flex-wrap gap-3 align-items-stretch">
-          <div
-            className=" d-flex flex-fill flex-item"
-            style={{ minWidth: "300px" }}
-          >
-            <TopRankingBlock
-              type="artists"
-              limit={5}
-              startDate={startISO}
-              endDate={endISO}
-              buttonLabel="Show more"
-              onButtonClick={() => navigate("/top/artists")}
-            />
-          </div>
-          <div
-            className=" d-flex flex-fill flex-item"
-            style={{ minWidth: "300px" }}
-          >
-            <TopRankingBlock
-              type="tracks"
-              limit={5}
-              startDate={startISO}
-              endDate={endISO}
-              buttonLabel="Show more"
-              onButtonClick={() => navigate("/top/tracks")}
-            />
-          </div>
-          <div
-            className=" d-flex flex-fill flex-item"
-            style={{ minWidth: "300px" }}
-          >
-            <TopRankingBlock
-              type="albums"
-              limit={5}
-              startDate={startISO}
-              endDate={endISO}
-              buttonLabel="Show more"
-              onButtonClick={() => navigate("/top/albums")}
-            />
-          </div>
-        </div>
+      <div className="d-flex flex-wrap gap-3 mb-3 align-items-stretch">
+        <TopRankingBlock
+          type="artists"
+          limit={5}
+          startDate={startISO}
+          endDate={endISO}
+          buttonLabel="Show more"
+          onButtonClick={() => navigate("/top/artists")}
+          style={{ flex: "1 1 0", minWidth: "300px" }}
+        />
+
+        <TopRankingBlock
+          type="tracks"
+          limit={5}
+          startDate={startISO}
+          endDate={endISO}
+          buttonLabel="Show more"
+          onButtonClick={() => navigate("/top/tracks")}
+          style={{ flex: "1 1 0", minWidth: "300px" }}
+        />
+
+        <TopRankingBlock
+          type="albums"
+          limit={5}
+          startDate={startISO}
+          endDate={endISO}
+          buttonLabel="Show more"
+          onButtonClick={() => navigate("/top/albums")}
+          style={{ flex: "1 1 0", minWidth: "300px" }}
+        />
       </div>
 
       <Separator />

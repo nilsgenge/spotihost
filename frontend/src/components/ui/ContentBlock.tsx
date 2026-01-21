@@ -1,6 +1,8 @@
 import React from "react";
 import Block from "./Block";
 import { Skeleton } from "./Skeleton";
+import type { CSSProperties } from "react";
+
 export interface ContentBlockProps {
   children: React.ReactNode;
   title: string;
@@ -8,6 +10,7 @@ export interface ContentBlockProps {
   onButtonClick?: () => void;
   loading?: boolean;
   error?: string | null;
+  style?: CSSProperties;
 }
 
 const ContentBlock: React.FC<ContentBlockProps> = ({
@@ -17,6 +20,7 @@ const ContentBlock: React.FC<ContentBlockProps> = ({
   onButtonClick,
   loading = false,
   error = null,
+  style,
 }) => {
   let displayTitle = title;
   let displayChildren = children;
@@ -44,7 +48,7 @@ const ContentBlock: React.FC<ContentBlockProps> = ({
   };
 
   return (
-    <Block fullWidth>
+    <Block fullWidth style={style}>
       <div className="d-flex flex-column h-100">
         <div className="mb-3 d-flex">
           <h4 className="fs-6">{displayTitle}</h4>

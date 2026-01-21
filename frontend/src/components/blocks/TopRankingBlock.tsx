@@ -1,4 +1,4 @@
-import { type FC } from "react";
+import { type CSSProperties, type FC } from "react";
 import ContentBlock from "../ui/ContentBlock";
 import ElementBlock from "../ui/ElementBlock";
 import { useTopArtists } from "../../hooks/useTopArtists";
@@ -20,6 +20,7 @@ interface TopRankingBlockProps {
   endDate: string;
   buttonLabel?: string;
   onButtonClick?: () => void;
+  style?: CSSProperties;
 }
 
 const TopRankingBlock: FC<TopRankingBlockProps> = ({
@@ -29,6 +30,7 @@ const TopRankingBlock: FC<TopRankingBlockProps> = ({
   endDate,
   buttonLabel,
   onButtonClick,
+  style,
 }) => {
   let data: (SimpleArtist | SimpleTrack | SimpleAlbum)[] = [];
   let title = "";
@@ -86,6 +88,7 @@ const TopRankingBlock: FC<TopRankingBlockProps> = ({
       buttonLabel={buttonLabel}
       onButtonClick={onButtonClick}
       loading={loading}
+      style={style}
     >
       <div className="d-flex flex-column gap-2">
         {data.map((item) => {
