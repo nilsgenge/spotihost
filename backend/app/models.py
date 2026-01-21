@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Table, DateTime, Dat
 from app.database import Base
 from sqlalchemy import String, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.sql import func
 
 track_album = Table(
     'track_album',
@@ -120,10 +121,29 @@ class Listen(Base):
 
     track: Mapped["Track"] = relationship()
 
+
 class SpotifyToken(Base):
     __tablename__ = 'spotify_tokens'
-    id = Column(Integer, primary_key=True, index=True)
-    access_token = Column(String, nullable=False)
-    refresh_token = Column(String, nullable=False)
-    token_type = Column(String, default="Bearer")
-    expires_at = Column(DateTime, nullable=False)
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    access_token: Mapped[str] = mapped_column(String, nullable=False)
+    refresh_token: Mapped[str] = mapped_column(String, nullable=False)
+    token_type: Mapped[str] = mapped_column(String, default="Bearer")
+    expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+
+
+class Setting(Base):
+    __tablename__ = "settings"
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    key: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True)
+    value: Mapped[str] = mapped_column(String, nullable=False)
+    type: Mapped[str] = mapped_column(String, nullable=False)
+    description: Mapped[str | None] = mapped_column(String, nullable=True)
+    default_value: Mapped[str | None] = mapped_column(String, nullable=True)
+    updated_at: Mapped[datetime | None] = mapped_column(
+        DateTime, 
+        server_default=func.now(), 
+        onupdate=func.now(),
+        nullable=True
+    )

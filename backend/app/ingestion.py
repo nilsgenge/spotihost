@@ -4,9 +4,10 @@ from typing import Dict, Any, List, Optional, Tuple
 
 import requests
 from sqlalchemy.orm import Session
-
+from app.main import scheduler
 from app.database import SessionLocal
-from app.models import Artist, Album, Track, Listen
+from app.models import Artist, Album, Setting, Track, Listen
+from apscheduler.triggers.interval import IntervalTrigger
 from app.utils.spotify import get_valid_spotify_token
 
 logging.basicConfig(level=logging.INFO)
@@ -307,3 +308,16 @@ def ingest_recent_listens():
         db.rollback()
     finally:
         db.close()
+
+
+def get_ingest_interval_minutes(db: Session, fallback: int = 10) -> int:
+    setting = (
+        db.query(Setting)
+        .filter(Setting.key == "ingest_interval_minutes")
+        .first()
+    )
+
+    try:
+        return int(setting.value) if setting and setting.value else fallback
+    except (TypeError, ValueError):
+        return fallback
