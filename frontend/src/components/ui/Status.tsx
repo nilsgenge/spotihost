@@ -10,8 +10,8 @@ const Status: React.FC<StatusTextProps> = ({ text, status }) => {
     status == "activated"
       ? "status-color-activated"
       : status == "deactivated"
-      ? "status-color-deactivated"
-      : "status-color-neutral";
+        ? "status-color-deactivated"
+        : "status-color-neutral";
 
   return <div className={`status ${bgColor}`}>{text}</div>;
 };

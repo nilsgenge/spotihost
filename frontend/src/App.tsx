@@ -1,3 +1,4 @@
+// App.tsx
 import "./App.css";
 import React from "react";
 import {
@@ -14,27 +15,46 @@ import Callback from "./pages/Callback";
 import Artist from "./pages/Artist";
 import Track from "./pages/Track";
 import Album from "./pages/Album";
+import { HealthProvider, useHealth } from "./context/HealthContext";
+
+const AppContent: React.FC = () => {
+  const { statusComponent } = useHealth();
+
+  const renderLayout = (content: React.ReactNode) => (
+    <div className="max-width-page">
+      <div className="container">
+        <Navbar />
+        {content}
+      </div>
+    </div>
+  );
+
+  const contentToRender = statusComponent ? (
+    statusComponent
+  ) : (
+    <DateRangeProvider>
+      <Routes>
+        <Route path="/callback" element={<Callback />} />
+        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/top" element={<Navigate to="/top/artists" />} />
+        <Route path="/top/:category" element={<Top />} />
+        <Route path="/track/:spotify_id" element={<Track />} />
+        <Route path="/artist/:spotify_id" element={<Artist />} />
+        <Route path="/album/:spotify_id" element={<Album />} />
+      </Routes>
+    </DateRangeProvider>
+  );
+
+  return renderLayout(contentToRender);
+};
 
 const App: React.FC = () => {
   return (
     <Router>
-      <div className="max-width-page">
-        <div className="container">
-          <Navbar />
-        </div>
-        <DateRangeProvider>
-          <Routes>
-            <Route path="/callback" element={<Callback />} />
-            <Route path="/" element={<Navigate to="/dashboard" />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/top" element={<Navigate to="/top/artists" />} />
-            <Route path="/top/:category" element={<Top />} />
-            <Route path="/track/:spotify_id" element={<Track />} />
-            <Route path="/artist/:spotify_id" element={<Artist />} />
-            <Route path="/album/:spotify_id" element={<Album />} />
-          </Routes>
-        </DateRangeProvider>
-      </div>
+      <HealthProvider>
+        <AppContent />
+      </HealthProvider>
     </Router>
   );
 };

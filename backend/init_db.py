@@ -5,7 +5,7 @@ from alembic.config import Config
 def init_db():
     print("Running database migrations...")
 
-    alembic_cfg = Config("/app/alembic.ini")
+    alembic_cfg = Config("/app/alembic.ini") # type: ignore
     alembic_cfg.set_main_option("script_location", "/app/alembic")
 
     try:

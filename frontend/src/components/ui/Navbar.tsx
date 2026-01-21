@@ -1,14 +1,16 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import LoginButton from "../blocks/LoginButton";
+import { useHealth } from "../../context/HealthContext";
 
 const Navbar: React.FC = () => {
+  const { isHealthy, loading } = useHealth();
+
   return (
     <nav className="custom-navbar">
       <NavLink className="navbar-brand fs-3" to="/dashboard">
         SpotiHost
       </NavLink>
-
       <div className="position-absolute start-50 translate-middle-x d-flex gap-4">
         <NavLink
           className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
@@ -23,9 +25,8 @@ const Navbar: React.FC = () => {
           Top
         </NavLink>
       </div>
-
       <div className="position-absolute end-0 pe-4 d-flex align-items-center">
-        <LoginButton />
+        {!loading && isHealthy && <LoginButton />}
       </div>
     </nav>
   );

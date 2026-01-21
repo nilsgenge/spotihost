@@ -78,3 +78,19 @@ export interface AdvancedArtist {
   albums: SimpleAlbum[];
   tracks: SimpleTrack[];
 }
+
+
+export interface HealthCheck {
+  status: "healthy" | "unhealthy";
+  checks: {
+    backend: {
+      status: "healthy" | "unhealthy";
+      timestamp: string;
+    };
+    database: {
+      status: "healthy" | "unhealthy" | "unknown";
+      latency_ms: number | null;
+      error?: string;
+    };
+  };
+}

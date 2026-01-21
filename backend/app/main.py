@@ -7,7 +7,7 @@ import os
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.ingestion import ingest_recent_listens
-from app.routers import listens, database_stats, timezone, top, playing, auth, track, album, artist
+from app.routers import listens, database_stats, timezone, top, playing, auth, track, album, artist, health
 
 app = FastAPI()
 
@@ -59,4 +59,5 @@ app.include_router(artist.router)
 app.include_router(top.router)
 app.include_router(playing.router)
 app.include_router(auth.router)
+app.include_router(health.router)
 
