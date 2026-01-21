@@ -140,6 +140,47 @@ body {
   font-weight: 500;
 }
 
+.profile-container {
+  position: relative;
+}
+
+.profile-clickable {
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.profile-clickable:hover {
+  transform: scale(1.03);
+}
+
+.profile-clickable .profile-name {
+  transition: text-shadow 0.2s ease;
+}
+
+.profile-clickable:hover .profile-name {
+  text-shadow: 0 0 8px rgba(30, 215, 96, 0.8);
+}
+
+.profile-dropdown {
+  background-color: var(--block-dark);
+  border: 1px solid var(--text-secondary);
+  min-width: 200px;
+  z-index: 1000;
+}
+
+.profile-dropdown-link {
+  color: var(--white);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.profile-dropdown-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+}
+
 
 /*    TEXT UTILITIES    */
 .text-custom-success {

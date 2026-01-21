@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { Skeleton } from "../ui/Skeleton";
 
 const LoginButton: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [loadingAuth, setLoadingAuth] = useState(true);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
+  // get user data to display
   const fetchUser = async () => {
     try {
       const response = await fetch(`${API_URL}/auth/me`);
@@ -26,14 +30,30 @@ const LoginButton: React.FC = () => {
 
   useEffect(() => {
     fetchUser();
-
     window.addEventListener("focus", fetchUser);
-
     return () => {
       window.removeEventListener("focus", fetchUser);
     };
   }, []);
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
+  // Button login redirect
   const handleLogin = async () => {
     setIsRedirecting(true);
     try {
@@ -49,6 +69,15 @@ const LoginButton: React.FC = () => {
     }
   };
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
+  // While loading
   if (loadingAuth) {
     return (
       <div className="d-flex align-items-center gap-3">
@@ -62,19 +91,68 @@ const LoginButton: React.FC = () => {
 
   if (user) {
     return (
-      <div className="d-flex align-items-center gap-2">
-        <span
-          className="fw-bold text-truncate text-white"
-          title={user.name}
-          style={{ maxWidth: "100px" }}
+      <div className="profile-container" ref={menuRef}>
+        {/* Profile name + image */}
+        <div
+          className="profile-clickable d-flex align-items-center gap-2"
+          onClick={toggleMenu}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              toggleMenu();
+            }
+          }}
         >
-          {user.name}
-        </span>
-        <img
-          src={user.image}
-          alt="Profile"
-          className="rounded-circle profile-img"
-        />
+          <span
+            className="fw-bold text-truncate text-white profile-name"
+            title={user.name}
+            style={{ maxWidth: "100px" }}
+          >
+            {user.name}
+          </span>
+          <img
+            src={user.image}
+            alt="Profile"
+            className="rounded-circle profile-img"
+          />
+        </div>
+
+        {/* Dropdown Menu */}
+        {isMenuOpen && (
+          <div className="profile-dropdown position-absolute end-0 mt-2 rounded shadow-lg">
+            <div className="py-2">
+              <Link
+                to="/dashboard"
+                className="profile-dropdown-link d-block px-4 py-2"
+                onClick={closeMenu}
+              >
+                Dashboard
+              </Link>
+              <Link
+                to="/top"
+                className="profile-dropdown-link d-block px-4 py-2"
+                onClick={closeMenu}
+              >
+                Top
+              </Link>
+              <Link
+                to="/settings"
+                className="profile-dropdown-link d-block px-4 py-2"
+                onClick={closeMenu}
+              >
+                Settings
+              </Link>
+              <Link
+                to="/profile"
+                className="profile-dropdown-link d-block px-4 py-2"
+                onClick={closeMenu}
+              >
+                Profile
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
