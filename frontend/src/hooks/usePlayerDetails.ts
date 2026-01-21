@@ -81,9 +81,8 @@ export interface UsePlayerReturn {
   refetch: () => Promise<void>;
 }
 
-
-
 export const usePlayerDetails = (): UsePlayerReturn => {
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [status, setStatus] = useState<UsePlayerReturn>({
     playerActive: false,
     isLoading: true,
@@ -104,7 +103,10 @@ export const usePlayerDetails = (): UsePlayerReturn => {
 
   const fetchData = useCallback(async () => {
     try {
-      setStatus(prev => ({ ...prev, isLoading: true, error: null }));
+      // Only show loading state if this is the first load
+      if (!hasLoadedOnce) {
+        setStatus(prev => ({ ...prev, isLoading: true, error: null }));
+      }
       
       const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -135,6 +137,7 @@ export const usePlayerDetails = (): UsePlayerReturn => {
           contextType: null,
           contextUrl: null,
         }));
+        setHasLoadedOnce(true);
         return;
       }
 
@@ -185,6 +188,8 @@ export const usePlayerDetails = (): UsePlayerReturn => {
         contextType,
         contextUrl,
       }));
+      
+      setHasLoadedOnce(true);
 
     } catch (err) {
       console.error('Failed to fetch player details:', err);
@@ -193,8 +198,9 @@ export const usePlayerDetails = (): UsePlayerReturn => {
         isLoading: false,
         error: 'Failed to fetch player details',
       }));
+      setHasLoadedOnce(true);
     }
-  }, []);
+  }, [hasLoadedOnce]);
 
   useEffect(() => {
     setStatus(prev => ({ ...prev, refetch: fetchData }));
