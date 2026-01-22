@@ -1,18 +1,15 @@
 import logging
 from fastapi import FastAPI
-from apscheduler.schedulers.background import BackgroundScheduler
 import os
 from app.database import SessionLocal
 from fastapi.middleware.cors import CORSMiddleware
-from app.scheduler import scheduler, schedule_ingestion
-
+from app.scheduler import start_scheduler, stop_scheduler, schedule_ingestion
 from app.ingestion import get_ingest_interval_minutes
 from app.routers import listens, database_stats, top, playing, auth, track, album, artist, health, settings
 
 app = FastAPI()
 
 CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://127.0.0.1:3000,http://localhost:5173")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS.split(",") if CORS_ORIGINS else ["*"],
@@ -23,37 +20,29 @@ app.add_middleware(
 
 logging.basicConfig(level=logging.INFO)
 
-scheduler = BackgroundScheduler()
 
 @app.on_event("startup")
 def startup_event():
-    logger = logging.getLogger("uvicorn")
-    logger.info("Starting Scheduler...")
-
     db = SessionLocal()
     try:
         ingest_interval = get_ingest_interval_minutes(db)
     finally:
         db.close()
-
+    
     schedule_ingestion(ingest_interval)
-    scheduler.start()
+    start_scheduler()
 
-    logger.info(f"Scheduler started. Ingesting every {ingest_interval} minutes.")
 
 @app.on_event("shutdown")
 def shutdown_event():
-    logger = logging.getLogger("uvicorn")
-    logger.info("Stopping Scheduler...")
-    scheduler.shutdown()
+    stop_scheduler()
+
 
 app.include_router(listens.router)
 app.include_router(album.router)
 app.include_router(artist.router)
 app.include_router(database_stats.router)
 app.include_router(track.router)
-app.include_router(album.router)
-app.include_router(artist.router)
 app.include_router(top.router)
 app.include_router(playing.router)
 app.include_router(auth.router)

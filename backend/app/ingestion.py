@@ -4,10 +4,8 @@ from typing import Dict, Any, List, Optional, Tuple
 
 import requests
 from sqlalchemy.orm import Session
-from app.main import scheduler
 from app.database import SessionLocal
 from app.models import Artist, Album, Setting, Track, Listen
-from apscheduler.triggers.interval import IntervalTrigger
 from app.utils.spotify import get_valid_spotify_token
 
 logging.basicConfig(level=logging.INFO)
