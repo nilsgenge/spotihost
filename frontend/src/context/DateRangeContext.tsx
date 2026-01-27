@@ -71,8 +71,8 @@ export type DateRanges = Record<DateRangeKey, { label: string; days: number }>;
 export const dateRanges: DateRanges = {
   "1d": { label: "1D", days: 1 },
   "1w": { label: "1W", days: 7 },
-  "4w": { label: "4W", days: 28 },
-  "3m": { label: "3M", days: 90 },
+  "4w": { label: "4W", days: 30 },
+  "3m": { label: "3M", days: 91 },
   "6m": { label: "6M", days: 182 },
   "1y": { label: "1Y", days: 365 },
   alltime: { label: "All time", days: 9999 },
