@@ -16,6 +16,8 @@ import Artist from "./pages/Artist";
 import Track from "./pages/Track";
 import Album from "./pages/Album";
 import { HealthProvider, useHealth } from "./context/HealthContext";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 const AppContent: React.FC = () => {
   const { statusComponent } = useHealth();
@@ -42,6 +44,8 @@ const AppContent: React.FC = () => {
         <Route path="/track/:spotify_id" element={<Track />} />
         <Route path="/artist/:spotify_id" element={<Artist />} />
         <Route path="/album/:spotify_id" element={<Album />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </DateRangeProvider>
   );

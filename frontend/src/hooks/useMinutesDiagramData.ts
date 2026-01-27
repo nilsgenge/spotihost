@@ -13,11 +13,13 @@ const useMinutesDiagramData = () => {
   const [data, setData] = useState<ChartDataPoint[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
+    useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       
-      const buckets: Array<{ label: string; start: Date; end: Date }> = [];
+      let buckets: Array<{ label: string; start: Date; end: Date }> = [];
+      let apiStart: Date | undefined;
+      let apiEnd: Date | undefined;
       const now = new Date(endDate);
 
       if (selectedRange === "1d") {
@@ -64,20 +66,17 @@ const useMinutesDiagramData = () => {
           buckets.push({ label, start, end });
         }
       } else if (selectedRange === "alltime") {
-        let year = now.getFullYear();
-        for (let i = 0; i < 10; i++) { 
-           const start = new Date(year - i, 0, 1);
-           const label = year.toString();
-           buckets.push({ label, start, end: new Date(year-i+1,0,1) });
-           year--;
-        }
-        buckets.reverse();
+        apiStart = new Date(now.getFullYear() - 20, 0, 1); 
+        apiEnd = new Date(now.getFullYear() + 1, 0, 1);
       }
+
+      const paramsStart = apiStart ? apiStart.toISOString() : buckets[0].start.toISOString();
+      const paramsEnd = apiEnd ? apiEnd.toISOString() : buckets[buckets.length - 1].end.toISOString();
 
       try {
         const params = new URLSearchParams({
-          start: buckets[0].start.toISOString(),
-          end: buckets[buckets.length - 1].end.toISOString(),
+          start: paramsStart,
+          end: paramsEnd,
         });
         
         const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
@@ -85,6 +84,35 @@ const useMinutesDiagramData = () => {
         const response = await fetch(`${API_URL}/listens/activity?${params.toString()}`);
         const result = await response.json();
         
+        if (selectedRange === "alltime") {
+          let firstDataYear = now.getFullYear() - 3;
+
+          if (result.activity && result.activity.length > 0) {
+            const oldestTimestamp = result.activity[0].timestamp;
+            firstDataYear = new Date(oldestTimestamp).getFullYear();
+          }
+
+          const currentYear = now.getFullYear();
+          const yearsWithData = currentYear - firstDataYear + 1;
+          
+          const yearsToDisplay = yearsWithData < 4 ? 4 : yearsWithData + 1;
+
+          let year = currentYear;
+          for (let i = 0; i < yearsToDisplay; i++) { 
+             const start = new Date(year, 0, 1);
+             const label = year.toString();
+             
+             buckets.push({ 
+                 label, 
+                 start, 
+                 end: new Date(year + 1, 0, 1) 
+             });
+             
+             year--;
+          }
+          buckets.reverse();
+        }
+
         const chartData = buckets.map(bucket => ({
             xAxisLabel: bucket.label,
             minutes: 0,

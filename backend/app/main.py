@@ -1,19 +1,15 @@
-from datetime import timezone
 import logging
 from fastapi import FastAPI
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.interval import IntervalTrigger
 import os
+from app.database import SessionLocal
 from fastapi.middleware.cors import CORSMiddleware
-
-from app.ingestion import ingest_recent_listens
-from app.routers import listens, database_stats, timezone, top, playing, auth, track, album, artist, health
+from app.scheduler import start_scheduler, stop_scheduler, schedule_ingestion
+from app.ingestion import get_ingest_interval_minutes
+from app.routers import listens, database_stats, top, playing, auth, track, album, artist, health, settings, imports
 
 app = FastAPI()
 
-INGEST_INTERVAL_MINUTES = int(os.getenv("INGEST_INTERVAL_MINUTES", "10"))
 CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://127.0.0.1:3000,http://localhost:5173")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS.split(",") if CORS_ORIGINS else ["*"],
@@ -24,40 +20,32 @@ app.add_middleware(
 
 logging.basicConfig(level=logging.INFO)
 
-scheduler = BackgroundScheduler()
 
 @app.on_event("startup")
 def startup_event():
-    logger = logging.getLogger("uvicorn")
-    logger.info("Starting Scheduler...")
+    db = SessionLocal()
+    try:
+        ingest_interval = get_ingest_interval_minutes(db)
+    finally:
+        db.close()
     
-    scheduler.add_job(
-        func=ingest_recent_listens,
-        trigger=IntervalTrigger(minutes=INGEST_INTERVAL_MINUTES),
-        id='spotify_ingest_job',
-        name='Ingest Spotify Listens',
-        replace_existing=True
-    )
-    
-    scheduler.start()
-    logger.info(f"Scheduler started. Ingesting every {INGEST_INTERVAL_MINUTES} minutes.")
+    schedule_ingestion(ingest_interval)
+    start_scheduler()
+
 
 @app.on_event("shutdown")
 def shutdown_event():
-    logger = logging.getLogger("uvicorn")
-    logger.info("Stopping Scheduler...")
-    scheduler.shutdown()
+    stop_scheduler()
+
 
 app.include_router(listens.router)
 app.include_router(album.router)
 app.include_router(artist.router)
 app.include_router(database_stats.router)
-app.include_router(timezone.router)
 app.include_router(track.router)
-app.include_router(album.router)
-app.include_router(artist.router)
 app.include_router(top.router)
 app.include_router(playing.router)
 app.include_router(auth.router)
 app.include_router(health.router)
-
+app.include_router(settings.router)
+app.include_router(imports.router)

@@ -6,6 +6,7 @@ database
 backend/venv/
 backend/app/venv/
 backend/scripts
+temp_imports/
 
 __pycache__/
 *.py[cod]

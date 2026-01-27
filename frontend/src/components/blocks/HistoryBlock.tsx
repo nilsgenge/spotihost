@@ -4,7 +4,7 @@ import ContentBlock from "../ui/ContentBlock";
 import ElementBlock from "../ui/ElementBlock";
 
 const HistoryBlock = () => {
-  const { listens, loading } = useRecentListens(20);
+  const { listens, loading } = useRecentListens(30);
 
   if (listens.length === 0 && !loading) {
     return (

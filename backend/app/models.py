@@ -1,8 +1,9 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, ForeignKey, Table, DateTime, Date, UniqueConstraint
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Table, DateTime, Date, UniqueConstraint
 from app.database import Base
 from sqlalchemy import String, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.sql import func
 
 track_album = Table(
     'track_album',
@@ -118,12 +119,78 @@ class Listen(Base):
     )
     context_type: Mapped[str | None] = mapped_column(String, nullable=True)
 
-    track: Mapped["Track"] = relationship()
+    track: Mapped["Track"] = relationship()    
+
+    import_job_id: Mapped[int | None] = mapped_column(
+        ForeignKey(
+            "import_jobs.id", 
+            ondelete="CASCADE", 
+            name="fk_listens_import_job_id_import_jobs"
+        ), 
+        nullable=True, 
+        index=True
+    )
+    import_job: Mapped["ImportJob"] = relationship(back_populates="listens")
+
+    ms_played: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    skipped: Mapped[bool | None] = mapped_column(Boolean, nullable=True, default=False)
+    offline: Mapped[bool | None] = mapped_column(Boolean, nullable=True, default=False)
+    platform: Mapped[str | None] = mapped_column(String, nullable=True)
+    conn_country: Mapped[str | None] = mapped_column(String, nullable=True)
+    ip_addr: Mapped[str | None] = mapped_column(String, nullable=True)
+    incognito_mode: Mapped[bool | None] = mapped_column(Boolean, nullable=True, default=False)
+    
+    offline_timestamp: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), 
+        nullable=True
+    )
+
+
+class ImportJob(Base):
+    __tablename__ = "import_jobs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    filename: Mapped[str] = mapped_column(String, nullable=False)
+    status: Mapped[str] = mapped_column(String, nullable=False, default="pending")
+    
+    total_records: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    imported_records: Mapped[int] = mapped_column(Integer, default=0)
+    
+    error_message: Mapped[str | None] = mapped_column(String, nullable=True)
+    file_hash: Mapped[str | None] = mapped_column(String, nullable=True, index=True)
+    
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), 
+        server_default=func.now()
+    )
+    
+    listens: Mapped[list["Listen"]] = relationship(back_populates="import_job")
+
 
 class SpotifyToken(Base):
     __tablename__ = 'spotify_tokens'
-    id = Column(Integer, primary_key=True, index=True)
-    access_token = Column(String, nullable=False)
-    refresh_token = Column(String, nullable=False)
-    token_type = Column(String, default="Bearer")
-    expires_at = Column(DateTime, nullable=False)
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    access_token: Mapped[str] = mapped_column(String, nullable=False)
+    refresh_token: Mapped[str] = mapped_column(String, nullable=False)
+    token_type: Mapped[str] = mapped_column(String, default="Bearer")
+    expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+
+
+class Setting(Base):
+    __tablename__ = "settings"
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    key: Mapped[str] = mapped_column(String, unique=True, nullable=False, index=True)
+    value: Mapped[str] = mapped_column(String, nullable=False)
+    type: Mapped[str] = mapped_column(String, nullable=False)
+    description: Mapped[str | None] = mapped_column(String, nullable=True)
+    default_value: Mapped[str | None] = mapped_column(String, nullable=True)
+    updated_at: Mapped[datetime | None] = mapped_column(
+        DateTime, 
+        server_default=func.now(), 
+        onupdate=func.now(),
+        nullable=True
+    )

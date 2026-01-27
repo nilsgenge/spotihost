@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getBrowserTimeZone, toUtcIso } from "../utils/time";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
 type DateRangeKey = "1d" | "1w" | "4w" | "3m" | "6m" | "1y" | "alltime";
 
 interface DateRangeContextType {
@@ -19,7 +17,7 @@ interface DateRangeContextType {
 }
 
 const DateRangeContext = createContext<DateRangeContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const DateRangeProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -30,22 +28,7 @@ export const DateRangeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const browserTz = getBrowserTimeZone();
-
-    if (browserTz) {
-      setTimeZone(browserTz);
-      return;
-    }
-
-    fetch(`${API_URL}/timezone`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.timezone) {
-          setTimeZone(data.timezone);
-        }
-      })
-      .catch(() => {
-        setTimeZone("UTC");
-      });
+    setTimeZone(browserTz || "UTC");
   }, []);
 
   const getStartDate = (days: number): Date => {
@@ -88,8 +71,8 @@ export type DateRanges = Record<DateRangeKey, { label: string; days: number }>;
 export const dateRanges: DateRanges = {
   "1d": { label: "1D", days: 1 },
   "1w": { label: "1W", days: 7 },
-  "4w": { label: "4W", days: 28 },
-  "3m": { label: "3M", days: 90 },
+  "4w": { label: "4W", days: 30 },
+  "3m": { label: "3M", days: 91 },
   "6m": { label: "6M", days: 182 },
   "1y": { label: "1Y", days: 365 },
   alltime: { label: "All time", days: 9999 },
