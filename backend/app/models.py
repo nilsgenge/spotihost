@@ -137,13 +137,7 @@ class Listen(Base):
     offline: Mapped[bool | None] = mapped_column(Boolean, nullable=True, default=False)
     platform: Mapped[str | None] = mapped_column(String, nullable=True)
     conn_country: Mapped[str | None] = mapped_column(String, nullable=True)
-    ip_addr: Mapped[str | None] = mapped_column(String, nullable=True)
     incognito_mode: Mapped[bool | None] = mapped_column(Boolean, nullable=True, default=False)
-    
-    offline_timestamp: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), 
-        nullable=True
-    )
 
 
 class ImportJob(Base):

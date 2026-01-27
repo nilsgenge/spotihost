@@ -228,18 +228,6 @@ const FileImportBlock: React.FC = () => {
     }
   };
 
-  const getProgressPercentage = (file: FileImportStatus): number => {
-    if (!file.total_records || file.status === "pending") {
-      return 0;
-    }
-    if (file.status === "completed") {
-      return 100;
-    }
-    return Math.round(
-      ((file.imported_records || 0) / file.total_records) * 100,
-    );
-  };
-
   const formatDuration = (startedAt?: string, completedAt?: string): string => {
     if (!startedAt) return "";
 
@@ -410,15 +398,6 @@ const FileImportBlock: React.FC = () => {
                       </button>
                     </div>
                   </div>
-
-                  {isActive && (
-                    <div className="progress" style={{ height: "4px" }}>
-                      <div
-                        className="progress-bar bg-primary"
-                        style={{ width: `${getProgressPercentage(file)}%` }}
-                      />
-                    </div>
-                  )}
 
                   {file.status === "failed" && file.error_message && (
                     <div className="mt-2 p-2 bg-danger bg-opacity-10 rounded">

@@ -551,24 +551,32 @@ def _process_import_batch(
             logger.warning(f"Could not resolve track ID for Spotify ID: {spotify_id}")
             continue
 
+        played_at = None
         played_at_str = raw_item.get("ts")
-        try:
-            played_at = datetime.fromisoformat(played_at_str.replace("Z", "+00:00")) # type: ignore
-        except Exception as e:
-            logger.warning(f"Invalid timestamp format: {played_at_str}")
-            continue
-
-        # Parse offline timestamp
-        offline_ts_val = None
-        raw_offline_ts = raw_item.get("offline_timestamp")
-        if raw_offline_ts:
+        if played_at_str:
             try:
-                if raw_offline_ts < 20000000000:
-                    offline_ts_val = datetime.fromtimestamp(raw_offline_ts, tz=timezone.utc)
-                else:
-                    offline_ts_val = datetime.fromtimestamp(raw_offline_ts / 1000, tz=timezone.utc)
-            except Exception as e:
-                logger.warning(f"Invalid offline timestamp: {raw_offline_ts}")
+                played_at = datetime.fromisoformat(played_at_str.replace("Z", "+00:00"))
+            except Exception:
+                # Use offline timestamp as fallback
+                pass
+
+        # fallback offline timestamp
+        if not played_at:
+            raw_offline_ts = raw_item.get("offline_timestamp")
+            if raw_offline_ts:
+                try:
+                    # Check if ms or s
+                    if raw_offline_ts < 20000000000:
+                        played_at = datetime.fromtimestamp(raw_offline_ts, tz=timezone.utc)
+                    else:
+                        played_at = datetime.fromtimestamp(raw_offline_ts / 1000, tz=timezone.utc)
+                except Exception as e:
+                    logger.warning(f"Invalid offline_timestamp: {raw_offline_ts}")
+
+        # if no time available, skip listen
+        if not played_at:
+            logger.warning(f"Skipping item: No valid timestamp found for Spotify ID {spotify_id}")
+            continue
 
         new_listen = Listen(
             track_id=db_track_id,
@@ -579,9 +587,7 @@ def _process_import_batch(
             offline=raw_item.get("offline"),
             platform=raw_item.get("platform"),
             conn_country=raw_item.get("conn_country"),
-            ip_addr=raw_item.get("ip_addr_decrypted"), 
             incognito_mode=raw_item.get("incognito_mode"),
-            offline_timestamp=offline_ts_val
         )
 
         sp = db.begin_nested()
@@ -595,7 +601,7 @@ def _process_import_batch(
         else:
             sp.commit()
 
-    # Commit all successful listens at once
+    # Commit all successful listens
     try:
         db.commit()
         if duplicate_count > 0:
@@ -629,7 +635,7 @@ def _create_or_get_track_from_api_data(track_data: Dict, db: Session) -> Optiona
     if track:
         return track.track_id
 
-    # 1. Create/get artists
+    # Create/get artists
     track_artist_ids = []
     for a in track_data.get("artists", []):
         if not a.get("id") or not a.get("name"):
@@ -641,7 +647,7 @@ def _create_or_get_track_from_api_data(track_data: Dict, db: Session) -> Optiona
         )
         track_artist_ids.append(a.get("id"))
 
-    # 2. Create/get album
+    # Create/get album
     album_data = track_data.get("album")
     if not album_data or not album_data.get("id"):
         logger.warning(f"Track {spotify_id} has no album data")
@@ -678,7 +684,7 @@ def _create_or_get_track_from_api_data(track_data: Dict, db: Session) -> Optiona
         image_url_large=s_lrg,
     )
 
-    # 3. Create track
+    # Create track
     t_sma, t_med, t_lrg = get_image_qualities(track_data.get("images", []))
     t_sma = t_sma or s_sma
     t_med = t_med or s_med
