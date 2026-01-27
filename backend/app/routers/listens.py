@@ -35,6 +35,8 @@ def get_listens_count(
 
         plays_count = db.query(Listen).filter(
             Listen.played_at.between(start_datetime, end_datetime)
+        ).filter(
+            Listen.skipped == False
         ).count()
 
         return {"plays_count": plays_count}
@@ -52,6 +54,7 @@ def get_recent_listens(
     try:
         listens = (
             db.query(Listen)
+            .filter(Listen.skipped == False)
             .options(joinedload(Listen.track).selectinload(Track.artists))
             .order_by(Listen.played_at.desc())
             .limit(limit)
@@ -147,6 +150,8 @@ def get_activity_stats(
             Track, Listen.track_id == Track.track_id
         ).filter(
             Listen.played_at.between(start_dt, end_dt)
+        ).filter(
+            Listen.skipped == False
         ).group_by(
             truncated_time
         ).order_by(
@@ -181,6 +186,8 @@ def get_minutes_listened(
             Track, Listen.track_id == Track.track_id
         ).filter(
             Listen.played_at.between(start_datetime, end_datetime)
+        ).filter(
+            Listen.skipped == False
         ).with_entities(func.sum(Track.duration)).scalar() or 0
 
         return {"minutes_listened": int(total_duration_seconds // 60)}

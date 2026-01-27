@@ -24,6 +24,7 @@ services:
     container_name: spotihost-backend
     volumes:
       - ./backend:/app
+      - ./temp_imports:/app/temp_imports
     ports:
       - "8000:8000"
     env_file:

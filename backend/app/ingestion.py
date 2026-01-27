@@ -1,17 +1,22 @@
 import logging
-from datetime import datetime, date
+import json
+from datetime import datetime, date, timezone
+import os
 from typing import Dict, Any, List, Optional, Tuple
 
 import requests
 from sqlalchemy.orm import Session
+from sqlalchemy import exc
+
 from app.database import SessionLocal
-from app.models import Artist, Album, Setting, Track, Listen
+from app.models import Artist, Album, Setting, Track, Listen, ImportJob
 from app.utils.spotify import get_valid_spotify_token
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+# HELPER FUNCTIONS
 
 def create_or_get_artist(
     db: Session,
@@ -169,14 +174,19 @@ def parse_date(date_str: str, precision: str) -> Optional[date]:
     """Parse Spotify date string based on precision."""
     if not date_str:
         return None
-    if precision == 'year':
-        return datetime.strptime(date_str, "%Y").date()
-    elif precision == 'day':
-        return datetime.strptime(date_str, "%Y-%m-%d").date()
+    try:
+        if precision == 'year':
+            return datetime.strptime(date_str, "%Y").date()
+        elif precision == 'month':
+            return datetime.strptime(date_str, "%Y-%m").date()
+        elif precision == 'day':
+            return datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        return None
     return None
 
 
-
+# API IMPORT
 
 def process_item(db: Session, item: Dict[str, Any]):
     """Process a single recently played item from Spotify API."""
@@ -319,3 +329,373 @@ def get_ingest_interval_minutes(db: Session, fallback: int = 10) -> int:
         return int(setting.value) if setting and setting.value else fallback
     except (TypeError, ValueError):
         return fallback
+
+
+# FILE IMPORT
+
+def process_import_job(job_id: int, file_path: str):
+    """
+    Main function for file import. Reads file, batches IDs, and saves tracks/listens.
+    Creates its own DB session as it runs as a background task.
+    
+    Args:
+        job_id: ID of the ImportJob to process
+        file_path: Path to the uploaded JSON file
+    """
+    db: Session = SessionLocal()
+    
+    logger.info(f"Starting Import Job {job_id} from {file_path}")
+    
+    try:
+        # Get job
+        job = db.query(ImportJob).filter(ImportJob.id == job_id).first()
+        if not job:
+            logger.error(f"Job {job_id} not found")
+            return
+
+        # Update job status
+        job.status = "processing"
+        job.started_at = datetime.now(timezone.utc)
+        db.commit()
+
+        # Get Spotify token
+        try:
+            token = get_valid_spotify_token(db)
+        except Exception as e:
+            job.status = "failed"
+            job.error_message = f"Could not get Spotify token: {str(e)}"
+            job.completed_at = datetime.now(timezone.utc)
+            db.commit()
+            logger.error(f"Job {job_id} failed: {job.error_message}")
+            return
+
+        # Processing buffers
+        uri_buffer = []
+        file_items_buffer = []
+        
+        total_count = 0
+        imported_count = 0
+        skipped_count = 0
+
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                try:
+                    json_data = json.load(f)
+                except json.JSONDecodeError as e:
+                    raise ValueError(f"Invalid JSON file format: {e}")
+
+            # Ensure we have a list
+            if not isinstance(json_data, list):
+                raise ValueError("JSON file does not contain a list of items")
+
+            for index, data in enumerate(json_data):
+                
+                if not isinstance(data, dict):
+                    skipped_count += 1
+                    continue
+
+                if not data.get("master_metadata_track_name"):
+                    skipped_count += 1
+                    continue
+                
+                if data.get("offline") and data.get("offline_timestamp") is None:
+                    skipped_count += 1
+                    continue
+
+                track_uri = data.get("spotify_track_uri")
+                if not track_uri or not track_uri.startswith("spotify:track:"):
+                    skipped_count += 1
+                    continue
+                
+                spotify_id = track_uri.split(":")[-1]
+                
+                ms_played = data.get("ms_played")
+                
+                if ms_played is not None:
+                    if ms_played < 30000:
+                        data["skipped"] = True
+                    else:
+                        data["skipped"] = False
+            
+                uri_buffer.append(spotify_id)
+                file_items_buffer.append(data)
+                total_count += 1
+
+                # Process batch when buffer is full (50 items)
+                if len(uri_buffer) >= 50:
+                    count = _process_import_batch(
+                        uri_buffer, 
+                        file_items_buffer, 
+                        token, 
+                        job_id, 
+                        db
+                    )
+                    imported_count += count
+                    
+                    # Update progress
+                    job.imported_records = imported_count
+                    job.total_records = total_count
+                    db.commit()
+                    
+                    logger.info(f"Job {job_id}: Processed batch. Progress: {imported_count}/{total_count}")
+                    
+                    # Clear buffers
+                    uri_buffer = []
+                    file_items_buffer = []
+
+            # Process remaining items (< 50)
+            if uri_buffer:
+                count = _process_import_batch(
+                    uri_buffer, 
+                    file_items_buffer, 
+                    token, 
+                    job_id, 
+                    db
+                )
+                imported_count += count
+
+            # Mark job as completed
+            job.status = "completed"
+            job.completed_at = datetime.now(timezone.utc)
+            job.imported_records = imported_count
+            job.total_records = total_count
+            db.commit()
+            
+            logger.info(
+                f"Import Job {job_id} completed successfully. "
+                f"Records: {imported_count}/{total_count}, Skipped: {skipped_count}"
+            )
+            
+            # Clean up file after successful import
+            try:
+                os.remove(file_path)
+                logger.info(f"Deleted file: {file_path}")
+            except Exception as e:
+                logger.warning(f"Could not delete file {file_path}: {e}")
+
+        except FileNotFoundError:
+            job.status = "failed"
+            job.error_message = f"File not found: {file_path}"
+            job.completed_at = datetime.now(timezone.utc)
+            db.commit()
+            logger.error(f"Job {job_id} failed: File not found")
+            
+        except Exception as e:
+            logger.error(f"Critical Error in Import Job {job_id}: {e}", exc_info=True)
+            job.status = "failed"
+            job.error_message = str(e)[:500]
+            job.completed_at = datetime.now(timezone.utc)
+            db.commit()
+            
+    except Exception as e:
+        logger.critical(f"Critical DB Error in Job {job_id}: {e}", exc_info=True)
+    finally:
+        db.close()
+
+
+
+def _process_import_batch(
+    spotify_ids: List[str], 
+    raw_items: List[Dict], 
+    token: str, 
+    job_id: int, 
+    db: Session
+) -> int:
+    """
+    Fetch 50 tracks from Spotify API and save them to database.
+    Uses Savepoints to prevent losing valid data on duplicate errors.
+    """
+    if not spotify_ids:
+        return 0
+
+    # Fetch track metadata from Spotify API
+    ids_string = ",".join(spotify_ids)
+    url = f"https://api.spotify.com/v1/tracks?ids={ids_string}"
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    try:
+        response = requests.get(url, headers=headers, timeout=30)
+        response.raise_for_status()
+        data = response.json()
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Spotify API Batch Error: {e}")
+        return 0
+
+    tracks_data = data.get("tracks", [])
+    
+    track_id_map = {}
+    
+    for t_data in tracks_data:
+        if not t_data:
+            continue
+        
+        db_track_id = _create_or_get_track_from_api_data(t_data, db)
+        if db_track_id:
+            track_id_map[t_data.get("id")] = db_track_id
+
+    try:
+        db.commit()
+    except Exception as e:
+        logger.error(f"Failed to commit tracks batch: {e}")
+        db.rollback()
+        return 0
+
+    inserted_count = 0
+    duplicate_count = 0
+    
+    for i, raw_item in enumerate(raw_items):
+        spotify_id = spotify_ids[i]
+        db_track_id = track_id_map.get(spotify_id)
+
+        if not db_track_id:
+            logger.warning(f"Could not resolve track ID for Spotify ID: {spotify_id}")
+            continue
+
+        played_at_str = raw_item.get("ts")
+        try:
+            played_at = datetime.fromisoformat(played_at_str.replace("Z", "+00:00")) # type: ignore
+        except Exception as e:
+            logger.warning(f"Invalid timestamp format: {played_at_str}")
+            continue
+
+        # Parse offline timestamp
+        offline_ts_val = None
+        raw_offline_ts = raw_item.get("offline_timestamp")
+        if raw_offline_ts:
+            try:
+                if raw_offline_ts < 20000000000:
+                    offline_ts_val = datetime.fromtimestamp(raw_offline_ts, tz=timezone.utc)
+                else:
+                    offline_ts_val = datetime.fromtimestamp(raw_offline_ts / 1000, tz=timezone.utc)
+            except Exception as e:
+                logger.warning(f"Invalid offline timestamp: {raw_offline_ts}")
+
+        new_listen = Listen(
+            track_id=db_track_id,
+            played_at=played_at,
+            import_job_id=job_id,
+            ms_played=raw_item.get("ms_played"),
+            skipped=raw_item.get("skipped"), 
+            offline=raw_item.get("offline"),
+            platform=raw_item.get("platform"),
+            conn_country=raw_item.get("conn_country"),
+            ip_addr=raw_item.get("ip_addr_decrypted"), 
+            incognito_mode=raw_item.get("incognito_mode"),
+            offline_timestamp=offline_ts_val
+        )
+
+        sp = db.begin_nested()
+        try:
+            db.add(new_listen)
+            db.flush()
+            inserted_count += 1
+        except exc.IntegrityError:
+            sp.rollback() 
+            duplicate_count += 1
+        else:
+            sp.commit()
+
+    # Commit all successful listens at once
+    try:
+        db.commit()
+        if duplicate_count > 0:
+            logger.info(f"Batch completed: {inserted_count} new, {duplicate_count} duplicates")
+    except Exception as e:
+        logger.error(f"Error committing batch: {e}")
+        db.rollback()
+        return 0
+    
+    return inserted_count
+
+
+
+def _create_or_get_track_from_api_data(track_data: Dict, db: Session) -> Optional[int]:
+    """
+    Create or get track from Spotify API response data.
+    
+    Args:
+        track_data: Track object from Spotify API
+        db: Database session
+    
+    Returns:
+        Track ID (primary key) or None if creation failed
+    """
+    spotify_id = track_data.get("id")
+    if not spotify_id:
+        return None
+
+    # Check if track already exists
+    track = db.query(Track).filter(Track.spotify_id == spotify_id).first()
+    if track:
+        return track.track_id
+
+    # 1. Create/get artists
+    track_artist_ids = []
+    for a in track_data.get("artists", []):
+        if not a.get("id") or not a.get("name"):
+            continue
+        artist, _ = create_or_get_artist(
+            db=db,
+            spotify_id=a.get("id"),
+            name=a.get("name"),
+        )
+        track_artist_ids.append(a.get("id"))
+
+    # 2. Create/get album
+    album_data = track_data.get("album")
+    if not album_data or not album_data.get("id"):
+        logger.warning(f"Track {spotify_id} has no album data")
+        return None
+
+    album_artist_ids = []
+    for a in album_data.get("artists", []):
+        if not a.get("id") or not a.get("name"):
+            continue
+        artist, _ = create_or_get_artist(
+            db=db,
+            spotify_id=a.get("id"),
+            name=a.get("name"),
+        )
+        album_artist_ids.append(a.get("id"))
+
+    s_sma, s_med, s_lrg = get_image_qualities(album_data.get("images", []))
+    rel_date = parse_date(
+        album_data.get("release_date"),
+        album_data.get("release_date_precision")
+    )
+    
+    album, _ = create_or_get_album(
+        db=db,
+        spotify_id=album_data.get("id"),
+        name=album_data.get("name"),
+        artist_ids=album_artist_ids,
+        release_date=rel_date,
+        release_date_precision=album_data.get("release_date_precision"),
+        album_type=album_data.get("album_type"),
+        total_tracks=album_data.get("total_tracks", 0),
+        image_url_small=s_sma,
+        image_url_medium=s_med,
+        image_url_large=s_lrg,
+    )
+
+    # 3. Create track
+    t_sma, t_med, t_lrg = get_image_qualities(track_data.get("images", []))
+    t_sma = t_sma or s_sma
+    t_med = t_med or s_med
+    t_lrg = t_lrg or s_lrg
+
+    duration_seconds = int(track_data.get("duration_ms", 0) / 1000)
+
+    track, _ = create_or_get_track(
+        db=db,
+        spotify_id=spotify_id,
+        name=track_data.get("name") or "Unknown Track",
+        artist_ids=track_artist_ids,
+        album_ids=[album_data.get("id")],
+        duration=duration_seconds,
+        image_url_small=t_sma,
+        image_url_medium=t_med,
+        image_url_large=t_lrg,
+    )
+
+    return track.track_id

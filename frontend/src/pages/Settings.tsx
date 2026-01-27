@@ -2,6 +2,7 @@ import React from "react";
 import { FaUndo, FaCheck, FaExclamationTriangle } from "react-icons/fa";
 import Separator from "../components/ui/Separator";
 import { useSettings } from "../hooks/useSettings";
+import FileImportBlock from "../components/blocks/FileImportBlock";
 
 const Settings: React.FC = () => {
   const {
@@ -64,7 +65,7 @@ const Settings: React.FC = () => {
               <input
                 type="number"
                 className="form-control text-end"
-                style={{ width: "80px" }}
+                style={{ width: "100px" }}
                 value={localValues.ingest_interval_minutes || ""}
                 onChange={(e) =>
                   setLocalValue("ingest_interval_minutes", e.target.value)
@@ -100,6 +101,9 @@ const Settings: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* File Imports */}
+      <FileImportBlock />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, ForeignKey, Table, DateTime, Date, UniqueConstraint
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Table, DateTime, Date, UniqueConstraint
 from app.database import Base
 from sqlalchemy import String, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -119,7 +119,54 @@ class Listen(Base):
     )
     context_type: Mapped[str | None] = mapped_column(String, nullable=True)
 
-    track: Mapped["Track"] = relationship()
+    track: Mapped["Track"] = relationship()    
+
+    import_job_id: Mapped[int | None] = mapped_column(
+        ForeignKey(
+            "import_jobs.id", 
+            ondelete="CASCADE", 
+            name="fk_listens_import_job_id_import_jobs"
+        ), 
+        nullable=True, 
+        index=True
+    )
+    import_job: Mapped["ImportJob"] = relationship(back_populates="listens")
+
+    ms_played: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    skipped: Mapped[bool | None] = mapped_column(Boolean, nullable=True, default=False)
+    offline: Mapped[bool | None] = mapped_column(Boolean, nullable=True, default=False)
+    platform: Mapped[str | None] = mapped_column(String, nullable=True)
+    conn_country: Mapped[str | None] = mapped_column(String, nullable=True)
+    ip_addr: Mapped[str | None] = mapped_column(String, nullable=True)
+    incognito_mode: Mapped[bool | None] = mapped_column(Boolean, nullable=True, default=False)
+    
+    offline_timestamp: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), 
+        nullable=True
+    )
+
+
+class ImportJob(Base):
+    __tablename__ = "import_jobs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    filename: Mapped[str] = mapped_column(String, nullable=False)
+    status: Mapped[str] = mapped_column(String, nullable=False, default="pending")
+    
+    total_records: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    imported_records: Mapped[int] = mapped_column(Integer, default=0)
+    
+    error_message: Mapped[str | None] = mapped_column(String, nullable=True)
+    file_hash: Mapped[str | None] = mapped_column(String, nullable=True, index=True)
+    
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), 
+        server_default=func.now()
+    )
+    
+    listens: Mapped[list["Listen"]] = relationship(back_populates="import_job")
 
 
 class SpotifyToken(Base):
