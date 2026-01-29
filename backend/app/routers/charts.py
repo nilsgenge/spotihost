@@ -69,6 +69,9 @@ def format_bucket(bucket_time: datetime, range_key: RangeKey):
     
     return {"label": label, "start": bucket_time, "end": end_time}
 
+
+# plays
+
 def get_minutes_buckets(
     db: Session,
     range_key: RangeKey,
@@ -78,6 +81,7 @@ def get_minutes_buckets(
 ):
     """Core logic for fetching minute buckets with optional entity filter"""
     
+    # Base query
     query = db.query(Listen.played_at, Track.duration)\
               .join(Track, Listen.track_id == Track.track_id)
     
@@ -114,30 +118,95 @@ def get_minutes_buckets(
         return [
             {
                 "label": str(y),
-                "value": data_map.get(y, None),
+                "value": data_map.get(y, 0),
                 "start": datetime(y, 1, 1).isoformat(),
                 "end": datetime(y + 1, 1, 1).isoformat()
             }
             for y in range(start_year, end_year + 1)
         ]
     
-    # Standard ranges
+    # Get truncator and aggregated data
     truncator = get_truncator(range_key)
-    results = query.with_entities(
+    
+    agg_results = query.with_entities(
         truncator.label('bucket_time'),
         func.coalesce(func.sum(Track.duration), 0).label('seconds')
     ).group_by(truncator).order_by(truncator).all()
     
-    buckets = []
-    for row in results:
-        fmt = format_bucket(row.bucket_time, range_key)
-        buckets.append({
-            "label": fmt["label"],
-            "value": int(row.seconds / 60),
-            "start": fmt["start"].isoformat(),
-            "end": fmt["end"].isoformat()
-        })
+    data_map = {}
+    for row in agg_results:
+        data_map[row.bucket_time] = int(row.seconds / 60)
+
+    # Helper function to truncate datetime to match DB truncation
+    def truncate_datetime(dt: datetime, range_key: RangeKey) -> datetime:
+        if range_key == "1d":
+            return dt.replace(minute=0, second=0, microsecond=0)
+        elif range_key in ["1w", "4w"]:
+            return dt.replace(hour=0, minute=0, second=0, microsecond=0)
+        elif range_key in ["3m", "6m"]:
+            # Truncate to Monday of the week
+            days_since_monday = dt.weekday()
+            monday = dt - timedelta(days=days_since_monday)
+            return monday.replace(hour=0, minute=0, second=0, microsecond=0)
+        else:  # 1y
+            return dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     
+    # Truncate start to match DB bucketing
+    current = truncate_datetime(start_dt, range_key)
+    buckets = []
+    
+    if range_key == "1d":
+        # Hourly buckets
+        while current < end_dt:
+            bucket_end = current + timedelta(hours=1)
+            buckets.append({
+                "label": current.strftime("%H:%M"),
+                "value": data_map.get(current, 0),
+                "start": current.isoformat(),
+                "end": bucket_end.isoformat()
+            })
+            current = bucket_end
+            
+    elif range_key in ["1w", "4w"]:
+        # Daily buckets
+        while current < end_dt:
+            bucket_end = current + timedelta(days=1)
+            buckets.append({
+                "label": current.strftime("%d %b"),
+                "value": data_map.get(current, 0),
+                "start": current.isoformat(),
+                "end": bucket_end.isoformat()
+            })
+            current = bucket_end
+            
+    elif range_key in ["3m", "6m"]:
+        # Weekly buckets
+        while current < end_dt:
+            bucket_end = current + timedelta(weeks=1)
+            buckets.append({
+                "label": f"{current.strftime('%d/%m')} - {bucket_end.strftime('%d/%m')}",
+                "value": data_map.get(current, 0),
+                "start": current.isoformat(),
+                "end": bucket_end.isoformat()
+            })
+            current = bucket_end
+            
+    else:  # 1y
+        # Monthly buckets
+        while current < end_dt:
+            if current.month == 12:
+                bucket_end = current.replace(year=current.year + 1, month=1)
+            else:
+                bucket_end = current.replace(month=current.month + 1)
+            
+            buckets.append({
+                "label": current.strftime("%b %Y"),
+                "value": data_map.get(current, 0),
+                "start": current.isoformat(),
+                "end": bucket_end.isoformat()
+            })
+            current = bucket_end
+
     return buckets
 
 @router.get("/minutes")
@@ -212,6 +281,211 @@ def get_track_minutes(
         raise HTTPException(400, detail="Invalid date format")
     
     return {"buckets": get_minutes_buckets(
+        db, range_key, start_dt, end_dt,
+        entity_filter=(Track, track_id, None, None)
+    )}
+
+
+# Plays
+
+def get_plays_buckets(
+    db: Session,
+    range_key: RangeKey,
+    start_dt: datetime,
+    end_dt: datetime,
+    entity_filter: Optional[tuple] = None
+):
+    """Core logic for fetching play COUNT buckets (not minutes)"""
+    
+    query = db.query(Listen.played_at)\
+              .join(Track, Listen.track_id == Track.track_id)
+    
+    filters = [
+        Listen.played_at.between(start_dt, end_dt),
+        Listen.skipped == False
+    ]
+    
+    if entity_filter:
+        model, spotify_id, _, _ = entity_filter
+        if model == Artist:
+            query = query.join(track_artists).join(Artist)
+            filters.append(Artist.spotify_id == spotify_id)
+        elif model == Album:
+            query = query.join(track_album).join(Album)
+            filters.append(Album.spotify_id == spotify_id)
+        elif model == Track:
+            filters.append(Track.spotify_id == spotify_id)
+    
+    query = query.filter(*filters)
+    
+    # Alltime
+    if range_key == "alltime":
+        start_year, end_year = calculate_alltime_range(db, query)
+        
+        year_data = query.with_entities(
+            func.extract('year', Listen.played_at).label('y'),
+            func.count(Listen.listen_id).label('play_count')
+        ).group_by('y').all()
+        
+        data_map = {int(row.y): int(row.play_count) for row in year_data}
+        
+        return [
+            {
+                "label": str(y),
+                "value": data_map.get(y, 0),
+                "start": datetime(y, 1, 1).isoformat(),
+                "end": datetime(y + 1, 1, 1).isoformat()
+            }
+            for y in range(start_year, end_year + 1)
+        ]
+    
+    # Standard ranges
+    truncator = get_truncator(range_key)
+    
+    agg_results = query.with_entities(
+        truncator.label('bucket_time'),
+        func.count(Listen.listen_id).label('play_count')
+    ).group_by(truncator).order_by(truncator).all()
+    
+    data_map = {row.bucket_time: int(row.play_count) for row in agg_results}
+
+    def truncate_datetime(dt: datetime, range_key: RangeKey) -> datetime:
+        if range_key == "1d":
+            return dt.replace(minute=0, second=0, microsecond=0)
+        elif range_key in ["1w", "4w"]:
+            return dt.replace(hour=0, minute=0, second=0, microsecond=0)
+        elif range_key in ["3m", "6m"]:
+            days_since_monday = dt.weekday()
+            monday = dt - timedelta(days=days_since_monday)
+            return monday.replace(hour=0, minute=0, second=0, microsecond=0)
+        else:
+            return dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    current = truncate_datetime(start_dt, range_key)
+    buckets = []
+    
+    if range_key == "1d":
+        while current < end_dt:
+            bucket_end = current + timedelta(hours=1)
+            buckets.append({
+                "label": current.strftime("%H:%M"),
+                "value": data_map.get(current, 0),
+                "start": current.isoformat(),
+                "end": bucket_end.isoformat()
+            })
+            current = bucket_end
+            
+    elif range_key in ["1w", "4w"]:
+        while current < end_dt:
+            bucket_end = current + timedelta(days=1)
+            buckets.append({
+                "label": current.strftime("%d %b"),
+                "value": data_map.get(current, 0),
+                "start": current.isoformat(),
+                "end": bucket_end.isoformat()
+            })
+            current = bucket_end
+            
+    elif range_key in ["3m", "6m"]:
+        while current < end_dt:
+            bucket_end = current + timedelta(weeks=1)
+            buckets.append({
+                "label": f"{current.strftime('%d/%m')} - {bucket_end.strftime('%d/%m')}",
+                "value": data_map.get(current, 0),
+                "start": current.isoformat(),
+                "end": bucket_end.isoformat()
+            })
+            current = bucket_end
+            
+    else:  # 1y
+        while current < end_dt:
+            if current.month == 12:
+                bucket_end = current.replace(year=current.year + 1, month=1)
+            else:
+                bucket_end = current.replace(month=current.month + 1)
+            
+            buckets.append({
+                "label": current.strftime("%b %Y"),
+                "value": data_map.get(current, 0),
+                "start": current.isoformat(),
+                "end": bucket_end.isoformat()
+            })
+            current = bucket_end
+
+    return buckets
+
+@router.get("/plays")
+def get_total_plays(
+    start: str,
+    end: str,
+    range_key: RangeKey,
+    db: Session = Depends(get_db)
+):
+    """Total play counts (not minutes)"""
+    try:
+        start_dt = datetime.fromisoformat(start)
+        end_dt = datetime.fromisoformat(end)
+    except ValueError:
+        raise HTTPException(400, detail="Invalid date format")
+    
+    return {"buckets": get_plays_buckets(db, range_key, start_dt, end_dt)}
+
+@router.get("/plays/artist/{artist_id}")
+def get_artist_plays(
+    artist_id: str = Path(...),
+    start: str = Query(...),
+    end: str = Query(...),
+    range_key: RangeKey = Query(...),
+    db: Session = Depends(get_db)
+):
+    """Artist play counts"""
+    try:
+        start_dt = datetime.fromisoformat(start)
+        end_dt = datetime.fromisoformat(end)
+    except ValueError:
+        raise HTTPException(400, detail="Invalid date format")
+    
+    return {"buckets": get_plays_buckets(
+        db, range_key, start_dt, end_dt, 
+        entity_filter=(Artist, artist_id, None, None)
+    )}
+
+@router.get("/plays/album/{album_id}")
+def get_album_plays(
+    album_id: str = Path(...),
+    start: str = Query(...),
+    end: str = Query(...),
+    range_key: RangeKey = Query(...),
+    db: Session = Depends(get_db)
+):
+    """Album play counts"""
+    try:
+        start_dt = datetime.fromisoformat(start)
+        end_dt = datetime.fromisoformat(end)
+    except ValueError:
+        raise HTTPException(400, detail="Invalid date format")
+    
+    return {"buckets": get_plays_buckets(
+        db, range_key, start_dt, end_dt,
+        entity_filter=(Album, album_id, None, None)
+    )}
+
+@router.get("/plays/track/{track_id}")
+def get_track_plays(
+    track_id: str = Path(...),
+    start: str = Query(...),
+    end: str = Query(...),
+    range_key: RangeKey = Query(...),
+    db: Session = Depends(get_db)
+):
+    """Track play counts"""
+    try:
+        start_dt = datetime.fromisoformat(start)
+        end_dt = datetime.fromisoformat(end)
+    except ValueError:
+        raise HTTPException(400, detail="Invalid date format")
+    
+    return {"buckets": get_plays_buckets(
         db, range_key, start_dt, end_dt,
         entity_filter=(Track, track_id, None, None)
     )}
