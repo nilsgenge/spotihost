@@ -14,9 +14,10 @@
   --text-soft: #9ca3af;
 
   /* Chart Specific Colors */
-  --chart-grid: rgba(255, 255, 255, 0.08);     /* Subtle grid lines */
-  --chart-axis: var(--text-secondary);          /* Axis lines & ticks */
-  --cursor-line: var(--text-soft);              /* Hover cursor line */
+  --chart-grid: rgba(255, 255, 255, 0.08);
+  --chart-axis: var(--text-secondary);
+  --cursor-line: var(--text-soft);
+  --chart-cursor-fill: rgba(255, 255, 255, 0.03);
   
   /* Layout */
   --navbar-height: 15px;
@@ -378,7 +379,7 @@ input[type="number"] {
   padding: 0.75rem 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   color: var(--white);
-  min-width: 140px;
+  min-width: 80px;
   text-align: center;
 }
 
@@ -386,7 +387,7 @@ input[type="number"] {
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--text-soft);
 }
 
 .chart-tooltip-value {

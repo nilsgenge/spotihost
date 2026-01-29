@@ -10,3 +10,23 @@ export interface Bucket {
 export interface ChartResponse {
   buckets: Bucket[];
 }
+
+export type BarChartCategory = "dayofweek" | "month" | "year";
+
+export interface CategoricalBucket {
+  label: string; // Display label (Mon, Jan, 2023)
+  value: number; // Always number, 0 if empty
+  key: string | number; // Internal key (0-6 for days, 1-12 for months, year for years)
+}
+
+export interface CategoricalChartResponse {
+  buckets: CategoricalBucket[];
+  category: BarChartCategory;
+  total: number; // Total plays across all buckets
+}
+
+export interface UseBarChartFilters {
+  artistId?: string;
+  albumId?: string;
+  trackId?: string;
+}

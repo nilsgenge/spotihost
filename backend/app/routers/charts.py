@@ -70,7 +70,7 @@ def format_bucket(bucket_time: datetime, range_key: RangeKey):
     return {"label": label, "start": bucket_time, "end": end_time}
 
 
-# plays
+# Minutes Line Diagram
 
 def get_minutes_buckets(
     db: Session,
@@ -104,7 +104,7 @@ def get_minutes_buckets(
     
     query = query.filter(*filters)
     
-    # Handle alltime
+    # Alltime
     if range_key == "alltime":
         start_year, end_year = calculate_alltime_range(db, query)
         
@@ -286,7 +286,7 @@ def get_track_minutes(
     )}
 
 
-# Plays
+# Plays Line Diagram
 
 def get_plays_buckets(
     db: Session,
@@ -297,6 +297,7 @@ def get_plays_buckets(
 ):
     """Core logic for fetching play COUNT buckets (not minutes)"""
     
+    # Base Query
     query = db.query(Listen.played_at)\
               .join(Track, Listen.track_id == Track.track_id)
     
@@ -305,6 +306,7 @@ def get_plays_buckets(
         Listen.skipped == False
     ]
     
+    # Apply entity filter if provided
     if entity_filter:
         model, spotify_id, _, _ = entity_filter
         if model == Artist:
@@ -489,3 +491,110 @@ def get_track_plays(
         db, range_key, start_dt, end_dt,
         entity_filter=(Track, track_id, None, None)
     )}
+
+
+# Plays Bar Diagram
+
+@router.get("/plays/categorical/{category}")
+def get_categorical_plays(
+    category: str = Path(..., description="dayofweek, month, or year"),
+    start: str = Query(...),
+    end: str = Query(...),
+    artist_id: Optional[str] = Query(None),
+    album_id: Optional[str] = Query(None),
+    track_id: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Returns play counts aggregated by category:
+    - dayofweek: 0-6 (Mon-Sun), labels: Mon, Tue, etc.
+    - month: 1-12, labels: Jan, Feb, etc.
+    - year: actual years, labels: 2020, 2021, etc.
+    """
+    try:
+        start_dt = datetime.fromisoformat(start)
+        end_dt = datetime.fromisoformat(end)
+    except ValueError:
+        raise HTTPException(400, detail="Invalid date format")
+    
+    if category not in ["dayofweek", "month", "year"]:
+        raise HTTPException(400, detail="Category must be dayofweek, month, or year")
+    
+    # Base query
+    query = db.query(Listen).filter(
+        Listen.played_at.between(start_dt, end_dt),
+        Listen.skipped == False
+    ).join(Track, Listen.track_id == Track.track_id)
+    
+    # Apply entity filters
+    if artist_id:
+        query = query.join(track_artists).join(Artist)\
+                     .filter(Artist.spotify_id == artist_id)
+    if album_id:
+        query = query.join(track_album).join(Album)\
+                     .filter(Album.spotify_id == album_id)
+    if track_id:
+        query = query.filter(Track.spotify_id == track_id)
+    
+    if category == "dayofweek":
+        results = query.with_entities(
+            func.extract('dow', Listen.played_at).label('dow'),
+            func.count(Listen.listen_id).label('plays')
+        ).group_by('dow').all()
+        
+        data_map = {}
+        for row in results:
+            pg_dow = int(row.dow)
+            iso_dow = (pg_dow - 1) % 7
+            data_map[iso_dow] = int(row.plays)
+        
+        days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        buckets = [
+            {
+                "label": days[i],
+                "value": data_map.get(i, 0),
+                "key": i
+            }
+            for i in range(7)
+        ]
+        
+    elif category == "month":
+        results = query.with_entities(
+            func.extract('month', Listen.played_at).label('m'),
+            func.count(Listen.listen_id).label('plays')
+        ).group_by('m').all()
+        
+        data_map = {int(row.m): int(row.plays) for row in results}
+        months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        buckets = [
+            {
+                "label": months[i],
+                "value": data_map.get(i + 1, 0),
+                "key": i + 1
+            }
+            for i in range(12)
+        ]
+        
+    else:  # year
+        results = query.with_entities(
+            func.extract('year', Listen.played_at).label('y'),
+            func.count(Listen.listen_id).label('plays')
+        ).group_by('y').order_by('y').all()
+        
+        buckets = [
+            {
+                "label": str(int(row.y)),
+                "value": int(row.plays),
+                "key": int(row.y)
+            }
+            for row in results
+        ]
+    
+    total_plays = sum(b["value"] for b in buckets)
+    
+    return {
+        "buckets": buckets,
+        "category": category,
+        "total": total_plays
+    }
