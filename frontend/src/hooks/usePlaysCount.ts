@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 interface UsePlaysCountReturn {
   listensCount: number;
@@ -10,7 +10,7 @@ interface UsePlaysCountReturn {
 export const usePlaysCount = (
   start: string,
   end: string,
-  timeRange: string
+  timeRange: string,
 ): UsePlaysCountReturn => {
   const [listensCount, setListensCount] = useState<number>(0);
   const [previousPlaysCount, setPreviousPlaysCount] = useState<number>(0);
@@ -22,7 +22,7 @@ export const usePlaysCount = (
       try {
         const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
         const response = await fetch(
-          `${API_URL}/listens/count?start=${encodeURIComponent(s)}&end=${encodeURIComponent(e)}`
+          `${API_URL}/stats/count?start=${encodeURIComponent(s)}&end=${encodeURIComponent(e)}`,
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -44,31 +44,55 @@ export const usePlaysCount = (
         const endDate = new Date(end);
 
         let previousStart: string, previousEnd: string;
-        
+
         switch (timeRange) {
           case "1d":
-            previousStart = new Date(startDate.getTime() - 24 * 60 * 60 * 1000).toISOString();
-            previousEnd = new Date(endDate.getTime() - 24 * 60 * 60 * 1000).toISOString();
+            previousStart = new Date(
+              startDate.getTime() - 24 * 60 * 60 * 1000,
+            ).toISOString();
+            previousEnd = new Date(
+              endDate.getTime() - 24 * 60 * 60 * 1000,
+            ).toISOString();
             break;
           case "1w":
-            previousStart = new Date(startDate.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
-            previousEnd = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+            previousStart = new Date(
+              startDate.getTime() - 7 * 24 * 60 * 60 * 1000,
+            ).toISOString();
+            previousEnd = new Date(
+              endDate.getTime() - 7 * 24 * 60 * 60 * 1000,
+            ).toISOString();
             break;
           case "4w":
-            previousStart = new Date(startDate.getTime() - 28 * 24 * 60 * 60 * 1000).toISOString();
-            previousEnd = new Date(endDate.getTime() - 28 * 24 * 60 * 60 * 1000).toISOString();
+            previousStart = new Date(
+              startDate.getTime() - 28 * 24 * 60 * 60 * 1000,
+            ).toISOString();
+            previousEnd = new Date(
+              endDate.getTime() - 28 * 24 * 60 * 60 * 1000,
+            ).toISOString();
             break;
           case "3m":
-            previousStart = new Date(startDate.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString();
-            previousEnd = new Date(endDate.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString();
+            previousStart = new Date(
+              startDate.getTime() - 90 * 24 * 60 * 60 * 1000,
+            ).toISOString();
+            previousEnd = new Date(
+              endDate.getTime() - 90 * 24 * 60 * 60 * 1000,
+            ).toISOString();
             break;
           case "6m":
-            previousStart = new Date(startDate.getTime() - 182 * 24 * 60 * 60 * 1000).toISOString();
-            previousEnd = new Date(endDate.getTime() - 182 * 24 * 60 * 60 * 1000).toISOString();
+            previousStart = new Date(
+              startDate.getTime() - 182 * 24 * 60 * 60 * 1000,
+            ).toISOString();
+            previousEnd = new Date(
+              endDate.getTime() - 182 * 24 * 60 * 60 * 1000,
+            ).toISOString();
             break;
           case "1y":
-            previousStart = new Date(startDate.getTime() - 365 * 24 * 60 * 60 * 1000).toISOString();
-            previousEnd = new Date(endDate.getTime() - 365 * 24 * 60 * 60 * 1000).toISOString();
+            previousStart = new Date(
+              startDate.getTime() - 365 * 24 * 60 * 60 * 1000,
+            ).toISOString();
+            previousEnd = new Date(
+              endDate.getTime() - 365 * 24 * 60 * 60 * 1000,
+            ).toISOString();
             break;
           default:
             previousStart = start;
@@ -77,7 +101,7 @@ export const usePlaysCount = (
 
         const [currentCount, prevCount] = await Promise.all([
           fetchListensCount(start, end),
-          fetchListensCount(previousStart, previousEnd)
+          fetchListensCount(previousStart, previousEnd),
         ]);
 
         setListensCount(currentCount);

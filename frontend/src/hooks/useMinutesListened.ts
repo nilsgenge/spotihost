@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 interface UseMinutesListenedReturn {
   value: number;
@@ -7,8 +7,8 @@ interface UseMinutesListenedReturn {
 }
 
 export const useMinutesListened = (
-  start: string, 
-  end: string
+  start: string,
+  end: string,
 ): UseMinutesListenedReturn => {
   const [minutesListened, setMinutesListened] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
@@ -19,15 +19,15 @@ export const useMinutesListened = (
       const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
       const response = await fetch(
-        `${API_URL}/listens/minutes?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`
+        `${API_URL}/stats/minutes?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
       );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       setMinutesListened(data.minutes_listened || 0);
       setError(null);
     } catch (err) {

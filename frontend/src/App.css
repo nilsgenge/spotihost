@@ -12,6 +12,11 @@
   --white: #ffffff;
   --text-secondary: #6c757d;
   --text-soft: #9ca3af;
+
+  /* Chart Specific Colors */
+  --chart-grid: rgba(255, 255, 255, 0.08);     /* Subtle grid lines */
+  --chart-axis: var(--text-secondary);          /* Axis lines & ticks */
+  --cursor-line: var(--text-soft);              /* Hover cursor line */
   
   /* Layout */
   --navbar-height: 15px;
