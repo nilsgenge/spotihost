@@ -19,13 +19,6 @@ interface DateRangeContextType {
   timeZone: string;
 }
 
-const getStartDate = (days: number): Date => {
-  const now = new Date();
-  now.setDate(now.getDate() - days);
-  now.setHours(0, 0, 0, 0);
-  return now;
-};
-
 export type DateRanges = Record<DateRangeKey, { label: string; days: number }>;
 
 export const dateRanges: DateRanges = {
@@ -49,9 +42,21 @@ export const DateRangeProvider: React.FC<{ children: React.ReactNode }> = ({
   const [timeZone, setTimeZone] = useState<string>("UTC");
 
   const { startDate, endDate } = useMemo(() => {
-    const end = new Date();
+    const now = new Date();
     const days = dateRanges[selectedRange].days;
-    const start = getStartDate(days);
+
+    const end = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+    );
+
+    const start = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate() - days,
+      ),
+    );
+
     return { startDate: start, endDate: end };
   }, [selectedRange]);
 

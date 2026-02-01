@@ -68,6 +68,11 @@ export const LineDiagram: React.FC<LineDiagramProps> = ({
             axisLine={{ stroke: "var(--chart-axis)" }}
             tickLine={{ stroke: "var(--chart-axis)" }}
             tickFormatter={(val) => (val !== null ? `${val}` : "")}
+            domain={[
+              0,
+              (dataMax: number) => Math.max(5, Math.ceil(dataMax * 1.15)),
+            ]}
+            allowDecimals={false}
           />
           <Tooltip
             content={<CustomTooltip />}

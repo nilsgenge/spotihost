@@ -16,7 +16,7 @@ const EmptyState: React.FC<{ message: string }> = ({ message }) => (
 
 const LoadingState: React.FC<{ label?: string }> = ({ label }) => (
   <div className="d-flex align-items-center justify-content-center h-100 text-secondary">
-    <div className="spinner-border spinner-border-sm me-2" role="status">
+    <div className="me-2" role="status">
       <span className="visually-hidden">Loading...</span>
     </div>
     {label && <span className="text-soft">{label}</span>}

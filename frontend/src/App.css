@@ -396,6 +396,34 @@ input[type="number"] {
   color: var(--primary-green);
 }
 
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  white-space: nowrap;
+}
+
+.chart-legend-color {
+  width: 1rem;
+  height: 1rem;
+  border-radius: var(--block-border-radius);
+  flex-shrink: 0;
+}
+
+.chart-legend-label {
+  color: var(--white);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
 
 /*    BREADCRUMBS    */
 .breadcrumb {

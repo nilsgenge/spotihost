@@ -14,19 +14,32 @@ export interface ChartResponse {
 export type BarChartCategory = "dayofweek" | "month" | "year";
 
 export interface CategoricalBucket {
-  label: string; // Display label (Mon, Jan, 2023)
-  value: number; // Always number, 0 if empty
-  key: string | number; // Internal key (0-6 for days, 1-12 for months, year for years)
+  label: string;
+  value: number;
+  key: string | number;
 }
 
 export interface CategoricalChartResponse {
   buckets: CategoricalBucket[];
   category: BarChartCategory;
-  total: number; // Total plays across all buckets
+  total: number;
 }
 
 export interface UseBarChartFilters {
   artistId?: string;
   albumId?: string;
   trackId?: string;
+}
+
+export interface PieBucket {
+  label: string;
+  value: number;
+  percentage: number;
+  color?: string | undefined;
+  [key: string]: any;
+}
+
+export interface PieChartResponse {
+  segments: PieBucket[];
+  total: number;
 }

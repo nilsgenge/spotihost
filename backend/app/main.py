@@ -5,7 +5,8 @@ from app.database import SessionLocal
 from fastapi.middleware.cors import CORSMiddleware
 from app.scheduler import start_scheduler, stop_scheduler, schedule_ingestion
 from app.ingestion import get_ingest_interval_minutes
-from app.routers import listens, database_stats, top, playing, auth, track, album, artist, health, settings, imports, stats, charts
+from app.routers import listens, database_stats, top, playing, auth, track, album, artist, health, settings, imports, stats
+from app.routers.charts import router as charts_router
 
 app = FastAPI()
 
@@ -49,5 +50,5 @@ app.include_router(auth.router)
 app.include_router(health.router)
 app.include_router(settings.router)
 app.include_router(imports.router)
-app.include_router(charts.router)
 app.include_router(stats.router)
+app.include_router(charts_router)
