@@ -5,6 +5,18 @@ import { SpotifyButton } from "../components/ui/SpotifyButton";
 import { formatFollowers } from "../utils/utils";
 import { TrackBreadcrumb } from "../components/ui/Breadcrumbs";
 import ElementBlock from "../components/ui/ElementBlock";
+import {
+  SkipRatePieDiagram,
+  CompletionRatePieDiagram,
+} from "../components/charts/PieDiagrams";
+import ContentBlock from "../components/ui/ContentBlock";
+import DateRangePicker from "../components/blocks/DateRangePicker";
+import { ArtistPlaysLineDiagram } from "../components/charts/PlaysLineDiagrams";
+import {
+  DayOfWeekBarDiagram,
+  MonthBarDiagram,
+  YearBarDiagram,
+} from "../components/charts/PlaysBarDiagrams";
 
 const Artist = () => {
   const { spotify_id } = useParams<{ spotify_id: string }>();
@@ -64,11 +76,66 @@ const Artist = () => {
       </div>
 
       <Separator />
+      <div className="row mb-3 text-center">
+        <DateRangePicker />
+      </div>
 
-      <div className="d-flex flex-row gap-4">
+      <div className="row mb-3">
+        <div className="col d-flex flex-wrap gap-3">
+          <ContentBlock title="Listening Activity">
+            <ArtistPlaysLineDiagram
+              artistId={spotify_id!}
+              artistName={artist.name}
+            />
+          </ContentBlock>
+        </div>
+      </div>
+
+      <div className="row mb-3">
+        <div className="col d-flex flex-wrap gap-3">
+          <ContentBlock title="Skip Rate - Alltime">
+            <SkipRatePieDiagram
+              donut={true}
+              filters={{ artistId: spotify_id }}
+              allTime
+            />
+          </ContentBlock>
+        </div>
+        <div className="col d-flex flex-wrap gap-3">
+          <ContentBlock title="Completion Rate - Alltime">
+            <CompletionRatePieDiagram
+              donut={true}
+              filters={{ artistId: spotify_id }}
+              allTime
+            />
+          </ContentBlock>
+        </div>
+      </div>
+
+      <div className="row mb-3">
+        <div className="col d-flex flex-wrap gap-3">
+          <ContentBlock title="Plays per Day - Alltime">
+            <DayOfWeekBarDiagram artistId={spotify_id} allTime />
+          </ContentBlock>
+        </div>
+        <div className="col d-flex flex-wrap gap-3">
+          <ContentBlock title="Plays per Month - Alltime">
+            <MonthBarDiagram artistId={spotify_id} allTime />
+          </ContentBlock>
+        </div>
+        <div className="col d-flex flex-wrap gap-3">
+          <ContentBlock title="Plays per Year - Alltime">
+            <YearBarDiagram artistId={spotify_id} allTime />
+          </ContentBlock>
+        </div>
+      </div>
+
+      <Separator />
+
+      <div className="row mb-3">
         <div className="w-50">
-          <h2 className="h4 mb-3">Tracks</h2>
-          <div className="d-flex flex-column gap-2">
+          <h2 className="h4 mb-3">Top Tracks</h2>
+          <div className="col d-flex flex-wrap gap-2">
             {artist.tracks.map((track) => (
               <ElementBlock
                 key={track.spotify_id}
@@ -85,8 +152,8 @@ const Artist = () => {
         </div>
 
         <div className="w-50">
-          <h2 className="h4 mb-3">Albums</h2>
-          <div className="d-flex flex-column gap-2">
+          <h2 className="h4 mb-3">Top Albums</h2>
+          <div className="col d-flex flex-wrap gap-2">
             {artist.albums.map((album) => (
               <ElementBlock
                 key={album.spotify_id}

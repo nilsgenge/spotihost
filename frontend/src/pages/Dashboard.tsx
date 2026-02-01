@@ -5,8 +5,6 @@ import { useDateRange } from "../context/DateRangeContext";
 
 import DateRangePicker from "../components/blocks/DateRangePicker";
 import Separator from "../components/ui/Separator";
-import ContentBlock from "../components/ui/ContentBlock";
-import LineDiagram from "../components/blocks/MinutesDiagram";
 import PlayingStatus from "../components/blocks/PlayingStatusRow";
 import HistoryBlock from "../components/blocks/HistoryBlock";
 import TopRankingBlock from "../components/blocks/TopRankingBlock";
@@ -17,6 +15,8 @@ import StatsArtistsBlock from "../components/blocks/StatsArtistsBlock";
 import StatsMinutesBlock from "../components/blocks/StatsMinutesBlock";
 import StatsPlaysBlock from "../components/blocks/StatsPlaysBlock";
 import { usePlayerDetails } from "../hooks/usePlayerDetails";
+import ContentBlock from "../components/ui/ContentBlock";
+import { TotalMinutesLineDiagram } from "../components/charts/MinutesLineDiagrams";
 
 const Dashboard: FC = () => {
   const navigate = useNavigate();
@@ -78,8 +78,8 @@ const Dashboard: FC = () => {
       {/* Diagram */}
       <div className="row mb-3 text-center">
         <div className="col">
-          <ContentBlock title={"Minutes listened"}>
-            <LineDiagram />
+          <ContentBlock title="Total Minutes Listened">
+            <TotalMinutesLineDiagram />
           </ContentBlock>
         </div>
       </div>

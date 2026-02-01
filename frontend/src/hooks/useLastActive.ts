@@ -10,7 +10,7 @@ interface UseLastActiveReturn {
 
 const useLastActive = (
   mostRecentTimestamp: Date | null | undefined,
-  playerData: UsePlayerReturn
+  playerData: UsePlayerReturn,
 ): UseLastActiveReturn => {
   const [value, setValue] = useState<string>("");
   const [title, setTitle] = useState<string>("");
@@ -27,24 +27,29 @@ const useLastActive = (
         setTitle("Last Active");
         return;
       }
-      
+
       if (playerData.isPlaying) {
         setValue("Active Now");
         setTitle("");
         setLoading(false);
-        return; 
+        return;
       }
 
-      
-      if (!mostRecentTimestamp || !(mostRecentTimestamp instanceof Date) || isNaN(mostRecentTimestamp.getTime())) {
-        setValue("-"); 
+      if (
+        !mostRecentTimestamp ||
+        !(mostRecentTimestamp instanceof Date) ||
+        isNaN(mostRecentTimestamp.getTime())
+      ) {
+        setValue("-");
         setTitle("Last active");
         setLoading(false);
         return;
       }
 
       const now = new Date();
-      const diffInSeconds = Math.floor((now.getTime() - mostRecentTimestamp.getTime()) / 1000);
+      const diffInSeconds = Math.floor(
+        (now.getTime() - mostRecentTimestamp.getTime()) / 1000,
+      );
 
       let calculatedValue = "";
       let calculatedTitle = "Last active";
@@ -62,7 +67,6 @@ const useLastActive = (
 
       setValue(calculatedValue);
       setTitle(calculatedTitle);
-
     } catch (err) {
       console.error("Error calculating last active time:", err);
       setError("Data unavailable");

@@ -15,8 +15,8 @@ export const useListeningStreak = (): UseListeningStreakReturn => {
     const fetchListeningStreak = async () => {
       try {
         const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-        const response = await fetch(`${API_URL}/listens/streak`);
-        
+        const response = await fetch(`${API_URL}/stats/streak`);
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
