@@ -40,6 +40,7 @@ interface DayOfWeekProps extends BaseProps {
   artistId?: string;
   albumId?: string;
   trackId?: string;
+  allTime?: boolean;
 }
 
 export const DayOfWeekBarDiagram: React.FC<DayOfWeekProps> = ({
@@ -69,6 +70,7 @@ interface MonthProps extends BaseProps {
   artistId?: string;
   albumId?: string;
   trackId?: string;
+  allTime?: boolean;
 }
 
 export const MonthBarDiagram: React.FC<MonthProps> = ({
@@ -98,6 +100,7 @@ interface YearProps extends BaseProps {
   artistId?: string;
   albumId?: string;
   trackId?: string;
+  allTime?: boolean;
 }
 
 export const YearBarDiagram: React.FC<YearProps> = ({
@@ -128,6 +131,7 @@ interface PlaysBarDiagramProps extends BaseProps {
   artistId?: string;
   albumId?: string;
   trackId?: string;
+  allTime?: boolean;
 }
 
 export const PlaysBarDiagram: React.FC<PlaysBarDiagramProps> = ({

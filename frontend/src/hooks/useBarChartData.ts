@@ -23,8 +23,12 @@ export const useBarChartData = (
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
 
+  // Use wide date range for alltime, otherwise use context dates
+  const queryStart = filters.allTime ? "1950-01-01T00:00:00Z" : startUtcIso;
+  const queryEnd = filters.allTime ? "2099-12-31T23:59:59Z" : endUtcIso;
+
   useEffect(() => {
-    if (!startUtcIso || !endUtcIso) {
+    if (!queryStart || !queryEnd) {
       setData([]);
       return;
     }
@@ -35,8 +39,8 @@ export const useBarChartData = (
 
       try {
         const params = new URLSearchParams({
-          start: startUtcIso,
-          end: endUtcIso,
+          start: queryStart,
+          end: queryEnd,
         });
 
         if (filters.artistId) params.append("artist_id", filters.artistId);
@@ -67,11 +71,12 @@ export const useBarChartData = (
     fetchData();
   }, [
     category,
-    startUtcIso,
-    endUtcIso,
+    queryStart,
+    queryEnd,
     filters.artistId,
     filters.albumId,
     filters.trackId,
+    filters.allTime,
   ]);
 
   return { data, loading, error, total };

@@ -29,6 +29,7 @@ export interface UseBarChartFilters {
   artistId?: string;
   albumId?: string;
   trackId?: string;
+  allTime?: boolean;
 }
 
 export interface PieBucket {

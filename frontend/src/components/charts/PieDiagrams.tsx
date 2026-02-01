@@ -9,9 +9,9 @@ interface DiagramProps {
   height?: number;
   donut?: boolean;
   filters?: UseBarChartFilters;
+  allTime?: boolean;
 }
 
-// Color mappings
 const skipColors: Record<string, string> = {
   Skipped: "var(--danger-red)",
   "Full Listen": "var(--primary-green)",
@@ -46,8 +46,12 @@ export const SkipRatePieDiagram: React.FC<DiagramProps> = ({
   height = 400,
   donut = true,
   filters = {},
+  allTime,
 }) => {
-  const { data, loading, error, total } = useSkipRateData(filters);
+  const { data, loading, error, total } = useSkipRateData({
+    ...filters,
+    allTime,
+  });
 
   if (loading) return <LoadingState label="Loading skip rate..." />;
   if (error) return <EmptyState message={`Error: ${error}`} />;
@@ -74,8 +78,12 @@ export const CompletionRatePieDiagram: React.FC<DiagramProps> = ({
   height = 400,
   donut = true,
   filters = {},
+  allTime,
 }) => {
-  const { data, loading, error, total } = useCompletionRateData(filters);
+  const { data, loading, error, total } = useCompletionRateData({
+    ...filters,
+    allTime,
+  });
 
   if (loading) return <LoadingState label="Loading completion rate..." />;
   if (error) return <EmptyState message={`Error: ${error}`} />;

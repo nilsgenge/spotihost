@@ -42,8 +42,11 @@ export const useSkipRateData = (
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
 
+  const queryStart = filters.allTime ? "1950-01-01T00:00:00Z" : startUtcIso;
+  const queryEnd = filters.allTime ? "2099-12-31T23:59:59Z" : endUtcIso;
+
   useEffect(() => {
-    if (!startUtcIso || !endUtcIso) {
+    if (!queryStart || !queryEnd) {
       setData([]);
       return;
     }
@@ -54,8 +57,8 @@ export const useSkipRateData = (
       try {
         const result = await fetchPieData(
           "skip-rate",
-          startUtcIso,
-          endUtcIso,
+          queryStart,
+          queryEnd,
           filters,
         );
         setData(result.segments);
@@ -71,11 +74,12 @@ export const useSkipRateData = (
 
     fetchData();
   }, [
-    startUtcIso,
-    endUtcIso,
+    queryStart,
+    queryEnd,
     filters.artistId,
     filters.albumId,
     filters.trackId,
+    filters.allTime,
   ]);
 
   return { data, loading, error, total };
@@ -90,8 +94,11 @@ export const useCompletionRateData = (
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
 
+  const queryStart = filters.allTime ? "1950-01-01T00:00:00Z" : startUtcIso;
+  const queryEnd = filters.allTime ? "2099-12-31T23:59:59Z" : endUtcIso;
+
   useEffect(() => {
-    if (!startUtcIso || !endUtcIso) {
+    if (!queryStart || !queryEnd) {
       setData([]);
       return;
     }
@@ -102,8 +109,8 @@ export const useCompletionRateData = (
       try {
         const result = await fetchPieData(
           "completion-rate",
-          startUtcIso,
-          endUtcIso,
+          queryStart,
+          queryEnd,
           filters,
         );
         setData(result.segments);
@@ -119,11 +126,12 @@ export const useCompletionRateData = (
 
     fetchData();
   }, [
-    startUtcIso,
-    endUtcIso,
+    queryStart,
+    queryEnd,
     filters.artistId,
     filters.albumId,
     filters.trackId,
+    filters.allTime,
   ]);
 
   return { data, loading, error, total };
