@@ -6,6 +6,7 @@ import {
 import ContentBlock from "../components/ui/ContentBlock";
 import Separator from "../components/ui/Separator";
 import { TotalPlaysLineDiagram } from "../components/charts/PlaysLineDiagrams";
+import DateRangePicker from "../components/blocks/DateRangePicker";
 
 const Analytics: React.FC = () => {
   return (
@@ -50,7 +51,12 @@ const Analytics: React.FC = () => {
         </div>
       </div>
 
-      {/* Charts Section */}
+      <Separator />
+
+      <div className="row mb-4 text-center">
+        <DateRangePicker />
+      </div>
+
       <div className="row g-4 mb-4">
         {/* Total Minutes */}
         <div className="col-12">
@@ -59,15 +65,17 @@ const Analytics: React.FC = () => {
           </ContentBlock>
         </div>
 
+        <Separator />
+
         {/* Pie Charts */}
         <div className="col-12 col-lg-6">
-          <ContentBlock title="Skip Rate">
+          <ContentBlock title="Skip Rate - Alltime">
             <SkipRatePieDiagram height={350} donut={true} allTime />
           </ContentBlock>
         </div>
 
         <div className="col-12 col-lg-6">
-          <ContentBlock title="Completion Rate">
+          <ContentBlock title="Completion Rate - Selected Range">
             <CompletionRatePieDiagram height={350} donut={true} />
           </ContentBlock>
         </div>
