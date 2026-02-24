@@ -5,17 +5,12 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
-import { getBrowserTimeZone, toUtcIso } from "../utils/time";
 
 export type DateRangeKey = "1d" | "1w" | "4w" | "3m" | "6m" | "1y" | "alltime";
 
 interface DateRangeContextType {
   selectedRange: DateRangeKey;
   setSelectedRange: (range: DateRangeKey) => void;
-  startDate: Date;
-  endDate: Date;
-  startUtcIso: string;
-  endUtcIso: string;
   timeZone: string;
 }
 
@@ -41,44 +36,22 @@ export const DateRangeProvider: React.FC<{ children: React.ReactNode }> = ({
   const [selectedRange, setSelectedRange] = useState<DateRangeKey>("4w");
   const [timeZone, setTimeZone] = useState<string>("UTC");
 
-  const { startDate, endDate } = useMemo(() => {
-    const now = new Date();
-    const days = dateRanges[selectedRange].days;
-
-    const end = new Date(
-      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-    );
-
-    const start = new Date(
-      Date.UTC(
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDate() - days,
-      ),
-    );
-
-    return { startDate: start, endDate: end };
-  }, [selectedRange]);
-
   useEffect(() => {
-    const browserTz = getBrowserTimeZone();
-    setTimeZone(browserTz || "UTC");
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (tz) setTimeZone(tz);
+    } catch (e) {
+      console.error("Could not detect timezone", e);
+    }
   }, []);
-
-  const startUtcIso = useMemo(() => toUtcIso(startDate), [startDate]);
-  const endUtcIso = useMemo(() => toUtcIso(endDate), [endDate]);
 
   const value = useMemo(
     () => ({
       selectedRange,
       setSelectedRange,
-      startDate,
-      endDate,
-      startUtcIso,
-      endUtcIso,
       timeZone,
     }),
-    [selectedRange, startDate, endDate, startUtcIso, endUtcIso, timeZone],
+    [selectedRange, timeZone],
   );
 
   return (
@@ -93,5 +66,147 @@ export const useDateRange = () => {
   if (!context) {
     throw new Error("useDateRange must be used within a DateRangeProvider");
   }
-  return context;
+
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        setNow(new Date());
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  const { startDate, endDate } = useMemo(() => {
+    const end = now;
+    let start = new Date();
+
+    switch (context.selectedRange) {
+      case "1d":
+        start = new Date(now);
+        start.setMinutes(0, 0, 0);
+        start.setHours(start.getHours() - 24);
+        break;
+
+      case "1w": {
+        const midnight = getStartOfDayInTimezone(now, context.timeZone);
+        start = new Date(midnight);
+        start.setDate(start.getDate() - 6);
+        break;
+      }
+
+      case "4w": {
+        const midnight = getStartOfDayInTimezone(now, context.timeZone);
+        start = new Date(midnight);
+        start.setDate(start.getDate() - 29);
+        break;
+      }
+
+      case "3m": {
+        const midnight = getStartOfDayInTimezone(now, context.timeZone);
+        start = new Date(midnight);
+        start.setDate(start.getDate() - 89);
+        break;
+      }
+
+      case "6m": {
+        const midnight = getStartOfDayInTimezone(now, context.timeZone);
+        start = new Date(midnight);
+        start.setDate(start.getDate() - 179);
+        break;
+      }
+
+      case "1y": {
+        const midnight = getStartOfDayInTimezone(now, context.timeZone);
+        start = new Date(midnight);
+        start.setDate(1);
+        start.setMonth(start.getMonth() - 11);
+        break;
+      }
+
+      case "alltime":
+        start = new Date("2000-01-01T00:00:00Z");
+        break;
+
+      default:
+        start = new Date(now);
+        start.setDate(start.getDate() - 7);
+    }
+
+    return { startDate: start, endDate: end };
+  }, [context.selectedRange, context.timeZone, now]);
+
+  const startUtcIso = useMemo(() => startDate.toISOString(), [startDate]);
+  const endUtcIso = useMemo(() => endDate.toISOString(), [endDate]);
+
+  return {
+    selectedRange: context.selectedRange,
+    setSelectedRange: context.setSelectedRange,
+    startDate,
+    endDate,
+    startUtcIso,
+    endUtcIso,
+    timeZone: context.timeZone,
+  };
+};
+
+const getStartOfDayInTimezone = (date: Date, tzId: string): Date => {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: tzId,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+
+  const dateString = formatter.format(date);
+  const parts = dateString.split("-");
+  const year = parseInt(parts[0]);
+  const month = parseInt(parts[1]) - 1;
+  const day = parseInt(parts[2]);
+
+  const targetNowParts = new Intl.DateTimeFormat("en-US", {
+    timeZone: tzId,
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false,
+  }).formatToParts(date);
+
+  const getPart = (type: string) =>
+    parseInt(targetNowParts.find((p) => p.type === type)?.value || "0");
+  const targetHour = getPart("hour");
+  const targetMinute = getPart("minute");
+
+  const utcHour = date.getUTCHours();
+  const utcMinute = date.getUTCMinutes();
+  const currentOffsetMinutes =
+    utcHour * 60 + utcMinute - (targetHour * 60 + targetMinute);
+
+  const utcMidnight = new Date(Date.UTC(year, month, day, 0, 0, 0));
+  utcMidnight.setMinutes(utcMidnight.getMinutes() + currentOffsetMinutes);
+
+  return utcMidnight;
+};
+
+export const minutesToHours = (minutes: number): string =>
+  (minutes / 60).toFixed(0);
+
+export const formatDuration = (seconds: number) => {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s < 10 ? "0" : ""}${s}`;
+};
+
+export const formatFollowers = (num: number): string => {
+  return new Intl.NumberFormat("en-US", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(num);
+};
+
+export const capitalizeFirstChar = (text: string): string => {
+  if (!text) return "";
+  return text.charAt(0).toUpperCase() + text.slice(1);
 };

@@ -9,7 +9,7 @@ interface UsePlaysChartReturn {
 }
 
 const useEntityPlays = (endpoint: string | null): UsePlaysChartReturn => {
-  const { selectedRange, startUtcIso, endUtcIso } = useDateRange();
+  const { selectedRange, startUtcIso, endUtcIso, timeZone } = useDateRange();
   const [data, setData] = useState<Bucket[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,6 +29,7 @@ const useEntityPlays = (endpoint: string | null): UsePlaysChartReturn => {
           start: startUtcIso,
           end: endUtcIso,
           range_key: selectedRange,
+          timezone: timeZone,
         });
 
         const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";

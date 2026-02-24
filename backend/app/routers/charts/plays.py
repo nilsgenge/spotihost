@@ -1,17 +1,19 @@
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from datetime import datetime
+from datetime import datetime, timezone as dt_timezone
 from typing import Optional
 from app.database import get_db
 from app.models import Listen, Track
 from .utils import (
     RangeKey,
-    get_truncator,
     calculate_alltime_range,
     apply_entity_filter,
-    generate_buckets
+    generate_buckets,
+    get_utc_dt,
+    get_local_timezone
 )
+from zoneinfo import ZoneInfo
 
 router = APIRouter(prefix="/plays", tags=["charts"])
 
@@ -21,13 +23,13 @@ def get_plays_buckets(
     range_key: RangeKey,
     start_dt: datetime,
     end_dt: datetime,
+    user_tz: ZoneInfo,
     artist_id: Optional[str] = None,
     album_id: Optional[str] = None,
     track_id: Optional[str] = None
 ) -> list[dict]:
     """
     Core logic for fetching play counts aggregated by time buckets.
-    Supports optional filtering by artist, album, or track.
     """
     # Base query
     query = db.query(Listen.played_at)\
@@ -44,6 +46,13 @@ def get_plays_buckets(
     if range_key == "alltime":
         start_year, end_year = calculate_alltime_range(db, query)
         
+        query = query.filter(
+            Listen.played_at.between(
+                datetime(start_year, 1, 1, tzinfo=dt_timezone.utc),
+                datetime(end_year + 1, 1, 1, tzinfo=dt_timezone.utc)
+            )
+        )
+        
         year_data = query.with_entities(
             func.extract('year', Listen.played_at).label('y'),
             func.count(Listen.listen_id).label('play_count')
@@ -51,47 +60,55 @@ def get_plays_buckets(
         
         data_map = {int(row.y): int(row.play_count) for row in year_data}
         
-        return [
-            {
-                "label": str(y),
-                "value": data_map.get(y, 0),
-                "start": datetime(y, 1, 1).isoformat(),
-                "end": datetime(y + 1, 1, 1).isoformat()
-            }
-            for y in range(start_year, end_year + 1)
-        ]
+        start_dt = datetime(start_year, 1, 1, tzinfo=dt_timezone.utc)
+        end_dt = datetime(end_year, 12, 31, 23, 59, 59, tzinfo=dt_timezone.utc)
+        
+        return generate_buckets("alltime", start_dt, end_dt, data_map, user_tz)
     
-    # Get truncator and aggregated data
-    truncator = get_truncator(range_key)
+    # Determine truncation level for DB
+    trunc_level = "day"
+    if range_key == "1d":
+        trunc_level = "hour"
+    elif range_key == "1y":
+        trunc_level = "month"
+
+    trunc_expr = func.date_trunc(
+        trunc_level, 
+        Listen.played_at.op('AT TIME ZONE')('UTC').op('AT TIME ZONE')(user_tz.key)
+    )
     
     agg_results = query.with_entities(
-        truncator.label('bucket_time'),
+        trunc_expr.label('bucket_time'),
         func.count(Listen.listen_id).label('play_count')
-    ).group_by(truncator).order_by(truncator).all()
+    ).group_by(trunc_expr).all()
     
-    data_map = {row.bucket_time: int(row.play_count) for row in agg_results}
+    data_map = {}
+    for row in agg_results:
+        if row.bucket_time:
+            local_dt = row.bucket_time.replace(tzinfo=user_tz)
+            utc_key = local_dt.astimezone(dt_timezone.utc)
+            data_map[utc_key] = int(row.play_count)
     
-    # Generate complete bucket list
-    return generate_buckets(range_key, start_dt, end_dt, data_map)
+    return generate_buckets(range_key, start_dt, end_dt, data_map, user_tz)
 
-
-# Line chart endpoints
 
 @router.get("")
 def get_total_plays(
     start: str,
     end: str,
     range_key: RangeKey,
+    timezone: str = Query("UTC", description="User IANA timezone"),
     db: Session = Depends(get_db)
 ):
     """Get total play counts across all tracks"""
     try:
-        start_dt = datetime.fromisoformat(start)
-        end_dt = datetime.fromisoformat(end)
+        start_dt = get_utc_dt(start)
+        end_dt = get_utc_dt(end)
+        user_tz = get_local_timezone(timezone)
     except ValueError:
         raise HTTPException(400, detail="Invalid date format")
     
-    return {"buckets": get_plays_buckets(db, range_key, start_dt, end_dt)}
+    return {"buckets": get_plays_buckets(db, range_key, start_dt, end_dt, user_tz)}
 
 
 @router.get("/artist/{artist_id}")
@@ -100,17 +117,19 @@ def get_artist_plays(
     start: str = Query(...),
     end: str = Query(...),
     range_key: RangeKey = Query(...),
+    timezone: str = Query("UTC"),
     db: Session = Depends(get_db)
 ):
     """Get play counts for a specific artist"""
     try:
-        start_dt = datetime.fromisoformat(start)
-        end_dt = datetime.fromisoformat(end)
+        start_dt = get_utc_dt(start)
+        end_dt = get_utc_dt(end)
+        user_tz = get_local_timezone(timezone)
     except ValueError:
         raise HTTPException(400, detail="Invalid date format")
     
     return {"buckets": get_plays_buckets(
-        db, range_key, start_dt, end_dt, artist_id=artist_id
+        db, range_key, start_dt, end_dt, user_tz, artist_id=artist_id
     )}
 
 
@@ -120,17 +139,19 @@ def get_album_plays(
     start: str = Query(...),
     end: str = Query(...),
     range_key: RangeKey = Query(...),
+    timezone: str = Query("UTC"),
     db: Session = Depends(get_db)
 ):
     """Get play counts for a specific album"""
     try:
-        start_dt = datetime.fromisoformat(start)
-        end_dt = datetime.fromisoformat(end)
+        start_dt = get_utc_dt(start)
+        end_dt = get_utc_dt(end)
+        user_tz = get_local_timezone(timezone)
     except ValueError:
         raise HTTPException(400, detail="Invalid date format")
     
     return {"buckets": get_plays_buckets(
-        db, range_key, start_dt, end_dt, album_id=album_id
+        db, range_key, start_dt, end_dt, user_tz, album_id=album_id
     )}
 
 
@@ -140,17 +161,19 @@ def get_track_plays(
     start: str = Query(...),
     end: str = Query(...),
     range_key: RangeKey = Query(...),
+    timezone: str = Query("UTC"),
     db: Session = Depends(get_db)
 ):
     """Get play counts for a specific track"""
     try:
-        start_dt = datetime.fromisoformat(start)
-        end_dt = datetime.fromisoformat(end)
+        start_dt = get_utc_dt(start)
+        end_dt = get_utc_dt(end)
+        user_tz = get_local_timezone(timezone)
     except ValueError:
         raise HTTPException(400, detail="Invalid date format")
     
     return {"buckets": get_plays_buckets(
-        db, range_key, start_dt, end_dt, track_id=track_id
+        db, range_key, start_dt, end_dt, user_tz, track_id=track_id
     )}
 
 

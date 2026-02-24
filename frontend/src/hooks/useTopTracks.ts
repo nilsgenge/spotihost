@@ -10,7 +10,7 @@ interface TopTracksResult {
 export const useTopTracks = (
   start: string,
   end: string,
-  limit: number = 10
+  limit: number = 10,
 ): TopTracksResult => {
   const [topTracks, setTopTracks] = useState<SimpleTrack[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -25,8 +25,8 @@ export const useTopTracks = (
 
         const response = await fetch(
           `${API_URL}/top/top-tracks?start=${encodeURIComponent(
-            start
-          )}&end=${encodeURIComponent(end)}&limit=${limit}`
+            start,
+          )}&end=${encodeURIComponent(end)}&limit=${limit}`,
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

@@ -1,60 +1,49 @@
-from datetime import datetime, timedelta
-from typing import Optional, Literal, Any
+from datetime import datetime, timedelta, timezone
+from typing import Optional, Literal, Any, Dict
 from sqlalchemy.orm import Session, Query
 from sqlalchemy import func
 from app.models import Listen, Track, Artist, Album, track_artists, track_album
+from zoneinfo import ZoneInfo
+from dateutil import rrule
 
 RangeKey = Literal["1d", "1w", "4w", "3m", "6m", "1y", "alltime"]
 
+def get_utc_dt(iso_str: str) -> datetime:
+    """Parse ISO string to timezone-aware UTC datetime."""
+    dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
 
-def get_truncator(range_key: RangeKey):
-    """Return SQLAlchemy truncator for the given range key"""
-    truncators = {
-        "1d": func.date_trunc('hour', Listen.played_at),
-        "1w": func.date_trunc('day', Listen.played_at),
-        "4w": func.date_trunc('day', Listen.played_at),
-        "3m": func.date_trunc('week', Listen.played_at),
-        "6m": func.date_trunc('week', Listen.played_at),
-        "1y": func.date_trunc('month', Listen.played_at),
-        "alltime": func.extract('year', Listen.played_at)
-    }
-    return truncators[range_key]
-
+def get_local_timezone(tz_name: str) -> ZoneInfo:
+    """Safe retrieval of ZoneInfo timezone."""
+    try:
+        return ZoneInfo(tz_name)
+    except Exception:
+        return ZoneInfo("UTC")
 
 def calculate_alltime_range(db: Session, query) -> tuple[int, int]:
-    """Calculate year range for alltime view"""
+    """Calculate year range for alltime view, capped to current year."""
+    current_year = datetime.now().year
+    
     year_stats = query.with_entities(
         func.min(func.extract('year', Listen.played_at)),
         func.max(func.extract('year', Listen.played_at))
     ).first()
     
     if not year_stats[0]:
-        current = datetime.now().year
-        return (current - 3, current)
+        return (current_year - 3, current_year)
     
-    min_y, max_y = int(year_stats[0]), int(year_stats[1])
+    min_y = int(year_stats[0])
+    max_y = min(int(year_stats[1]), current_year)
+    
     start_y = min_y - 1
     end_y = max_y
+    
     if (end_y - start_y + 1) < 4:
         start_y = end_y - 3
         
     return (start_y, end_y)
-
-
-def truncate_datetime(dt: datetime, range_key: RangeKey) -> datetime:
-    """Truncate datetime to match DB truncation logic"""
-    if range_key == "1d":
-        return dt.replace(minute=0, second=0, microsecond=0)
-    elif range_key in ["1w", "4w"]:
-        return dt.replace(hour=0, minute=0, second=0, microsecond=0)
-    elif range_key in ["3m", "6m"]:
-        # Truncate to Monday of the week
-        days_since_monday = dt.weekday()
-        monday = dt - timedelta(days=days_since_monday)
-        return monday.replace(hour=0, minute=0, second=0, microsecond=0)
-    else:  # 1y
-        return dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-
 
 def apply_entity_filter(
     query: Query,
@@ -62,10 +51,7 @@ def apply_entity_filter(
     album_id: Optional[str], 
     track_id: Optional[str]
 ) -> Query:
-    """
-    Apply entity filtering to a query in priority order: track > album > artist
-    Returns the modified query
-    """
+    """Apply entity filtering to a query in priority order: track > album > artist"""
     if track_id:
         return query.filter(Track.spotify_id == track_id)
     elif album_id:
@@ -78,67 +64,78 @@ def apply_entity_filter(
 
 def generate_buckets(
     range_key: RangeKey,
-    start_dt: datetime,
-    end_dt: datetime,
-    data_map: dict
+    start_dt_utc: datetime,
+    end_dt_utc: datetime,
+    data_map: Dict[Any, int],
+    user_tz: ZoneInfo
 ) -> list[dict]:
     """
-    Generate time buckets with labels and fill with data from data_map.
-    Works for both minutes and plays - just pass the appropriate data_map.
+    Generate time buckets with labels, filling gaps with 0.
+    Handles 3-day and 7-day intervals required for 3M and 6M ranges.
     """
-    current = truncate_datetime(start_dt, range_key)
     buckets = []
     
+    start_local = start_dt_utc.astimezone(user_tz)
+    end_local = end_dt_utc.astimezone(user_tz)
+
     if range_key == "1d":
-        # Hourly buckets
-        while current < end_dt:
-            bucket_end = current + timedelta(hours=1)
+        for dt in rrule.rrule(rrule.HOURLY, dtstart=start_local, until=end_local):
+            key_utc = dt.astimezone(timezone.utc).replace(minute=0, second=0, microsecond=0)
             buckets.append({
-                "label": current.strftime("%H:%M"),
-                "value": data_map.get(current, 0),
-                "start": current.isoformat(),
-                "end": bucket_end.isoformat()
+                "label": dt.strftime("%H:%M"),
+                "value": data_map.get(key_utc, 0),
+                "start": key_utc.isoformat()
             })
-            current = bucket_end
+
+    elif range_key in ["1w", "4w", "3m", "6m"]:
+        interval_days = 1
+        if range_key == "3m": interval_days = 3
+        if range_key == "6m": interval_days = 7
+        
+        current_dt = start_local
+        
+        while current_dt <= end_local:
+            bucket_start_local = current_dt.replace(hour=0, minute=0, second=0, microsecond=0)
             
-    elif range_key in ["1w", "4w"]:
-        # Daily buckets
-        while current < end_dt:
-            bucket_end = current + timedelta(days=1)
-            buckets.append({
-                "label": current.strftime("%d %b"),
-                "value": data_map.get(current, 0),
-                "start": current.isoformat(),
-                "end": bucket_end.isoformat()
-            })
-            current = bucket_end
-            
-    elif range_key in ["3m", "6m"]:
-        # Weekly buckets
-        while current < end_dt:
-            bucket_end = current + timedelta(weeks=1)
-            buckets.append({
-                "label": f"{current.strftime('%d/%m')} - {bucket_end.strftime('%d/%m')}",
-                "value": data_map.get(current, 0),
-                "start": current.isoformat(),
-                "end": bucket_end.isoformat()
-            })
-            current = bucket_end
-            
-    else:  # 1y
-        # Monthly buckets
-        while current < end_dt:
-            if current.month == 12:
-                bucket_end = current.replace(year=current.year + 1, month=1)
+            interval_sum = 0
+            for i in range(interval_days):
+                check_date = bucket_start_local + timedelta(days=i)
+                if check_date > end_local:
+                    break
+                
+                key_utc = check_date.astimezone(timezone.utc)
+                interval_sum += data_map.get(key_utc, 0)
+
+            if interval_days == 1:
+                label = bucket_start_local.strftime("%d %b")
             else:
-                bucket_end = current.replace(month=current.month + 1)
-            
+                end_label_date = bucket_start_local + timedelta(days=interval_days - 1)
+                label = f"{bucket_start_local.strftime('%d/%m')} - {end_label_date.strftime('%d/%m')}"
+
             buckets.append({
-                "label": current.strftime("%b %Y"),
-                "value": data_map.get(current, 0),
-                "start": current.isoformat(),
-                "end": bucket_end.isoformat()
+                "label": label,
+                "value": interval_sum,
+                "start": bucket_start_local.astimezone(timezone.utc).isoformat()
             })
-            current = bucket_end
+            
+            current_dt += timedelta(days=interval_days)
+
+    elif range_key == "1y":
+        for dt in rrule.rrule(rrule.MONTHLY, dtstart=start_local, until=end_local, bymonthday=1):
+            key_utc = dt.astimezone(timezone.utc)
+            buckets.append({
+                "label": dt.strftime("%b %Y"),
+                "value": data_map.get(key_utc, 0),
+                "start": key_utc.isoformat()
+            })
+
+    elif range_key == "alltime":
+        for dt in rrule.rrule(rrule.YEARLY, dtstart=start_local, until=end_local, bymonth=1, bymonthday=1):
+            year = dt.year
+            buckets.append({
+                "label": str(year),
+                "value": data_map.get(year, 0),
+                "start": dt.isoformat()
+            })
 
     return buckets
