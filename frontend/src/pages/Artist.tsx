@@ -91,7 +91,7 @@ const Artist: React.FC = () => {
       {/* Stats Section */}
       <div className="mb-4">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h2 className="h5 mb-0">Extra Stats</h2>
+          <h2 className="h5 mb-0">Activity</h2>
         </div>
         <div className="row mb-4 text-center">
           <DateRangePicker />
@@ -108,7 +108,12 @@ const Artist: React.FC = () => {
             </ContentBlock>
           </div>
 
+          <Separator />
+
           {/* Pie Charts */}
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h2 className="h5 mb-0">Extra Stats</h2>
+          </div>
           <div className="col-12 col-lg-6">
             <ContentBlock title="Skip Rate - Alltime">
               <SkipRatePieDiagram
