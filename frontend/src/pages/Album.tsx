@@ -1,3 +1,4 @@
+import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAlbumDetails } from "../hooks/useAlbumDetails";
 import ElementBlock from "../components/ui/ElementBlock";
@@ -6,8 +7,8 @@ import { SpotifyButton } from "../components/ui/SpotifyButton";
 import { TrackBreadcrumb } from "../components/ui/Breadcrumbs";
 import { capitalizeFirstChar } from "../utils/utils";
 import DateRangePicker from "../components/blocks/DateRangePicker";
-import { AlbumPlaysLineDiagram } from "../components/charts/PlaysLineDiagrams";
 import ContentBlock from "../components/ui/ContentBlock";
+import { AlbumPlaysLineDiagram } from "../components/charts/PlaysLineDiagrams";
 import {
   SkipRatePieDiagram,
   CompletionRatePieDiagram,
@@ -18,7 +19,7 @@ import {
   YearBarDiagram,
 } from "../components/charts/PlaysBarDiagrams";
 
-const Album = () => {
+const Album: React.FC = () => {
   const { spotify_id } = useParams<{ spotify_id: string }>();
   const { album, loading, error } = useAlbumDetails(spotify_id);
 
@@ -28,6 +29,7 @@ const Album = () => {
 
   return (
     <div className="container">
+      {/* Breadcrumb */}
       <TrackBreadcrumb
         item1={{
           name: album.name,
@@ -36,7 +38,8 @@ const Album = () => {
         }}
       />
 
-      <div className="row align-items-center mb-5">
+      {/* Hero Section */}
+      <div className="row align-items-center g-4 mb-4">
         <div className="col-auto">
           <img
             src={album.image_url}
@@ -44,7 +47,6 @@ const Album = () => {
             className="rounded-3 shadow detail-image"
           />
         </div>
-
         <div className="col">
           <div className="d-flex flex-column gap-2">
             <h1 className="fw-bold mb-0">{album.name}</h1>
@@ -67,21 +69,25 @@ const Album = () => {
               <SpotifyButton type="album" spotifyId={spotify_id} />
             </div>
 
-            <div className="d-flex flex-wrap gap-4 mt-3">
+            <div className="d-flex flex-wrap gap-4 mt-3 small">
               <div>
-                <strong>Released</strong>: {album.release_date.split("-")[0]}
+                <span className="fw-bold">Released</span>:{" "}
+                {album.release_date.split("-")[0]}
               </div>
               <div>
-                <strong>Total Tracks</strong>: {album.total_tracks}
+                <span className="fw-bold">Total Tracks</span>:{" "}
+                {album.total_tracks}
               </div>
               <div>
-                <strong>Popularity</strong>: {album.popularity}/100
+                <span className="fw-bold">Popularity</span>: {album.popularity}
+                /100
               </div>
               <div>
-                <strong>Listens</strong>: {album.listen_count}
+                <span className="fw-bold">Listens</span>: {album.listen_count}
               </div>
               <div>
-                <strong>Type</strong>: {capitalizeFirstChar(album.album_type)}
+                <span className="fw-bold">Type </span>:{" "}
+                {capitalizeFirstChar(album.album_type)}
               </div>
             </div>
           </div>
@@ -89,91 +95,104 @@ const Album = () => {
       </div>
 
       <Separator />
-      <div className="row mb-3 text-center">
-        <DateRangePicker />
-      </div>
 
-      <div className="row mb-3">
-        <div className="col d-flex flex-wrap gap-3">
-          <ContentBlock title="Listening Activity">
-            <AlbumPlaysLineDiagram
-              albumId={spotify_id!}
-              albumName={album.name}
+      {/* Artists Section */}
+      <div className="mb-4">
+        <h2 className="h5 mb-3">Artists</h2>
+        <div className="d-flex flex-column gap-2">
+          {album.artists.map((artist) => (
+            <ElementBlock
+              key={artist.spotify_id}
+              image={artist.image_url}
+              title={artist.name}
+              title_url={`/artist/${artist.spotify_id}`}
+              stat={
+                artist.listen_count != 0 ? `${artist.listen_count} Listens` : ""
+              }
             />
-          </ContentBlock>
-        </div>
-      </div>
-
-      <div className="row mb-3">
-        <div className="col d-flex flex-wrap gap-3">
-          <ContentBlock title="Skip Rate - Alltime">
-            <SkipRatePieDiagram
-              donut={true}
-              filters={{ albumId: spotify_id }}
-              allTime
-            />
-          </ContentBlock>
-        </div>
-        <div className="col d-flex flex-wrap gap-3">
-          <ContentBlock title="Completion Rate - Alltime">
-            <CompletionRatePieDiagram
-              donut={true}
-              filters={{ albumId: spotify_id }}
-              allTime
-            />
-          </ContentBlock>
+          ))}
         </div>
       </div>
 
-      <div className="row mb-3">
-        <div className="col d-flex flex-wrap gap-3">
-          <ContentBlock title="Plays per Day - Alltime">
-            <DayOfWeekBarDiagram albumId={spotify_id} allTime />
-          </ContentBlock>
-        </div>
-        <div className="col d-flex flex-wrap gap-3">
-          <ContentBlock title="Plays per Month - Alltime">
-            <MonthBarDiagram albumId={spotify_id} allTime />
-          </ContentBlock>
-        </div>
-        <div className="col d-flex flex-wrap gap-3">
-          <ContentBlock title="Plays per Year - Alltime">
-            <YearBarDiagram albumId={spotify_id} allTime />
-          </ContentBlock>
+      {/* Tracks Section */}
+      <div className="mb-4">
+        <h2 className="h5 mb-3">Tracks</h2>
+        <div className="d-flex flex-column gap-2">
+          {album.tracks.map((track, index) => (
+            <ElementBlock
+              key={track.spotify_id}
+              number={index + 1}
+              image={album.image_url}
+              title={track.name}
+              title_url={`/track/${track.spotify_id}`}
+              label={track.artists}
+              stat={
+                track.listen_count != 0 ? `${track.listen_count} Listens` : ""
+              }
+            />
+          ))}
         </div>
       </div>
 
       <Separator />
 
-      <h2 className="h4 mb-3">Artists</h2>
-      <div className="d-flex flex-column gap-2 mb-4">
-        {album.artists.map((artist) => (
-          <ElementBlock
-            key={artist.spotify_id}
-            image={artist.image_url}
-            title={artist.name}
-            title_url={`/artist/${artist.spotify_id}`}
-            stat={
-              artist.listen_count != 0 ? `${artist.listen_count} Listens` : ""
-            }
-          />
-        ))}
-      </div>
+      {/* Stats Section */}
+      <div className="mb-4">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h2 className="h5 mb-0">Extra Stats</h2>
+        </div>
+        <div className="row mb-4 text-center">
+          <DateRangePicker />
+        </div>
 
-      <h2 className="h4 mb-3">Tracks</h2>
-      <div className="d-flex flex-column gap-2">
-        {album.tracks.map((track) => (
-          <ElementBlock
-            key={track.spotify_id}
-            image={album.image_url}
-            title={track.name}
-            title_url={`/track/${track.spotify_id}`}
-            label={track.artists}
-            stat={
-              track.listen_count != 0 ? `${track.listen_count} Listens` : ""
-            }
-          />
-        ))}
+        <div className="row g-4">
+          {/* Listening Activity */}
+          <div className="col-12">
+            <ContentBlock title="Listening Activity">
+              <AlbumPlaysLineDiagram
+                albumId={spotify_id!}
+                albumName={album.name}
+              />
+            </ContentBlock>
+          </div>
+
+          {/* Pie Charts */}
+          <div className="col-12 col-lg-6">
+            <ContentBlock title="Skip Rate - Alltime">
+              <SkipRatePieDiagram
+                donut={true}
+                filters={{ albumId: spotify_id }}
+                allTime
+              />
+            </ContentBlock>
+          </div>
+          <div className="col-12 col-lg-6">
+            <ContentBlock title="Completion Rate - Alltime">
+              <CompletionRatePieDiagram
+                donut={true}
+                filters={{ albumId: spotify_id }}
+                allTime
+              />
+            </ContentBlock>
+          </div>
+
+          {/* Bar Charts */}
+          <div className="col-12 col-md-6 col-lg-4">
+            <ContentBlock title="Plays per Day - Alltime">
+              <DayOfWeekBarDiagram albumId={spotify_id} allTime />
+            </ContentBlock>
+          </div>
+          <div className="col-12 col-md-6 col-lg-4">
+            <ContentBlock title="Plays per Month - Alltime">
+              <MonthBarDiagram albumId={spotify_id} allTime />
+            </ContentBlock>
+          </div>
+          <div className="col-12 col-md-6 col-lg-4">
+            <ContentBlock title="Plays per Year - Alltime">
+              <YearBarDiagram albumId={spotify_id} allTime />
+            </ContentBlock>
+          </div>
+        </div>
       </div>
     </div>
   );

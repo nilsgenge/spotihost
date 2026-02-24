@@ -21,6 +21,7 @@ interface TopRankingBlockProps {
   buttonLabel?: string;
   onButtonClick?: () => void;
   style?: CSSProperties;
+  className?: string;
 }
 
 const TopRankingBlock: FC<TopRankingBlockProps> = ({
@@ -31,6 +32,7 @@ const TopRankingBlock: FC<TopRankingBlockProps> = ({
   buttonLabel,
   onButtonClick,
   style,
+  className = "",
 }) => {
   let data: (SimpleArtist | SimpleTrack | SimpleAlbum)[] = [];
   let title = "";
@@ -57,30 +59,36 @@ const TopRankingBlock: FC<TopRankingBlockProps> = ({
     title = "Top Albums";
   }
 
+  const getItemDetails = (item: SimpleArtist | SimpleTrack | SimpleAlbum) => {
+    let title_url: string | undefined;
+    let image: string | undefined;
+    let label: ArtistLink[] | undefined;
+
+    if (type === "artists") {
+      const artist = item as SimpleArtist;
+      title_url = `/artist/${artist.spotify_id}`;
+      image = artist.image_url;
+    } else if (type === "tracks") {
+      const track = item as SimpleTrack;
+      title_url = `/track/${track.spotify_id}`;
+      image = track.cover_url;
+      label = track.artists;
+    } else if (type === "albums") {
+      const album = item as SimpleAlbum;
+      title_url = `/album/${album.spotify_id}`;
+      image = album.cover_url;
+      label = album.artists;
+    }
+
+    return { title_url, image, label };
+  };
+
+  // Render Loading or Empty State
   const renderStatusMessage = (message: string) => (
-    <div
-      className="d-flex justify-content-center align-items-center text-secondary"
-      style={{ height: "100px" }}
-    >
+    <div className="d-flex justify-content-center align-items-center text-secondary h-100">
       {message}
     </div>
   );
-
-  if (error) {
-    return (
-      <ContentBlock title={title} error={error}>
-        {renderStatusMessage("Error loading data")}
-      </ContentBlock>
-    );
-  }
-
-  if (data.length === 0 && !loading) {
-    return (
-      <ContentBlock title={title}>
-        {renderStatusMessage("No data found")}
-      </ContentBlock>
-    );
-  }
 
   return (
     <ContentBlock
@@ -88,45 +96,34 @@ const TopRankingBlock: FC<TopRankingBlockProps> = ({
       buttonLabel={buttonLabel}
       onButtonClick={onButtonClick}
       loading={loading}
+      className={`h-100 d-flex flex-column ${className}`}
       style={style}
     >
-      <div className="d-flex flex-column gap-2">
-        {data.map((item) => {
-          let title_url: string | undefined;
-          let image: string | undefined;
-          let label: ArtistLink[] | undefined;
+      {error ? (
+        renderStatusMessage("Error loading data")
+      ) : data.length === 0 && !loading ? (
+        renderStatusMessage("No data found")
+      ) : (
+        <div className="d-flex flex-column flex-grow-1 gap-2">
+          {data.map((item) => {
+            const { title_url, image, label } = getItemDetails(item);
+            const key = (item as SimpleTrack | SimpleAlbum | SimpleArtist)
+              .spotify_id;
 
-          if (type === "artists") {
-            const artist = item as SimpleArtist;
-            title_url = `/artist/${artist.spotify_id}`;
-            image = artist.image_url;
-          } else if (type === "tracks") {
-            const track = item as SimpleTrack;
-            title_url = `/track/${track.spotify_id}`;
-            image = track.cover_url;
-            label = track.artists;
-          } else if (type === "albums") {
-            const album = item as SimpleAlbum;
-            title_url = `/album/${album.spotify_id}`;
-            image = album.cover_url;
-            label = album.artists;
-          }
-
-          const key = (item as SimpleTrack | SimpleAlbum | SimpleArtist)
-            .spotify_id;
-
-          return (
-            <ElementBlock
-              key={key}
-              image={image}
-              title={item.name}
-              title_url={title_url}
-              label={label}
-              stat={`${item.listen_count} Listens`}
-            />
-          );
-        })}
-      </div>
+            return (
+              <ElementBlock
+                key={key}
+                image={image}
+                title={item.name}
+                title_url={title_url}
+                label={label}
+                stat={`${item.listen_count} Listens`}
+                fullWidth={false}
+              />
+            );
+          })}
+        </div>
+      )}
     </ContentBlock>
   );
 };

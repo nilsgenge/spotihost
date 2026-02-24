@@ -13,11 +13,11 @@ const Block: React.FC<BlockProps> = ({
   style,
   className = "",
 }) => {
-  const widthClass = fullWidth && !style ? "w-100" : "";
+  const widthClass = fullWidth ? "w-100" : "";
 
   return (
     <div
-      className={`block p-3 rounded ${widthClass} ${className}`}
+      className={`block p-3 rounded ${widthClass} ${className}`.trim()}
       style={style}
     >
       {children}

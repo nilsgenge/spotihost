@@ -71,18 +71,14 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/*    LAYOUT UTILITIES    */
-.stat-lg,
-.stat-sm {
-  flex: 1 1 250px;
-}
-
-
 /*    BLOCKS & CARDS    */
 .block {
   background-color: var(--block-dark);
   color: var(--white);
   border-radius: var(--block-border-radius);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; 
 }
 
 

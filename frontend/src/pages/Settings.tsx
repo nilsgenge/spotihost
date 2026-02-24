@@ -1,8 +1,10 @@
 import React from "react";
-import { FaUndo, FaCheck, FaExclamationTriangle } from "react-icons/fa";
+import { FaExclamationTriangle } from "react-icons/fa";
 import Separator from "../components/ui/Separator";
+import ContentBlock from "../components/ui/ContentBlock";
 import { useSettings } from "../hooks/useSettings";
 import FileImportBlock from "../components/blocks/FileImportBlock";
+import SettingItem from "../components/blocks/SettingsItem";
 
 const Settings: React.FC = () => {
   const {
@@ -19,13 +21,9 @@ const Settings: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="container">
-        <h1>Settings</h1>
-        <Separator />
-        <div className="text-center py-5">
-          <div className="text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
+      <div className="container py-5 text-center">
+        <div className="text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
         </div>
       </div>
     );
@@ -49,61 +47,48 @@ const Settings: React.FC = () => {
       <h1>Settings</h1>
       <Separator />
 
-      {/* Ingestion Settings */}
-      {settings.ingest_interval_minutes && (
-        <div className="block p-4 mb-4">
-          <div className="d-flex justify-content-between align-items-start">
-            <div className="flex-grow-1">
-              <h5 className="mb-1">Ingestion Interval</h5>
-              <small className="text-custom-muted">
-                How often the application attempts to fetch new data from
-                Spotify (in minutes)
-              </small>
-            </div>
-
-            <div className="d-flex align-items-center gap-2">
-              <input
-                type="number"
-                className="form-control text-end"
-                style={{ width: "100px" }}
-                value={localValues.ingest_interval_minutes || ""}
-                onChange={(e) =>
-                  setLocalValue("ingest_interval_minutes", e.target.value)
-                }
-                onBlur={() => saveSetting("ingest_interval_minutes")}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.currentTarget.blur();
-                    saveSetting("ingest_interval_minutes");
-                  }
-                }}
-                min="1"
-                max="999"
-                disabled={savingKey === "ingest_interval_minutes"}
-              />
-              {savingKey === "ingest_interval_minutes" && (
-                <div className="text-primary" role="status">
-                  <span className="visually-hidden">Saving...</span>
+      <div className="row g-4">
+        {/* General Settings */}
+        <div className="col-12">
+          <ContentBlock title="General Settings">
+            <div className="row g-4">
+              {/* Ingestion */}
+              {settings.ingest_interval_minutes && (
+                <div className="col-12 col">
+                  <SettingItem
+                    id="ingest_interval_minutes"
+                    label="Ingestion Interval"
+                    description="How often the application attempts to fetch new data from Spotify (in minutes)."
+                    type="number"
+                    value={localValues.ingest_interval_minutes || ""}
+                    min={1}
+                    max={999}
+                    isSaving={savingKey === "ingest_interval_minutes"}
+                    isSaved={savedKey === "ingest_interval_minutes"}
+                    onChange={(val) =>
+                      setLocalValue("ingest_interval_minutes", val)
+                    }
+                    onSave={() => saveSetting("ingest_interval_minutes")}
+                    onReset={() => resetSetting("ingest_interval_minutes")}
+                  />
                 </div>
               )}
-              {savedKey === "ingest_interval_minutes" && (
-                <FaCheck className="text-custom-success" />
-              )}
-              <button
-                className="btn btn-sm btn-outline-custom"
-                onClick={() => resetSetting("ingest_interval_minutes")}
-                disabled={savingKey === "ingest_interval_minutes"}
-                title="Reset to default"
-              >
-                <FaUndo />
-              </button>
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* File Imports */}
-      <FileImportBlock />
+            {/* Other Settings ... */}
+          </ContentBlock>
+        </div>
+
+        {/* Imports */}
+        <div className="col-12">
+          <ContentBlock
+            title="Import Listening History"
+            description="Upload JSON files from your Spotify data export to view detailed history."
+          >
+            <FileImportBlock />
+          </ContentBlock>
+        </div>
+      </div>
     </div>
   );
 };

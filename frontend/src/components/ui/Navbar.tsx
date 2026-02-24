@@ -24,6 +24,13 @@ const Navbar: React.FC = () => {
         >
           Top
         </NavLink>
+
+        <NavLink
+          className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+          to="/analytics"
+        >
+          Analytics
+        </NavLink>
       </div>
       <div className="position-absolute end-0 pe-4 d-flex align-items-center">
         {!loading && isHealthy && <LoginButton />}

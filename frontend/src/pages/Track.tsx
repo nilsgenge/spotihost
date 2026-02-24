@@ -26,8 +26,14 @@ const Track = () => {
   if (error) return <div className="container text-danger">{error}</div>;
   if (!track) return <div className="container">Track not found</div>;
 
+  const isSingleArtist = track.artists.length === 1;
+  const artistOuterColClass = isSingleArtist ? "col-lg-6" : "col-lg-7";
+  const albumOuterColClass = isSingleArtist ? "col-lg-6" : "col-lg-5";
+  const artistItemColClass = isSingleArtist ? "col-12" : "col-6";
+
   return (
     <div className="container">
+      {/* Breadcrumb */}
       <TrackBreadcrumb
         item1={{
           name: track.album.name,
@@ -37,7 +43,8 @@ const Track = () => {
         item2={track.name}
       />
 
-      <div className="row align-items-center mb-5">
+      {/* Hero Section */}
+      <div className="row align-items-center g-4 mb-4">
         <div className="col-auto">
           <img
             src={track.image_url}
@@ -45,10 +52,10 @@ const Track = () => {
             className="rounded-3 shadow detail-image"
           />
         </div>
-
         <div className="col">
           <div className="d-flex flex-column gap-2">
             <h1 className="fw-bold mb-0">{track.name}</h1>
+
             <div className="d-flex flex-wrap gap-2">
               {track.artists.map((artist, index) => (
                 <span key={artist.spotify_id}>
@@ -67,15 +74,17 @@ const Track = () => {
               <SpotifyButton type="track" spotifyId={spotify_id} />
             </div>
 
-            <div className="d-flex flex-wrap gap-4 mt-3">
+            <div className="d-flex flex-wrap gap-4 mt-3 small">
               <div>
-                <strong>Duration</strong>: {formatDuration(track.duration_s)}
+                <span className="fw-bold">Duration</span>:{" "}
+                {formatDuration(track.duration_s)}
               </div>
               <div>
-                <strong>Popularity</strong>: {track.popularity}/100
+                <span className="fw-bold">Popularity</span>: {track.popularity}
+                /100
               </div>
               <div>
-                <strong>Listens</strong>: {track.listen_count}
+                <span className="fw-bold">Listens</span>: {track.listen_count}
               </div>
             </div>
           </div>
@@ -83,85 +92,99 @@ const Track = () => {
       </div>
 
       <Separator />
-      <div className="row mb-3 text-center">
-        <DateRangePicker />
-      </div>
 
-      <div className="row mb-3">
-        <div className="col d-flex flex-wrap gap-3">
-          <ContentBlock title="Listening Activity">
-            <TrackPlaysLineDiagram
-              trackId={spotify_id!}
-              trackName={track.name}
-            />
-          </ContentBlock>
+      {/* Artists & Album Section */}
+      <div className="row g-4 mb-4">
+        <div className={`col-12 ${artistOuterColClass}`}>
+          <h2 className="h5 mb-3">Artists</h2>
+          <div className="row g-2">
+            {track.artists.map((artist) => (
+              <div className={artistItemColClass} key={artist.spotify_id}>
+                <ElementBlock
+                  image={artist.image_url}
+                  title={artist.name}
+                  title_url={`/artist/${artist.spotify_id}`}
+                  stat={`${artist.listen_count} Listens`}
+                />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="row mb-3">
-        <div className="col d-flex flex-wrap gap-3">
-          <ContentBlock title="Skip Rate - Alltime">
-            <SkipRatePieDiagram
-              donut={true}
-              filters={{ trackId: spotify_id }}
-              allTime
+        <div className={`col-12 ${albumOuterColClass}`}>
+          <h2 className="h5 mb-3">Appears on</h2>
+          <div className="d-flex flex-column gap-2">
+            <ElementBlock
+              key={track.album.spotify_id}
+              image={track.album.cover_url}
+              title={track.album.name}
+              title_url={`/album/${track.album.spotify_id}`}
+              label={track.album.artists}
+              stat={`${track.album.listen_count} Listens`}
             />
-          </ContentBlock>
-        </div>
-        <div className="col d-flex flex-wrap gap-3">
-          <ContentBlock title="Completion Rate - Alltime">
-            <CompletionRatePieDiagram
-              donut={true}
-              filters={{ trackId: spotify_id }}
-              allTime
-            />
-          </ContentBlock>
-        </div>
-      </div>
-
-      <div className="row mb-3">
-        <div className="col d-flex flex-wrap gap-3">
-          <ContentBlock title="Plays per Day - Alltime">
-            <DayOfWeekBarDiagram trackId={spotify_id} allTime />
-          </ContentBlock>
-        </div>
-        <div className="col d-flex flex-wrap gap-3">
-          <ContentBlock title="Plays per Month - Alltime">
-            <MonthBarDiagram trackId={spotify_id} allTime />
-          </ContentBlock>
-        </div>
-        <div className="col d-flex flex-wrap gap-3">
-          <ContentBlock title="Plays per Year - Alltime">
-            <YearBarDiagram trackId={spotify_id} allTime />
-          </ContentBlock>
+          </div>
         </div>
       </div>
 
       <Separator />
 
-      <h2 className="h4 mb-3">Artists</h2>
-      <div className="d-flex flex-column gap-2 mb-4">
-        {track.artists.map((artist) => (
-          <ElementBlock
-            key={artist.spotify_id}
-            image={artist.image_url}
-            title={artist.name}
-            title_url={`/artist/${artist.spotify_id}`}
-            stat={`${artist.listen_count} Listens`}
-          />
-        ))}
-      </div>
+      {/* Stats Section */}
+      <div className="mb-4">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h2 className="h5 mb-0">Extra Stats</h2>
+        </div>
+        <div className="row mb-4 text-center">
+          <DateRangePicker />
+        </div>
 
-      <h2 className="h4 mb-3">Appears on</h2>
-      <div className="d-flex flex-column gap-2">
-        <ElementBlock
-          key={track.album.spotify_id}
-          image={track.album.cover_url}
-          title={track.album.name}
-          title_url={`/album/${track.album.spotify_id}`}
-          label={track.album.artists}
-          stat={`${track.album.listen_count} Listens`}
-        />
+        <div className="row g-4">
+          {/* Listening Activity - Full Width */}
+          <div className="col-12">
+            <ContentBlock title="Listening Activity">
+              <TrackPlaysLineDiagram
+                trackId={spotify_id!}
+                trackName={track.name}
+              />
+            </ContentBlock>
+          </div>
+
+          {/* Pie Charts */}
+          <div className="col-12 col-lg-6">
+            <ContentBlock title="Skip Rate - Alltime">
+              <SkipRatePieDiagram
+                donut={true}
+                filters={{ trackId: spotify_id }}
+                allTime
+              />
+            </ContentBlock>
+          </div>
+          <div className="col-12 col-lg-6">
+            <ContentBlock title="Completion Rate - Alltime">
+              <CompletionRatePieDiagram
+                donut={true}
+                filters={{ trackId: spotify_id }}
+                allTime
+              />
+            </ContentBlock>
+          </div>
+
+          {/* Bar Charts */}
+          <div className="col-12 col-md-6 col-lg-4">
+            <ContentBlock title="Plays per Day - Alltime">
+              <DayOfWeekBarDiagram trackId={spotify_id} allTime />
+            </ContentBlock>
+          </div>
+          <div className="col-12 col-md-6 col-lg-4">
+            <ContentBlock title="Plays per Month - Alltime">
+              <MonthBarDiagram trackId={spotify_id} allTime />
+            </ContentBlock>
+          </div>
+          <div className="col-12 col-md-6 col-lg-4">
+            <ContentBlock title="Plays per Year - Alltime">
+              <YearBarDiagram trackId={spotify_id} allTime />
+            </ContentBlock>
+          </div>
+        </div>
       </div>
     </div>
   );

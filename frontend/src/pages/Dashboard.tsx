@@ -1,6 +1,5 @@
 import { type FC } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { useDateRange } from "../context/DateRangeContext";
 
 import DateRangePicker from "../components/blocks/DateRangePicker";
@@ -20,108 +19,116 @@ import { TotalMinutesLineDiagram } from "../components/charts/MinutesLineDiagram
 
 const Dashboard: FC = () => {
   const navigate = useNavigate();
-
   const { selectedRange, startDate, endDate } = useDateRange();
+  const { playerActive } = usePlayerDetails();
 
   const startISO = startDate.toISOString();
   const endISO = endDate.toISOString();
 
-  const { playerActive } = usePlayerDetails();
-
   return (
     <div className="container">
-      <h1>Dashboard</h1>
-      <div className="row mb-3 text-center">
-        <DateRangePicker />
+      {/* Header */}
+      <h1 className="mb-4">Dashboard</h1>
+
+      <div className="row mb-4 text-center">
+        <div className="col">
+          <DateRangePicker />
+        </div>
       </div>
 
       <Separator />
 
-      {playerActive && <PlayingStatus />}
+      {/* Playing Status */}
+      {playerActive && (
+        <div className="mb-4">
+          <PlayingStatus />
+        </div>
+      )}
 
-      {/* Stats */}
-      <div className="row mb-3">
-        <div className="col d-flex flex-wrap gap-3">
-          <div className="stat-sm ">
-            <StatsStreakBlock />
-          </div>
+      {/* Stats Grid */}
+      <div className="row g-4 mb-4">
+        <div className="col-6 col-lg-3">
+          <StatsStreakBlock />
+        </div>
+        <div className="col-6 col-lg-3">
+          <StatsPlaysBlock
+            startDate={startISO}
+            endDate={endISO}
+            selectedRange={selectedRange}
+          />
+        </div>
+        <div className="col-6 col-lg-3">
+          <StatsMinutesBlock startDate={startISO} endDate={endISO} />
+        </div>
+        <div className="col-6 col-lg-3">
+          <StatsArtistsBlock
+            startDate={startISO}
+            endDate={endISO}
+            selectedRange={selectedRange}
+          />
+        </div>
 
-          <div className="stat-sm">
-            <StatsPlaysBlock
-              startDate={startISO}
-              endDate={endISO}
-              selectedRange={selectedRange}
-            />
-          </div>
-
-          <div className="stat-sm">
-            <StatsMinutesBlock startDate={startISO} endDate={endISO} />
-          </div>
-
-          <div className="stat-sm">
-            <StatsArtistsBlock
-              startDate={startISO}
-              endDate={endISO}
-              selectedRange={selectedRange}
-            />
-          </div>
-          <div className="stat-lg">
-            <StatsDatabaseEntriesBlock />
-          </div>
-
-          <div className="stat-lg">
-            <StatsLastActiveBlock />
-          </div>
+        <div className="col-12 col-md-6">
+          <StatsDatabaseEntriesBlock />
+        </div>
+        <div className="col-12 col-md-6">
+          <StatsLastActiveBlock />
         </div>
       </div>
 
-      {/* Diagram */}
-      <div className="row mb-3 text-center">
-        <div className="col">
+      {/* Minutes Chart */}
+      <div className="row g-4 mb-4">
+        <div className="col-12">
           <ContentBlock title="Total Minutes Listened">
             <TotalMinutesLineDiagram />
           </ContentBlock>
         </div>
       </div>
 
-      {/* Top */}
-      <div className="d-flex flex-wrap gap-3 mb-3 align-items-stretch">
-        <TopRankingBlock
-          type="artists"
-          limit={5}
-          startDate={startISO}
-          endDate={endISO}
-          buttonLabel="Show more"
-          onButtonClick={() => navigate("/top/artists")}
-          style={{ flex: "1 1 0", minWidth: "300px" }}
-        />
+      {/* Top Rankings */}
+      <div className="row g-4 mb-4">
+        <div className="col-12 col-md-6 col-lg-4 h-100">
+          <TopRankingBlock
+            className="h-100 d-flex flex-column"
+            type="artists"
+            limit={5}
+            startDate={startISO}
+            endDate={endISO}
+            buttonLabel="Show more"
+            onButtonClick={() => navigate("/top/artists")}
+          />
+        </div>
 
-        <TopRankingBlock
-          type="tracks"
-          limit={5}
-          startDate={startISO}
-          endDate={endISO}
-          buttonLabel="Show more"
-          onButtonClick={() => navigate("/top/tracks")}
-          style={{ flex: "1 1 0", minWidth: "300px" }}
-        />
+        <div className="col-12 col-md-6 col-lg-4 h-100">
+          <TopRankingBlock
+            className="h-100 d-flex flex-column"
+            type="tracks"
+            limit={5}
+            startDate={startISO}
+            endDate={endISO}
+            buttonLabel="Show more"
+            onButtonClick={() => navigate("/top/tracks")}
+          />
+        </div>
 
-        <TopRankingBlock
-          type="albums"
-          limit={5}
-          startDate={startISO}
-          endDate={endISO}
-          buttonLabel="Show more"
-          onButtonClick={() => navigate("/top/albums")}
-          style={{ flex: "1 1 0", minWidth: "300px" }}
-        />
+        <div className="col-12 col-md-6 col-lg-4 h-100">
+          <TopRankingBlock
+            className="h-100 d-flex flex-column"
+            type="albums"
+            limit={5}
+            startDate={startISO}
+            endDate={endISO}
+            buttonLabel="Show more"
+            onButtonClick={() => navigate("/top/albums")}
+          />
+        </div>
       </div>
 
       <Separator />
 
       {/* History */}
-      <div className="row mb-3 text-center">
-        <div className="col">
+      <div className="row g-4 mb-4">
+        <div className="col-12">
           <HistoryBlock />
         </div>
       </div>

@@ -6,21 +6,25 @@ import type { CSSProperties } from "react";
 export interface ContentBlockProps {
   children: React.ReactNode;
   title: string;
+  description?: string;
   buttonLabel?: string;
   onButtonClick?: () => void;
   loading?: boolean;
   error?: string | null;
   style?: CSSProperties;
+  className?: string;
 }
 
 const ContentBlock: React.FC<ContentBlockProps> = ({
   children,
   title,
+  description,
   buttonLabel,
   onButtonClick,
   loading = false,
   error = null,
   style,
+  className = "",
 }) => {
   let displayTitle = title;
   let displayChildren = children;
@@ -48,10 +52,13 @@ const ContentBlock: React.FC<ContentBlockProps> = ({
   };
 
   return (
-    <Block fullWidth style={style}>
+    <Block fullWidth className={className} style={style}>
       <div className="d-flex flex-column h-100">
-        <div className="mb-3 d-flex">
-          <h4 className="fs-6">{displayTitle}</h4>
+        <div className="mb-3">
+          <h4 className="fs-6 mb-1">{displayTitle}</h4>
+          {description && (
+            <small className="text-custom-muted">{description}</small>
+          )}
         </div>
 
         {displayChildren && (
@@ -65,7 +72,7 @@ const ContentBlock: React.FC<ContentBlockProps> = ({
               onClick={handleClick}
               disabled={loading}
             >
-              <span className="ms-2">{buttonLabel}</span>
+              {buttonLabel}
             </button>
           </div>
         )}

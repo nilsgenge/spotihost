@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   FaUpload,
   FaCheckCircle,
-  FaSpinner,
   FaTimesCircle,
   FaTrash,
   FaRedo,
@@ -37,7 +36,6 @@ const FileImportBlock: React.FC = () => {
   const [stats, setStats] = useState<ImportStats | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch all import jobs on mount
   useEffect(() => {
     fetchImportJobs();
     fetchStats();
@@ -55,7 +53,7 @@ const FileImportBlock: React.FC = () => {
       activeJobs.forEach((job) => {
         pollJobStatus(job.id);
       });
-    }, 2000); // Poll every 2 seconds
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [files]);
@@ -94,7 +92,6 @@ const FileImportBlock: React.FC = () => {
         prev.map((file) => (file.id === jobId ? updatedJob : file)),
       );
 
-      // Refresh stats if job completed or failed
       if (updatedJob.status === "completed" || updatedJob.status === "failed") {
         fetchStats();
       }
@@ -109,16 +106,12 @@ const FileImportBlock: React.FC = () => {
     setError(null);
     setIsUploading(true);
 
-    // Upload files sequentially
     for (let i = 0; i < selectedFiles.length; i++) {
       const file = selectedFiles[i];
-
-      // Validate file type
       if (!file.name.endsWith(".json")) {
         setError(`Skipped ${file.name}: Only JSON files are supported`);
         continue;
       }
-
       await uploadFile(file);
     }
 
@@ -141,8 +134,6 @@ const FileImportBlock: React.FC = () => {
       }
 
       const result = await response.json();
-
-      // Refresh job list
       await fetchImportJobs();
     } catch (err: any) {
       console.error("Upload error:", err);
@@ -191,7 +182,6 @@ const FileImportBlock: React.FC = () => {
         throw new Error(errorData.detail || "Retry failed");
       }
 
-      // Job will be updated via polling
       await pollJobStatus(fileId);
     } catch (err: any) {
       console.error("Retry error:", err);
@@ -219,7 +209,12 @@ const FileImportBlock: React.FC = () => {
       case "pending":
       case "processing":
         return (
-          <div className="spinner-border spinner-border-sm text-primary" />
+          <div
+            className="spinner-border spinner-border-sm text-primary"
+            role="status"
+          >
+            <span className="visually-hidden">Loading...</span>
+          </div>
         );
       case "completed":
         return <FaCheckCircle className="text-custom-success" />;
@@ -230,12 +225,10 @@ const FileImportBlock: React.FC = () => {
 
   const formatDuration = (startedAt?: string, completedAt?: string): string => {
     if (!startedAt) return "";
-
     const start = new Date(startedAt);
     const end = completedAt ? new Date(completedAt) : new Date();
     const durationMs = end.getTime() - start.getTime();
     const seconds = Math.floor(durationMs / 1000);
-
     if (seconds < 60) return `${seconds}s`;
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `${minutes}m ${seconds % 60}s`;
@@ -243,49 +236,19 @@ const FileImportBlock: React.FC = () => {
     return `${hours}h ${minutes % 60}m`;
   };
 
-  const dragClasses = `
-  border border-2 rounded p-4 text-center mb-3
-  ${isDragging ? "border-primary" : "border-secondary"}
-  ${isUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
-`;
-
-  const hasFiles = files.length > 0;
-
-  const renderStat = (
-    label: string,
-    value: React.ReactNode,
-    valueClass = "",
-  ) => (
-    <div className="col-6 col-md-3">
-      <div className="text-center p-2 block">
-        <small className="text-custom-muted d-block">{label}</small>
-        <strong className={`fs-5 ${valueClass}`}>{value}</strong>
-      </div>
-    </div>
-  );
-
-  const renderStatusText = (file: any) => {
+  const renderStatusText = (file: FileImportStatus) => {
     if (file.status === "pending") return "Waiting to start...";
-
     if (file.status === "processing")
       return `Importing... ${file.imported_records?.toLocaleString() || 0} / ${file.total_records?.toLocaleString() || "?"} records`;
-
     if (file.status === "completed")
       return `✓ ${file.imported_records?.toLocaleString()} records in ${formatDuration(file.started_at, file.completed_at)}`;
-
     if (file.status === "failed")
       return `Failed: ${file.error_message || "Unknown error"}`;
+    return "";
   };
 
   return (
-    <div className="block p-4 mb-4">
-      <header className="mb-3">
-        <h5 className="mb-1">Import Listening History</h5>
-        <small className="text-custom-muted">
-          Upload JSON files from your Spotify data export
-        </small>
-      </header>
-
+    <div>
       {error && (
         <div className="alert alert-danger alert-dismissible mb-3">
           {error}
@@ -297,32 +260,54 @@ const FileImportBlock: React.FC = () => {
         </div>
       )}
 
+      {/* Stats Grid */}
       {stats && (
-        <div className="row mb-3">
-          {renderStat(
-            "Total Imported",
-            stats.total_records_imported.toLocaleString(),
-            "text-custom-success",
-          )}
-          {renderStat("Completed", stats.completed_jobs, "text-custom-success")}
-          {renderStat("Processing", stats.processing_jobs, "text-primary")}
-          {renderStat("Failed", stats.failed_jobs, "text-custom-danger")}
+        <div className="row g-3 mb-4">
+          <div className="col-6 col-md-3 text-center p-3 border border-secondary rounded">
+            <small className="text-custom-muted d-block">Total Imported</small>
+            <strong className="fs-5 text-custom-success">
+              {stats.total_records_imported.toLocaleString()}
+            </strong>
+          </div>
+          <div className="col-6 col-md-3 text-center p-3 border border-secondary rounded">
+            <small className="text-custom-muted d-block">Completed</small>
+            <strong className="fs-5 text-custom-success">
+              {stats.completed_jobs}
+            </strong>
+          </div>
+          <div className="col-6 col-md-3 text-center p-3 border border-secondary rounded">
+            <small className="text-custom-muted d-block">Processing</small>
+            <strong className="fs-5 text-primary">
+              {stats.processing_jobs}
+            </strong>
+          </div>
+          <div className="col-6 col-md-3 text-center p-3 border border-secondary rounded">
+            <small className="text-custom-muted d-block">Failed</small>
+            <strong className="fs-5 text-custom-danger">
+              {stats.failed_jobs}
+            </strong>
+          </div>
         </div>
       )}
 
+      {/* Drag and Drop Zone */}
       <div
-        className={dragClasses}
+        className={`border rounded p-4 text-center mb-3 ${
+          isDragging ? "border-primary" : "border-secondary"
+        } ${isUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() =>
           !isUploading && document.getElementById("file-input")?.click()
         }
+        style={{ background: "rgba(255, 255, 255, 0.02)" }}
       >
         <FaUpload
-          className={`fs-1 text-custom-muted mb-2 ${isUploading ? "animate-pulse" : ""}`}
+          className={`fs-1 text-custom-muted mb-2 ${
+            isUploading ? "animate-pulse" : ""
+          }`}
         />
-
         <p className="mb-0 text-custom-muted">
           {isUploading ? (
             "Uploading..."
@@ -333,7 +318,6 @@ const FileImportBlock: React.FC = () => {
             </>
           )}
         </p>
-
         <input
           id="file-input"
           type="file"
@@ -345,10 +329,12 @@ const FileImportBlock: React.FC = () => {
         />
       </div>
 
-      {hasFiles && (
+      {/* File List */}
+      {files.length > 0 && (
         <>
-          <h6 className="mb-2">Import Jobs ({files.length})</h6>
-
+          <h6 className="mb-2 text-custom-muted">
+            Import Jobs ({files.length})
+          </h6>
           <div className="list-group list-group-flush">
             {files.map((file) => {
               const isActive =
@@ -357,28 +343,30 @@ const FileImportBlock: React.FC = () => {
               return (
                 <div
                   key={file.id}
-                  className="list-group-item bg-transparent text-white border-secondary"
+                  className="list-group-item bg-transparent border-secondary py-3"
                 >
                   <div className="d-flex justify-content-between align-items-start mb-2">
-                    <div className="d-flex align-items-center gap-2 flex-grow-1">
-                      {getStatusIcon(file.status)}
+                    <div className="d-flex align-items-center gap-2 flex-grow-1 overflow-hidden">
+                      <div className="flex-shrink-0">
+                        {getStatusIcon(file.status)}
+                      </div>
 
-                      <div className="flex-grow-1">
-                        <div className="fw-bold text-truncate w-75">
+                      <div className="flex-grow-1 min-w-0">
+                        <div className="fw-bold text-truncate">
                           {file.filename}
                         </div>
-
                         <small className="text-custom-muted">
                           {renderStatusText(file)}
                         </small>
                       </div>
                     </div>
 
-                    <div className="d-flex gap-2">
+                    <div className="d-flex gap-2 flex-shrink-0">
                       {file.status === "failed" && (
                         <button
                           className="btn btn-sm btn-outline-custom"
                           onClick={() => retryJob(file.id)}
+                          title="Retry import"
                         >
                           <FaRedo />
                         </button>
@@ -391,7 +379,7 @@ const FileImportBlock: React.FC = () => {
                         title={
                           isActive
                             ? "Cannot delete while processing"
-                            : "Delete job and all imported data"
+                            : "Delete job"
                         }
                       >
                         <FaTrash />
@@ -400,7 +388,7 @@ const FileImportBlock: React.FC = () => {
                   </div>
 
                   {file.status === "failed" && file.error_message && (
-                    <div className="mt-2 p-2 bg-danger bg-opacity-10 rounded">
+                    <div className="mt-2 p-2 bg-danger bg-opacity-10 rounded border border-danger border-opacity-25">
                       <small className="text-danger">
                         {file.error_message}
                       </small>
@@ -413,7 +401,7 @@ const FileImportBlock: React.FC = () => {
         </>
       )}
 
-      {!hasFiles && !isUploading && (
+      {files.length === 0 && !isUploading && (
         <div className="text-center text-custom-muted py-4">
           No import jobs yet. Upload your Spotify listening history to get
           started.

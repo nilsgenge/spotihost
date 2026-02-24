@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDateRange } from "../context/DateRangeContext";
 import DateRangePicker from "../components/blocks/DateRangePicker";
 import Separator from "../components/ui/Separator";
@@ -7,21 +7,20 @@ import TopRankingBlock from "../components/blocks/TopRankingBlock";
 
 export type RankingType = "artists" | "tracks" | "albums";
 
+const CATEGORIES: Record<RankingType, { label: string; path: string }> = {
+  artists: { label: "Artists", path: "/top/artists" },
+  tracks: { label: "Tracks", path: "/top/tracks" },
+  albums: { label: "Albums", path: "/top/albums" },
+};
+
 const Top = () => {
   const { startDate, endDate } = useDateRange();
-  const navigate = useNavigate();
   const location = useLocation();
 
   const startISO = startDate.toISOString();
   const endISO = endDate.toISOString();
 
-  const categories: Record<RankingType, { label: string }> = {
-    artists: { label: "Artists" },
-    tracks: { label: "Tracks" },
-    albums: { label: "Albums" },
-  };
-
-  const getPathCategory = (): RankingType => {
+  const getActiveCategory = (): RankingType => {
     const path = location.pathname;
     if (path.endsWith("artists")) return "artists";
     if (path.endsWith("tracks")) return "tracks";
@@ -29,52 +28,47 @@ const Top = () => {
     return "artists";
   };
 
-  const [selectedCategory, setSelectedCategory] =
-    useState<RankingType>(getPathCategory);
-
-  useEffect(() => {
-    setSelectedCategory(getPathCategory());
-  }, [location.pathname]);
-
-  const handleCategoryChange = (category: RankingType) => {
-    setSelectedCategory(category);
-    navigate(`/top/${category}`);
-  };
+  const activeCategory = getActiveCategory();
 
   return (
     <div className="container">
-      <h1>Top</h1>
+      <h1 className="mb-4">Top</h1>
+
       <div className="row mb-4 text-center">
-        <DateRangePicker />
+        <div className="col">
+          <DateRangePicker />
+        </div>
       </div>
 
-      <div className="row mb-3 text-center">
+      {/* Tab Navigation */}
+      <div className="row mb-3 justify-content-center">
         <div className="col">
           <div className="d-flex gap-2 flex-wrap">
-            {Object.entries(categories).map(([key, { label }]) => (
-              <button
-                key={key}
-                className={`btn ${
-                  selectedCategory === key
-                    ? "btn-primary"
-                    : "btn-outline-custom"
-                }`}
-                onClick={() => handleCategoryChange(key as RankingType)}
-              >
-                {label}
-              </button>
-            ))}
+            {Object.entries(CATEGORIES).map(([key, { label, path }]) => {
+              const isActive = activeCategory === key;
+              return (
+                <Link
+                  key={key}
+                  to={path}
+                  className={`btn ${
+                    isActive ? "btn-primary" : "btn-outline-custom"
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
 
       <Separator />
 
-      <div className="row mb-3 text-center">
+      <div className="row justify-content-center g-4">
         <div className="col">
           <TopRankingBlock
-            key={selectedCategory}
-            type={selectedCategory}
+            key={activeCategory}
+            type={activeCategory}
             limit={30}
             startDate={startISO}
             endDate={endISO}

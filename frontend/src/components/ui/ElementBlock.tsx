@@ -10,6 +10,9 @@ interface ElementBlockProps {
   title_url?: string;
   label?: ArtistLink[];
   stat?: string;
+  className?: string;
+  number?: number | string;
+  fullWidth?: boolean;
 }
 
 const ElementBlock: React.FC<ElementBlockProps> = ({
@@ -18,20 +21,26 @@ const ElementBlock: React.FC<ElementBlockProps> = ({
   label,
   stat,
   title_url,
+  number,
+  className = "",
+  fullWidth = true,
 }) => {
   const renderImage = () => {
-    if (image) {
-      return (
-        <div
-          className="element-cover rounded-2 element-image"
-          style={{ backgroundImage: `url(${image})` }}
-        />
-      );
-    }
+    const imageStyle = image ? { backgroundImage: `url(${image})` } : {};
+    const ariaLabel = image ? `${title} cover art` : "No cover art available";
 
     return (
-      <div className="element-cover rounded bg-primary text-white d-flex align-items-center justify-content-center">
-        <FaQuestion />
+      <div
+        role="img"
+        aria-label={ariaLabel}
+        className={`element-cover rounded-2 element-image ${
+          !image
+            ? "bg-primary text-white d-flex align-items-center justify-content-center"
+            : ""
+        }`}
+        style={imageStyle}
+      >
+        {!image && <FaQuestion aria-hidden="true" />}
       </div>
     );
   };
@@ -41,9 +50,10 @@ const ElementBlock: React.FC<ElementBlockProps> = ({
 
     return label.map((artist, index) => {
       const isLast = index === label.length - 1;
+      const key = artist.url || index;
 
       return (
-        <React.Fragment key={index}>
+        <React.Fragment key={key}>
           {artist.url ? (
             <Link to={artist.url} className="text-reset hover-underline">
               {artist.name}
@@ -57,26 +67,49 @@ const ElementBlock: React.FC<ElementBlockProps> = ({
     });
   };
 
+  const titleContent = title_url ? (
+    <Link
+      to={title_url}
+      className="fw-bold text-reset hover-underline text-truncate d-block"
+      title={title}
+    >
+      {title}
+    </Link>
+  ) : (
+    <div className="fw-bold text-truncate" title={title}>
+      {title}
+    </div>
+  );
+
   return (
-    <Block fullWidth>
-      <div className="d-flex align-items-center gap-3">
+    <Block fullWidth={fullWidth} className={`min-w-0 ${className}`}>
+      <div className="d-flex align-items-center gap-3 w-100 min-w-0">
+        {number !== undefined && (
+          <div
+            className="text-custom-muted small flex-shrink-0 text-end me-2"
+            style={{ width: "24px" }}
+          >
+            {number}
+          </div>
+        )}
+
         <div className="flex-shrink-0">{renderImage()}</div>
-        <div className="flex-grow-1 text-start">
-          {title_url ? (
-            <Link to={title_url} className="fw-bold text-reset hover-underline">
-              {title}
-            </Link>
-          ) : (
-            <div className="fw-bold">{title}</div>
-          )}
+
+        <div className="flex-grow-1 text-start min-w-0 text-truncate">
+          {titleContent}
 
           {label && label.length > 0 && (
-            <div className="text-custom-muted small">{renderArtists()}</div>
+            <div className="text-custom-muted small text-truncate">
+              {renderArtists()}
+            </div>
           )}
         </div>
-        <div className="text-end">
-          <div className="text-custom-muted small">{stat}</div>
-        </div>
+
+        {stat && (
+          <div className="text-end">
+            <div className="text-custom-muted small text-nowrap">{stat}</div>
+          </div>
+        )}
       </div>
     </Block>
   );

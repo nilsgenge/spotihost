@@ -1,4 +1,3 @@
-// App.tsx
 import "./App.css";
 import React from "react";
 import {
@@ -18,6 +17,7 @@ import Album from "./pages/Album";
 import { HealthProvider, useHealth } from "./context/HealthContext";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import Analytics from "./pages/Analytics";
 
 const AppContent: React.FC = () => {
   const { statusComponent } = useHealth();
@@ -46,6 +46,7 @@ const AppContent: React.FC = () => {
         <Route path="/album/:spotify_id" element={<Album />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/analytics" element={<Analytics />} />
       </Routes>
     </DateRangeProvider>
   );
