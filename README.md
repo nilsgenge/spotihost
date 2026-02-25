@@ -125,7 +125,9 @@ docker compose ps
 ```
 Look for spotihost-app and spotihost-db.
 
-
+## Contributing
+I appreciate any contributions you this project! Whether you’re reporting a bug, suggesting a new feature, or submitting a pull request. Your input helps shape the project and makes it better for everyone.
+Don’t hesitate to open an issue or share your ideas.
 
 
 
