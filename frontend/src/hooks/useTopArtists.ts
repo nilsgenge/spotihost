@@ -10,7 +10,7 @@ interface TopArtistsResult {
 export const useTopArtists = (
   start: string,
   end: string,
-  limit: number = 10
+  limit: number = 10,
 ): TopArtistsResult => {
   const [topArtists, setTopArtists] = useState<SimpleArtist[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -21,12 +21,10 @@ export const useTopArtists = (
       setLoading(true);
       setError(null);
       try {
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
         const response = await fetch(
-          `${API_URL}/top/top-artists?start=${encodeURIComponent(
-            start
-          )}&end=${encodeURIComponent(end)}&limit=${limit}`
+          `/api/top/top-artists?start=${encodeURIComponent(
+            start,
+          )}&end=${encodeURIComponent(end)}&limit=${limit}`,
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

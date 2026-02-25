@@ -1,4 +1,4 @@
-import React, { type FC } from "react";
+import { type FC } from "react";
 import { FaUndo, FaCheck } from "react-icons/fa";
 import ContentBlock from "../ui/ContentBlock";
 

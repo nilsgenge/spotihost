@@ -27,8 +27,6 @@ interface ImportStats {
   total_records_imported: number;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
 const FileImportBlock: React.FC = () => {
   const [files, setFiles] = useState<FileImportStatus[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -60,7 +58,7 @@ const FileImportBlock: React.FC = () => {
 
   const fetchImportJobs = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/imports/jobs`);
+      const response = await fetch(`/api/imports/jobs`);
       if (!response.ok) throw new Error("Failed to fetch jobs");
       const data = await response.json();
       setFiles(data);
@@ -72,7 +70,7 @@ const FileImportBlock: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/imports/stats`);
+      const response = await fetch(`/api/imports/stats`);
       if (!response.ok) throw new Error("Failed to fetch stats");
       const data = await response.json();
       setStats(data);
@@ -83,7 +81,7 @@ const FileImportBlock: React.FC = () => {
 
   const pollJobStatus = async (jobId: number) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/imports/jobs/${jobId}`);
+      const response = await fetch(`/api/imports/jobs/${jobId}`);
       if (!response.ok) return;
 
       const updatedJob = await response.json();
@@ -123,7 +121,7 @@ const FileImportBlock: React.FC = () => {
     formData.append("file", file);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/imports/upload`, {
+      const response = await fetch(`/api/imports/upload`, {
         method: "POST",
         body: formData,
       });
@@ -133,7 +131,7 @@ const FileImportBlock: React.FC = () => {
         throw new Error(errorData.detail || "Upload failed");
       }
 
-      const result = await response.json();
+      /* const result = await response.json(); */
       await fetchImportJobs();
     } catch (err: any) {
       console.error("Upload error:", err);
@@ -151,7 +149,7 @@ const FileImportBlock: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/imports/jobs/${fileId}`, {
+      const response = await fetch(`/api/imports/jobs/${fileId}`, {
         method: "DELETE",
       });
 
@@ -170,12 +168,9 @@ const FileImportBlock: React.FC = () => {
 
   const retryJob = async (fileId: number) => {
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/imports/jobs/${fileId}/retry`,
-        {
-          method: "POST",
-        },
-      );
+      const response = await fetch(`/api/imports/jobs/${fileId}/retry`, {
+        method: "POST",
+      });
 
       if (!response.ok) {
         const errorData = await response.json();

@@ -1,0 +1,45 @@
+# Development Overrides
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+# This adds:
+# - Hot reload for backend and frontend
+# - Source code volume mounts
+# - Exposed ports for debugging
+
+services:
+  db:
+    ports:
+      - "5432:5432"
+
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend:/app
+      - ./temp_imports:/app/temp_imports
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000,http://localhost:5173}
+    ports:
+      - "8000:8000"
+    networks:
+      - spotihost-internal
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: spotihost-frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=
+    depends_on:
+      - app
+    networks:
+      - spotihost-internal

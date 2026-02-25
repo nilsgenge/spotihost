@@ -24,10 +24,7 @@ const fetchPieData = async (
   if (filters.albumId) params.append("album_id", filters.albumId);
   if (filters.trackId) params.append("track_id", filters.trackId);
 
-  const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
-  const response = await fetch(
-    `${API_URL}/charts/${endpoint}?${params.toString()}`,
-  );
+  const response = await fetch(`/api/charts/${endpoint}?${params.toString()}`);
 
   if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
   return response.json();

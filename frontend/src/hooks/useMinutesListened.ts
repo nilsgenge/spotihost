@@ -16,10 +16,8 @@ export const useMinutesListened = (
 
   const fetchMinutesListened = async () => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
       const response = await fetch(
-        `${API_URL}/stats/minutes?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
+        `/api/stats/minutes?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
       );
 
       if (!response.ok) {

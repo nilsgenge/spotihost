@@ -47,9 +47,8 @@ export const useBarChartData = (
         if (filters.albumId) params.append("album_id", filters.albumId);
         if (filters.trackId) params.append("track_id", filters.trackId);
 
-        const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
         const response = await fetch(
-          `${API_URL}/charts/plays/categorical/${category}?${params.toString()}`,
+          `/api/charts/plays/categorical/${category}?${params.toString()}`,
         );
 
         if (!response.ok)

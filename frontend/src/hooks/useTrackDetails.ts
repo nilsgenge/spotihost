@@ -8,7 +8,7 @@ interface UseTrackDetailsReturn {
 }
 
 export const useTrackDetails = (
-  spotifyId: string | undefined
+  spotifyId: string | undefined,
 ): UseTrackDetailsReturn => {
   const [track, setTrack] = useState<AdvancedTrack | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -25,10 +25,7 @@ export const useTrackDetails = (
       try {
         setLoading(true);
 
-        const API_URL =
-          import.meta.env.VITE_API_URL || "http://localhost:8000";
-
-        const response = await fetch(`${API_URL}/track/${spotifyId}`);
+        const response = await fetch(`/api/track/${spotifyId}`);
 
         if (!response.ok) {
           if (response.status === 404) {

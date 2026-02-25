@@ -1,6 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import { useState, useEffect, useCallback } from "react";
 
 export interface HealthCheck {
   status: "healthy" | "unhealthy";
@@ -36,11 +34,12 @@ export function useHealthCheck(): UseHealthCheckReturn {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`${API_URL}/health`);
+      const response = await fetch(`/api/health`);
       const data: HealthCheck = await response.json();
       setHealth(data);
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to fetch health status');
+      const error =
+        err instanceof Error ? err : new Error("Failed to fetch health status");
       setError(error);
       setHealth(null);
     } finally {
@@ -52,9 +51,9 @@ export function useHealthCheck(): UseHealthCheckReturn {
     fetchHealth();
   }, [fetchHealth]);
 
-  const isHealthy = health?.status === 'healthy';
-  const isDatabaseHealthy = health?.checks.database.status === 'healthy';
-  const isBackendHealthy = health?.checks.backend.status === 'healthy';
+  const isHealthy = health?.status === "healthy";
+  const isDatabaseHealthy = health?.checks.database.status === "healthy";
+  const isBackendHealthy = health?.checks.backend.status === "healthy";
 
   return {
     health,

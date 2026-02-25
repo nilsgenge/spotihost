@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 interface SettingData {
   value: string;
@@ -32,25 +32,23 @@ export const useSettings = (): UseSettingsReturn => {
   const [savedKey, setSavedKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
   const fetchSettings = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await fetch(`${API_URL}/settings`);
-      
+
+      const response = await fetch(`/api/settings/`);
+
       if (!response.ok) {
         throw new Error(`Failed to fetch settings: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setSettings(data);
-      
+
       // Initialize local values with fetched data
       const initialLocalValues: { [key: string]: string } = {};
-      Object.keys(data).forEach(key => {
+      Object.keys(data).forEach((key) => {
         initialLocalValues[key] = data[key].value;
       });
       setLocalValues(initialLocalValues);
@@ -60,100 +58,110 @@ export const useSettings = (): UseSettingsReturn => {
     } finally {
       setLoading(false);
     }
-  }, [API_URL]);
+  }, [`/api`]);
 
   const setLocalValue = useCallback((key: string, value: string) => {
-    setLocalValues(prev => ({
+    setLocalValues((prev) => ({
       ...prev,
       [key]: value,
     }));
   }, []);
 
-  const saveSetting = useCallback(async (key: string, newValue?: string) => {
-    const value = newValue ?? localValues[key];
-    
-    // Don't save if value hasn't changed
-    if (settings[key]?.value === value) {
-      return;
-    }
+  const saveSetting = useCallback(
+    async (key: string, newValue?: string) => {
+      const value = newValue ?? localValues[key];
 
-    setSavingKey(key);
-    setSavedKey(null);
-    setError(null);
-    
-    try {
-      const response = await fetch(`${API_URL}/settings/${key}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ value }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update setting: ${response.status}`);
+      // Don't save if value hasn't changed
+      if (settings[key]?.value === value) {
+        return;
       }
 
-      setSettings((prev) => ({
-        ...prev,
-        [key]: { ...prev[key], value },
-      }));
-      
-      // Update local value to match saved value
-      setLocalValues(prev => ({
-        ...prev,
-        [key]: value,
-      }));
+      setSavingKey(key);
+      setSavedKey(null);
+      setError(null);
 
-      setSavedKey(key);
-      setTimeout(() => setSavedKey(null), 2000);
-    } catch (err) {
-      console.error("Failed to update setting:", err);
-      setError(err instanceof Error ? err.message : "Failed to update setting");
-      
-      // Revert local value on error
-      setLocalValues(prev => ({
-        ...prev,
-        [key]: settings[key]?.value || '',
-      }));
-    } finally {
-      setSavingKey(null);
-    }
-  }, [API_URL, localValues, settings]);
+      try {
+        const response = await fetch(`/api/settings/${key}/`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ value }),
+        });
 
-  const resetSetting = useCallback(async (key: string) => {
-    setSavingKey(key);
-    setSavedKey(null);
-    setError(null);
-    
-    try {
-      const response = await fetch(`${API_URL}/settings/${key}/reset`, {
-        method: "POST",
-      });
+        if (!response.ok) {
+          throw new Error(`Failed to update setting: ${response.status}`);
+        }
 
-      if (!response.ok) {
-        throw new Error(`Failed to reset setting: ${response.status}`);
+        setSettings((prev) => ({
+          ...prev,
+          [key]: { ...prev[key], value },
+        }));
+
+        // Update local value to match saved value
+        setLocalValues((prev) => ({
+          ...prev,
+          [key]: value,
+        }));
+
+        setSavedKey(key);
+        setTimeout(() => setSavedKey(null), 2000);
+      } catch (err) {
+        console.error("Failed to update setting:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to update setting",
+        );
+
+        // Revert local value on error
+        setLocalValues((prev) => ({
+          ...prev,
+          [key]: settings[key]?.value || "",
+        }));
+      } finally {
+        setSavingKey(null);
       }
+    },
+    [`/api`, localValues, settings],
+  );
 
-      const data = await response.json();
-      
-      setSettings((prev) => ({
-        ...prev,
-        [key]: { ...prev[key], value: data.value },
-      }));
-      
-      setLocalValues(prev => ({
-        ...prev,
-        [key]: data.value,
-      }));
+  const resetSetting = useCallback(
+    async (key: string) => {
+      setSavingKey(key);
+      setSavedKey(null);
+      setError(null);
 
-      setSavedKey(key);
-      setTimeout(() => setSavedKey(null), 2000);
-    } catch (err) {
-      console.error("Failed to reset setting:", err);
-      setError(err instanceof Error ? err.message : "Failed to reset setting");
-    } finally {
-      setSavingKey(null);
-    }
-  }, [API_URL]);
+      try {
+        const response = await fetch(`/api/settings/${key}/reset/`, {
+          method: "POST",
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to reset setting: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        setSettings((prev) => ({
+          ...prev,
+          [key]: { ...prev[key], value: data.value },
+        }));
+
+        setLocalValues((prev) => ({
+          ...prev,
+          [key]: data.value,
+        }));
+
+        setSavedKey(key);
+        setTimeout(() => setSavedKey(null), 2000);
+      } catch (err) {
+        console.error("Failed to reset setting:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to reset setting",
+        );
+      } finally {
+        setSavingKey(null);
+      }
+    },
+    [`/api`],
+  );
 
   useEffect(() => {
     fetchSettings();

@@ -8,9 +8,7 @@ interface RecentListensResult {
   error: string | null;
 }
 
-export const useRecentListens = (
-  limit: number = 50
-): RecentListensResult => {
+export const useRecentListens = (limit: number = 50): RecentListensResult => {
   const [listens, setListens] = useState<Listen[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,11 +21,7 @@ export const useRecentListens = (
     const fetchRecentListens = async () => {
       setLoading(true);
       try {
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
-        const response = await fetch(
-          `${API_URL}/listens/recent?limit=${limit}`
-        );
+        const response = await fetch(`/api/listens/recent?limit=${limit}`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch listens");
@@ -37,7 +31,7 @@ export const useRecentListens = (
 
         const processed = rawData.listens.map((item: Listen) => {
           const date = new Date(item.played_at);
-          
+
           return {
             ...item,
             formatted_time: date.toLocaleTimeString([], {

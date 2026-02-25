@@ -9,12 +9,10 @@ const LoginButton: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
-
   // get user data to display
   const fetchUser = async () => {
     try {
-      const response = await fetch(`${API_URL}/auth/me`);
+      const response = await fetch(`/api/auth/me`);
       if (response.ok) {
         const data = await response.json();
         setUser(data);
@@ -57,7 +55,7 @@ const LoginButton: React.FC = () => {
   const handleLogin = async () => {
     setIsRedirecting(true);
     try {
-      const response = await fetch(`${API_URL}/auth/login`);
+      const response = await fetch(`/api/auth/login`);
       const data = await response.json();
 
       if (data.auth_url) {

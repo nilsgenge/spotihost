@@ -8,7 +8,7 @@ interface UseAlbumDetailsReturn {
 }
 
 export const useAlbumDetails = (
-  spotifyId: string | undefined
+  spotifyId: string | undefined,
 ): UseAlbumDetailsReturn => {
   const [album, setAlbum] = useState<AdvancedAlbum | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -25,10 +25,7 @@ export const useAlbumDetails = (
       try {
         setLoading(true);
 
-        const API_URL =
-          import.meta.env.VITE_API_URL || "http://localhost:8000";
-
-        const response = await fetch(`${API_URL}/album/${spotifyId}`);
+        const response = await fetch(`/api/album/${spotifyId}`);
 
         if (!response.ok) {
           if (response.status === 404) {

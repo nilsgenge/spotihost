@@ -10,7 +10,7 @@ interface TopAlbumsResult {
 export const useTopAlbums = (
   start: string,
   end: string,
-  limit: number = 10
+  limit: number = 10,
 ): TopAlbumsResult => {
   const [topAlbums, setTopAlbums] = useState<SimpleAlbum[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -21,12 +21,10 @@ export const useTopAlbums = (
       setLoading(true);
       setError(null);
       try {
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
         const response = await fetch(
-          `${API_URL}/top/top-albums?start=${encodeURIComponent(
-            start
-          )}&end=${encodeURIComponent(end)}&limit=${limit}`
+          `/api/top/top-albums?start=${encodeURIComponent(
+            start,
+          )}&end=${encodeURIComponent(end)}&limit=${limit}`,
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

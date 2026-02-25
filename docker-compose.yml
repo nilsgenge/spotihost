@@ -1,50 +1,54 @@
+# Production Docker Compose
+# Usage: docker compose up -d
+# Access the application at: http://localhost:8000
 
 services:
   db:
-    image: postgres:15
+    image: postgres:15-alpine
     container_name: spotihost-db
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - spotihost-internal
 
-  backend:
+  app:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: spotihost-backend
-    volumes:
-      - ./backend:/app
-      - ./temp_imports:/app/temp_imports
+      context: .
+      dockerfile: backend/Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-}
+    container_name: spotihost-app
+    restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "${PORT:-8000}:8000"
     env_file:
       - .env
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - SERVE_STATIC=true
     depends_on:
       db:
         condition: service_healthy
-  
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: spotihost-frontend
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
+      - app_data:/app/temp_imports
+    networks:
+      - spotihost-internal
 
 volumes:
   postgres_data:
+  app_data:
+
+networks:
+  spotihost-internal:
+    driver: bridge

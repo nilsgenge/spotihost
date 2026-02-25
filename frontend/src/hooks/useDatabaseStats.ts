@@ -19,14 +19,12 @@ const useDatabaseStats = (): DatabaseStatsResult => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+        const response = await fetch(`/api/database-stats`);
 
-        const response = await fetch(`${API_URL}/database-stats`);
-        
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data: DatabaseStats = await response.json();
         setTotalEntries(data.total_entries);
         setError(null);
@@ -41,7 +39,7 @@ const useDatabaseStats = (): DatabaseStatsResult => {
     fetchStats();
   }, []);
 
-  const formattedEntries = new Intl.NumberFormat('en-US').format(totalEntries);
+  const formattedEntries = new Intl.NumberFormat("en-US").format(totalEntries);
 
   return { totalEntries, formattedEntries, loading, error };
 };

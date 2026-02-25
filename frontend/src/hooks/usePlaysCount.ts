@@ -20,9 +20,8 @@ export const usePlaysCount = (
   useEffect(() => {
     const fetchListensCount = async (s: string, e: string): Promise<number> => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
         const response = await fetch(
-          `${API_URL}/stats/count?start=${encodeURIComponent(s)}&end=${encodeURIComponent(e)}`,
+          `/api/stats/count?start=${encodeURIComponent(s)}&end=${encodeURIComponent(e)}`,
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

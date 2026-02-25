@@ -32,10 +32,7 @@ const useEntityMinutes = (endpoint: string | null): UseMinutesChartReturn => {
           timezone: timeZone,
         });
 
-        const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
-        const response = await fetch(
-          `${API_URL}${endpoint}?${params.toString()}`,
-        );
+        const response = await fetch(`/api${endpoint}?${params.toString()}`);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

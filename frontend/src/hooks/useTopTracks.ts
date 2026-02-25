@@ -21,10 +21,8 @@ export const useTopTracks = (
       setLoading(true);
       setError(null);
       try {
-        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
         const response = await fetch(
-          `${API_URL}/top/top-tracks?start=${encodeURIComponent(
+          `/api/top/top-tracks?start=${encodeURIComponent(
             start,
           )}&end=${encodeURIComponent(end)}&limit=${limit}`,
         );

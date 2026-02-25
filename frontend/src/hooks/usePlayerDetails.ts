@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 interface Artist {
   name: string;
@@ -26,7 +26,7 @@ interface Track {
   artists: Artist[];
   duration_ms: number;
   explicit: boolean;
-  type: 'track';
+  type: "track";
 }
 
 interface Episode {
@@ -38,11 +38,11 @@ interface Episode {
     images: Image[];
   };
   duration_ms: number;
-  type: 'episode';
+  type: "episode";
 }
 
 interface Context {
-  type: 'album' | 'artist' | 'playlist' | 'show' | 'collection';
+  type: "album" | "artist" | "playlist" | "show" | "collection";
   uri: string;
   external_urls?: SpotifyExternalUrls;
   href?: string;
@@ -60,7 +60,7 @@ interface PlayerData {
   device: Device;
   context: Context | null;
   shuffle_state: boolean;
-  repeat_state: 'off' | 'track' | 'context';
+  repeat_state: "off" | "track" | "context";
 }
 
 export interface UsePlayerReturn {
@@ -69,7 +69,7 @@ export interface UsePlayerReturn {
   error: string | null;
   isPlaying: boolean;
   shuffleState: boolean;
-  repeatState: 'off' | 'track' | 'context';
+  repeatState: "off" | "track" | "context";
   deviceType: string;
   songName: string;
   artistName: string;
@@ -89,13 +89,13 @@ export const usePlayerDetails = (): UsePlayerReturn => {
     error: null,
     isPlaying: false,
     shuffleState: false,
-    repeatState: 'off',
-    deviceType: 'Unknown',
-    songName: '',
-    artistName: '',
-    imageUrl: '',
+    repeatState: "off",
+    deviceType: "Unknown",
+    songName: "",
+    artistName: "",
+    imageUrl: "",
     isExplicit: false,
-    songUrl: '#',
+    songUrl: "#",
     contextType: null,
     contextUrl: null,
     refetch: async () => {},
@@ -105,13 +105,11 @@ export const usePlayerDetails = (): UsePlayerReturn => {
     try {
       // Only show loading state if this is the first load
       if (!hasLoadedOnce) {
-        setStatus(prev => ({ ...prev, isLoading: true, error: null }));
+        setStatus((prev) => ({ ...prev, isLoading: true, error: null }));
       }
-      
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-      const response = await fetch(`${API_URL}/currently-playing`);
-      
+      const response = await fetch(`/api/currently-playing`);
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -120,20 +118,20 @@ export const usePlayerDetails = (): UsePlayerReturn => {
 
       // Nothing playing (204 response or no item)
       if (!data.item) {
-        setStatus(prev => ({
+        setStatus((prev) => ({
           ...prev,
           playerActive: false,
           isLoading: false,
           error: null,
           isPlaying: false,
           shuffleState: false,
-          repeatState: 'off',
-          deviceType: data.device?.type || '-',
-          songName: 'Nothing Playing',
-          artistName: '-',
-          imageUrl: '',
+          repeatState: "off",
+          deviceType: data.device?.type || "-",
+          songName: "Nothing Playing",
+          artistName: "-",
+          imageUrl: "",
           isExplicit: false,
-          songUrl: '#',
+          songUrl: "#",
           contextType: null,
           contextUrl: null,
         }));
@@ -142,25 +140,27 @@ export const usePlayerDetails = (): UsePlayerReturn => {
       }
 
       const item = data.item;
-      let songName = '';
-      let artistName = '';
-      let imageUrl = '';
+      let songName = "";
+      let artistName = "";
+      let imageUrl = "";
       let isExplicit = false;
       const songUrl = item.external_urls.spotify;
 
-      if (item.type === 'track') {
+      if (item.type === "track") {
         songName = item.name;
-        artistName = item.artists.map((a) => a.name).join(', ');
+        artistName = item.artists.map((a) => a.name).join(", ");
         isExplicit = item.explicit;
-        imageUrl = item.album.images.length > 0 
-          ? item.album.images[item.album.images.length - 1].url 
-          : '';
-      } else if (item.type === 'episode') {
+        imageUrl =
+          item.album.images.length > 0
+            ? item.album.images[item.album.images.length - 1].url
+            : "";
+      } else if (item.type === "episode") {
         songName = item.name;
         artistName = item.show.publisher;
-        imageUrl = item.show.images.length > 0 
-          ? item.show.images[item.show.images.length - 1].url 
-          : '';
+        imageUrl =
+          item.show.images.length > 0
+            ? item.show.images[item.show.images.length - 1].url
+            : "";
       }
 
       let contextType = null;
@@ -171,7 +171,7 @@ export const usePlayerDetails = (): UsePlayerReturn => {
         contextUrl = data.context.external_urls?.spotify || null;
       }
 
-      setStatus(prev => ({
+      setStatus((prev) => ({
         ...prev,
         playerActive: true,
         isLoading: false,
@@ -179,7 +179,7 @@ export const usePlayerDetails = (): UsePlayerReturn => {
         isPlaying: data.is_playing,
         shuffleState: data.shuffle_state,
         repeatState: data.repeat_state,
-        deviceType: data.device?.type || 'Unknown',
+        deviceType: data.device?.type || "Unknown",
         songName,
         artistName,
         imageUrl,
@@ -188,31 +188,30 @@ export const usePlayerDetails = (): UsePlayerReturn => {
         contextType,
         contextUrl,
       }));
-      
-      setHasLoadedOnce(true);
 
+      setHasLoadedOnce(true);
     } catch (err) {
-      console.error('Failed to fetch player details:', err);
-      setStatus(prev => ({
+      console.error("Failed to fetch player details:", err);
+      setStatus((prev) => ({
         ...prev,
         isLoading: false,
-        error: 'Failed to fetch player details',
+        error: "Failed to fetch player details",
       }));
       setHasLoadedOnce(true);
     }
   }, [hasLoadedOnce]);
 
   useEffect(() => {
-    setStatus(prev => ({ ...prev, refetch: fetchData }));
+    setStatus((prev) => ({ ...prev, refetch: fetchData }));
   }, [fetchData]);
 
   useEffect(() => {
     fetchData();
 
-    window.addEventListener('focus', fetchData);
-    
+    window.addEventListener("focus", fetchData);
+
     return () => {
-      window.removeEventListener('focus', fetchData);
+      window.removeEventListener("focus", fetchData);
     };
   }, [fetchData]);
 
