@@ -58,7 +58,7 @@ export const useSettings = (): UseSettingsReturn => {
     } finally {
       setLoading(false);
     }
-  }, [`/api`]);
+  }, [`/api/`]);
 
   const setLocalValue = useCallback((key: string, value: string) => {
     setLocalValues((prev) => ({
@@ -81,7 +81,7 @@ export const useSettings = (): UseSettingsReturn => {
       setError(null);
 
       try {
-        const response = await fetch(`/api/settings/${key}/`, {
+        const response = await fetch(`/api/settings/${key}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ value }),
@@ -119,7 +119,7 @@ export const useSettings = (): UseSettingsReturn => {
         setSavingKey(null);
       }
     },
-    [`/api`, localValues, settings],
+    [`/api/`, localValues, settings],
   );
 
   const resetSetting = useCallback(
@@ -129,7 +129,7 @@ export const useSettings = (): UseSettingsReturn => {
       setError(null);
 
       try {
-        const response = await fetch(`/api/settings/${key}/reset/`, {
+        const response = await fetch(`/api/settings/${key}/reset`, {
           method: "POST",
         });
 
@@ -160,7 +160,7 @@ export const useSettings = (): UseSettingsReturn => {
         setSavingKey(null);
       }
     },
-    [`/api`],
+    [`/api/`],
   );
 
   useEffect(() => {
