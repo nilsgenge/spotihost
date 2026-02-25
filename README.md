@@ -1,35 +1,61 @@
-# SpotiHost
-
 <div align="center">
-A selfhosted analysics tool for Spotify
-<img src="assets/dashboard_top.png" alt="Dashboard" width="90%" />
+
+[![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/)
+[![MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![GitHub stars](https://img.shields.io/github/stars/nilsgenge/spotihost?style=for-the-badge&logo=github&label=Stars)](https://github.com/nilsgenge/spotihost/stargazers)
+
 </div>
 
+# SpotiHost
+> A selfhosted analysics tool for Spotify
+
+<p align="center">
+  <img src="assets/dashboard_top.png" alt="Dashboard">
+</p>
+
 ## Overview
-SpotiHost is a selfhostable service that analysis all your spotify listens and provides insights into your listening habits.
+SpotiHost is a self-hostable Spotify analytics tool designed to give you complete ownership of your listening data. 
+Unlike standard applications that limit you to a single year of statistics, SpotiHost allows you to import your entire Spotify history, transforming it into a deep, searchable archive of your musical life.
+Explore your habits through detailed time-series visualizations, track your top artists and albums over time, and uncover hidden patterns with advanced metrics like skip rates and track completion rates.
+<br>
+Built with a modern stack of React, TypeScript, and FastAPI, SpotiHost runs automatically in the background, ensuring your dashboard is always up-to-date with your latest listens.
+<br>
+SpotiHost is lightweight enough to run unobtrusively in the background on your local machine or on modest home server hardware.
+<br>
+Getting started is seamless—simply log in with your Spotify account to get started instantly, and deploy the application effortlessly using Docker. A detailed guide can be found below.
+
 
 ## Features
 
-- **Spotify API** Integration: Login with your Spotify account and SpotiHost automatically fetches all your future listens without you even noticing.  
-- **Docker**: the entire application runs in a few commands on your server
+- Docker Deployment: Run the full application stack effortlessly with just a few commands.
+- Spotify Integration: Log in securely with your Spotify account to get started immediately.
+- Automatic Syncing: Runs in the background to fetch and update your latest listens automatically.
+- Full History Import: Import your entire Spotify library to analyze lifetime statistics, not just recent data.
+- Detailed Metrics: Analyze skip rates and track completion percentages for songs, albums, and artists.
+- Interactive Charts: Visualize trends with line charts tracking minutes and plays over any time range.
+- Dynamic Rankings: View your top artists, albums, and tracks filtered by specific date ranges.
+- Listening History: Access a complete, searchable log of every song you have ever played.
 
 ## Screenshots
-<div align="center">
-  <img src="assets/dashboard.png" alt="Dashboard" width="80%" />
-</div>
-<br />
-<div align="center">
-  <img src="assets/track.png" alt="Track" width="80%" />
-</div>
-<br />
-<div align="center">
-  <img src="assets/album.png" alt="Album" width="80%" />
-</div>
+<p align="center">
+  <img src="assets/dashboard.png" alt="Dashboard"></img><br>
+  <em>Dashboard</em>
+</p>
+<br>
 
-## Tech Stack
-**Frontend:** React, TypeScript
+<p align="center">
+  <img src="assets/track.png" alt="Track"></img><br>
+  <em>Track Pages</em>
+</p>
+<br>
 
-**Backend:** Python, FastAPI, PostgreSQL
+<p align="center">
+  <img src="assets/album.png" alt="Album"></img><br>
+  <em>Album Pages</em>
+</p>
 
 ## Quick Start
 ### Prerequisites
