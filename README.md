@@ -32,4 +32,100 @@ SpotiHost is a selfhostable service that analysis all your spotify listens and p
 **Backend:** Python, FastAPI, PostgreSQL
 
 ## Quick Start
-Coming soon...
+### Prerequisites
+- Docker and Docker Compose installed
+- Spotify Developer Account
+
+### Get Spotify Credentials
+1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+2. Click "Create App"
+3. Fill in app name and description
+4. In the app settings, add a Redirect URI:
+   - For local use: `http://localhost:8000/callback`
+   - For deployment on a server: `https://your-domain.com/callback`
+5. Copy the **Client ID** and **Client Secret**
+
+### Configure Environment
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/spotihost.git
+cd spotihost
+
+# Create your config file
+cp .env.example .env
+```
+
+Edit `.env` with your credentials:
+
+```env
+# Database Configuration
+DB_USER=spotihost_user
+DB_PASSWORD=your_secure_password_here
+DB_NAME=spotihost_db
+
+# Spotify API Credentials
+SPOTIFY_CLIENT_ID=your_spotify_client_id_here
+SPOTIFY_CLIENT_SECRET=your_spotify_client_secret_here
+
+# Application Settings
+PORT=8000
+SPOTIFY_REDIRECT_URI=http://localhost:8000/callback
+```
+
+### Start the Application
+
+```bash
+# Build and start (first time or after updates)
+docker compose up -d --build
+
+# Subsequent starts
+docker compose up -d
+
+# Stop the application
+docker compose down
+```
+
+### Access SpotiHost
+
+Open your browser and go to: **http://localhost:8000** or configure your own domain.
+
+### Updating
+
+```bash
+git pull
+docker compose down
+docker compose up -d --build
+```
+For bigger updates, you may want to reinstall the app. You can easily import your data again.
+
+## Troubleshooting
+
+### Database Connection Errors
+
+```bash
+# Check if database is healthy
+docker compose ps
+
+# Restart the app container
+docker compose restart app
+```
+### Reset Everything (Fresh Start)
+
+```bash
+# Warning: This deletes all your data!
+docker compose down -v
+docker compose up -d --build
+```
+
+### View Container Status
+
+```bash
+docker compose ps
+```
+Look for spotihost-app and spotihost-db.
+
+
+
+
+
