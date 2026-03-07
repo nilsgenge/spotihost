@@ -189,24 +189,3 @@ const getStartOfDayInTimezone = (date: Date, tzId: string): Date => {
 
   return utcMidnight;
 };
-
-export const minutesToHours = (minutes: number): string =>
-  (minutes / 60).toFixed(0);
-
-export const formatDuration = (seconds: number) => {
-  const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60);
-  return `${m}:${s < 10 ? "0" : ""}${s}`;
-};
-
-export const formatFollowers = (num: number): string => {
-  return new Intl.NumberFormat("en-US", {
-    notation: "compact",
-    maximumFractionDigits: 1,
-  }).format(num);
-};
-
-export const capitalizeFirstChar = (text: string): string => {
-  if (!text) return "";
-  return text.charAt(0).toUpperCase() + text.slice(1);
-};
