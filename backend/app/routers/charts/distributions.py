@@ -253,7 +253,7 @@ def get_platform_distribution(
         elif "windows" in platform_str:
             group_mapping[original_platform] = "Windows"
         elif "android" in platform_str:
-            group_mapping[original_platform] = "Androit"
+            group_mapping[original_platform] = "Android"
         elif "mobile" in platform_str:
             group_mapping[original_platform] = "Mobile"
         else:
