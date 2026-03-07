@@ -42,7 +42,9 @@ RUN sed -i 's/\r$//' /app/docker-entrypoint.sh && \
 
 RUN mkdir -p /app/temp_imports
 
-EXPOSE 8000
+ARG PORT=8000
+ENV PORT=${PORT}
+EXPOSE ${PORT}
 
 ENTRYPOINT ["sh", "/app/docker-entrypoint.sh"]
 

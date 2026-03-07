@@ -27,10 +27,11 @@ services:
       dockerfile: backend/Dockerfile
       args:
         - VITE_API_URL=${VITE_API_URL:-}
+        - PORT=${PORT:-8000}
     container_name: spotihost-app
     restart: unless-stopped
     ports:
-      - "${PORT:-8000}:8000"
+      - "${PORT:-8000}:${PORT:-8000}"
     env_file:
       - .env
     environment:
