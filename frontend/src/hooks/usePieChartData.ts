@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useDateRange } from "../context/DateRangeContext";
-import type { PieBucket, UseBarChartFilters } from "../types/charts";
+import type {
+  PieBucket,
+  UseBarChartFilters,
+  PieChartEndpoint,
+} from "../types/charts";
 
 interface UsePieChartReturn {
   data: PieBucket[];
@@ -10,7 +14,7 @@ interface UsePieChartReturn {
 }
 
 const fetchPieData = async (
-  endpoint: "skip-rate" | "completion-rate",
+  endpoint: PieChartEndpoint,
   startUtcIso: string,
   endUtcIso: string,
   filters: UseBarChartFilters,
@@ -30,7 +34,9 @@ const fetchPieData = async (
   return response.json();
 };
 
-export const useSkipRateData = (
+// Generic hook for fetching pie chart data from any endpoint
+export const usePieChartData = (
+  endpoint: PieChartEndpoint,
   filters: UseBarChartFilters = {},
 ): UsePieChartReturn => {
   const { startUtcIso, endUtcIso } = useDateRange();
@@ -53,7 +59,7 @@ export const useSkipRateData = (
       setError(null);
       try {
         const result = await fetchPieData(
-          "skip-rate",
+          endpoint,
           queryStart,
           queryEnd,
           filters,
@@ -71,6 +77,7 @@ export const useSkipRateData = (
 
     fetchData();
   }, [
+    endpoint,
     queryStart,
     queryEnd,
     filters.artistId,
@@ -81,55 +88,21 @@ export const useSkipRateData = (
 
   return { data, loading, error, total };
 };
+
+// Convenience hooks for specific chart types
+
+export const useSkipRateData = (
+  filters: UseBarChartFilters = {},
+): UsePieChartReturn => usePieChartData("skip-rate", filters);
 
 export const useCompletionRateData = (
   filters: UseBarChartFilters = {},
-): UsePieChartReturn => {
-  const { startUtcIso, endUtcIso } = useDateRange();
-  const [data, setData] = useState<PieBucket[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [total, setTotal] = useState(0);
+): UsePieChartReturn => usePieChartData("completion-rate", filters);
 
-  const queryStart = filters.allTime ? "1950-01-01T00:00:00Z" : startUtcIso;
-  const queryEnd = filters.allTime ? "2099-12-31T23:59:59Z" : endUtcIso;
+export const usePlatformData = (
+  filters: UseBarChartFilters = {},
+): UsePieChartReturn => usePieChartData("platform", filters);
 
-  useEffect(() => {
-    if (!queryStart || !queryEnd) {
-      setData([]);
-      return;
-    }
-
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const result = await fetchPieData(
-          "completion-rate",
-          queryStart,
-          queryEnd,
-          filters,
-        );
-        setData(result.segments);
-        setTotal(result.total);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error");
-        setData([]);
-        setTotal(0);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [
-    queryStart,
-    queryEnd,
-    filters.artistId,
-    filters.albumId,
-    filters.trackId,
-    filters.allTime,
-  ]);
-
-  return { data, loading, error, total };
-};
+export const useContextData = (
+  filters: UseBarChartFilters = {},
+): UsePieChartReturn => usePieChartData("context", filters);

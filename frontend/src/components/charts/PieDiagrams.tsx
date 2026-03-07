@@ -1,9 +1,7 @@
 import PieDiagram from "./PieDiagram";
-import {
-  useSkipRateData,
-  useCompletionRateData,
-} from "../../hooks/usePieChartData";
-import type { UseBarChartFilters } from "../../types/charts";
+import { usePieChartData } from "../../hooks/usePieChartData";
+import { generateColorGradient } from "../../utils/colorGradient";
+import type { UseBarChartFilters, PieChartConfig } from "../../types/charts";
 
 interface DiagramProps {
   height?: number;
@@ -11,19 +9,6 @@ interface DiagramProps {
   filters?: UseBarChartFilters;
   allTime?: boolean;
 }
-
-const skipColors: Record<string, string> = {
-  Skipped: "var(--danger-red)",
-  "Full Listen": "var(--primary-green)",
-};
-
-const completionColors: Record<string, string> = {
-  "<25%": "#f0fdf4", // green-50
-  "<50%": "#bbf7d0", // green-200
-  "<75%": "#86efac", // green-300
-  "<95%": "#4ade80", // green-400
-  "Full Listen": "var(--primary-green)",
-};
 
 // Loading/Empty states
 const LoadingState: React.FC<{ label?: string }> = ({ label }) => (
@@ -42,26 +27,50 @@ const EmptyState: React.FC<{ message: string }> = ({ message }) => (
   </div>
 );
 
-export const SkipRatePieDiagram: React.FC<DiagramProps> = ({
+const ConfigurablePieDiagram: React.FC<DiagramProps & PieChartConfig> = ({
+  endpoint,
+  lightColor,
+  darkColor,
+  unknownColor = "#6b7280",
+  customColors,
+  tooltipLabels = {},
+  loadingLabel,
+  emptyMessage,
   height = 400,
   donut = true,
   filters = {},
   allTime,
 }) => {
-  const { data, loading, error, total } = useSkipRateData({
+  const { data, loading, error, total } = usePieChartData(endpoint, {
     ...filters,
     allTime,
   });
 
-  if (loading) return <LoadingState label="Loading skip rate..." />;
+  if (loading) return <LoadingState label={loadingLabel} />;
   if (error) return <EmptyState message={`Error: ${error}`} />;
-  if (total === 0)
-    return <EmptyState message="No plays in selected timeframe" />;
+  if (total === 0) return <EmptyState message={emptyMessage} />;
 
-  const coloredData = data.map((item) => ({
+  const capitalizedData = data.map((item) => ({
     ...item,
-    color: skipColors[item.label] || "var(--text-secondary)",
+    label: item.label.charAt(0).toUpperCase() + item.label.slice(1),
   }));
+
+  // Generate gradient colors dynamically based on data
+  const labels = capitalizedData.map((d) => d.label);
+  const colorMap = generateColorGradient(labels, {
+    lightColor,
+    darkColor,
+    excludeLabel: "Unknown",
+    unknownColor,
+  });
+
+  // Apply colors to data (customColors override gradient colors)
+  const coloredData = capitalizedData.map((item) => ({
+    ...item,
+    color: customColors?.[item.label] || colorMap[item.label] || unknownColor,
+  }));
+
+  const outerRadius = endpoint === "completion-rate" ? 140 : 150;
 
   return (
     <PieDiagram
@@ -69,39 +78,59 @@ export const SkipRatePieDiagram: React.FC<DiagramProps> = ({
       height={height}
       donut={donut}
       innerRadius={donut ? 100 : 0}
-      outerRadius={150}
+      outerRadius={outerRadius}
+      tooltipLabels={tooltipLabels}
     />
   );
 };
 
-export const CompletionRatePieDiagram: React.FC<DiagramProps> = ({
-  height = 400,
-  donut = true,
-  filters = {},
-  allTime,
-}) => {
-  const { data, loading, error, total } = useCompletionRateData({
-    ...filters,
-    allTime,
-  });
+// Exported diagram components
+export const SkipRatePieDiagram: React.FC<DiagramProps> = (props) => (
+  <ConfigurablePieDiagram
+    endpoint="skip-rate"
+    lightColor="#dc2626"
+    darkColor="#dc2626"
+    unknownColor="#76787c"
+    tooltipLabels={{ Skipped: "<30s listened", "Full Listen": ">30s listened" }}
+    loadingLabel="Loading skip rate..."
+    emptyMessage="No plays in selected timeframe"
+    customColors={{ Skipped: "#dc2626", "Full Listen": "#22c55e" }}
+    {...props}
+  />
+);
 
-  if (loading) return <LoadingState label="Loading completion rate..." />;
-  if (error) return <EmptyState message={`Error: ${error}`} />;
-  if (total === 0)
-    return <EmptyState message="No listens with duration data" />;
+export const CompletionRatePieDiagram: React.FC<DiagramProps> = (props) => (
+  <ConfigurablePieDiagram
+    endpoint="completion-rate"
+    lightColor="#bef0cf"
+    darkColor="#22c55e"
+    unknownColor="#76787c"
+    loadingLabel="Loading completion rate..."
+    emptyMessage="No listens with duration data"
+    {...props}
+  />
+);
 
-  const coloredData = data.map((item) => ({
-    ...item,
-    color: completionColors[item.label] || "var(--text-secondary)",
-  }));
+export const PlatformPieDiagram: React.FC<DiagramProps> = (props) => (
+  <ConfigurablePieDiagram
+    endpoint="platform"
+    lightColor="#bef0cf"
+    darkColor="#22c55e"
+    unknownColor="#76787c"
+    loadingLabel="Loading platform data..."
+    emptyMessage="No platform data available"
+    {...props}
+  />
+);
 
-  return (
-    <PieDiagram
-      data={coloredData}
-      height={height}
-      donut={donut}
-      innerRadius={donut ? 100 : 0}
-      outerRadius={140}
-    />
-  );
-};
+export const ContextPieDiagram: React.FC<DiagramProps> = (props) => (
+  <ConfigurablePieDiagram
+    endpoint="context"
+    lightColor="#bef0cf"
+    darkColor="#22c55e"
+    unknownColor="#76787c"
+    loadingLabel="Loading context data..."
+    emptyMessage="No context data available"
+    {...props}
+  />
+);

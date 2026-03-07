@@ -44,3 +44,20 @@ export interface PieChartResponse {
   segments: PieBucket[];
   total: number;
 }
+
+export type PieChartEndpoint =
+  | "skip-rate"
+  | "completion-rate"
+  | "platform"
+  | "context";
+
+export interface PieChartConfig {
+  endpoint: PieChartEndpoint;
+  lightColor: string;
+  darkColor: string;
+  unknownColor?: string;
+  customColors?: Record<string, string>; // Override colors for specific labels
+  tooltipLabels?: Record<string, string>;
+  loadingLabel: string;
+  emptyMessage: string;
+}

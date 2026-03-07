@@ -2,6 +2,8 @@ import React from "react";
 import {
   CompletionRatePieDiagram,
   SkipRatePieDiagram,
+  PlatformPieDiagram,
+  ContextPieDiagram,
 } from "../components/charts/PieDiagrams";
 import ContentBlock from "../components/ui/ContentBlock";
 import Separator from "../components/ui/Separator";
@@ -69,17 +71,31 @@ const Analytics: React.FC = () => {
 
         {/* Pie Charts */}
         <div className="col-12 col-lg-6">
-          <ContentBlock title="Skip Rate - Alltime">
-            <SkipRatePieDiagram height={350} donut={true} allTime />
+          <ContentBlock title="Skip Rate">
+            <SkipRatePieDiagram height={500} donut={true} />
           </ContentBlock>
         </div>
 
         <div className="col-12 col-lg-6">
-          <ContentBlock title="Completion Rate - Selected Range">
-            <CompletionRatePieDiagram height={350} donut={true} />
+          <ContentBlock title="Completion Rate">
+            <CompletionRatePieDiagram height={500} donut={true} />
+          </ContentBlock>
+        </div>
+
+        <div className="col-12 col-lg-6">
+          <ContentBlock title="Listens per Platform">
+            <PlatformPieDiagram height={500} donut={true} />
+          </ContentBlock>
+        </div>
+
+        <div className="col-12 col-lg-6">
+          <ContentBlock title="Listens per Context">
+            <ContextPieDiagram height={500} donut={true} />
           </ContentBlock>
         </div>
       </div>
+
+      <Separator />
     </div>
   );
 };

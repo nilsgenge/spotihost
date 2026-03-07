@@ -16,6 +16,7 @@ interface PieDiagramProps {
   outerRadius?: number;
   showLabels?: boolean;
   showLegend?: boolean;
+  tooltipLabels?: Record<string, string>;
 }
 
 const CustomLegend = (props: any) => (
@@ -40,17 +41,13 @@ const PieDiagram: React.FC<PieDiagramProps> = ({
   outerRadius = 140,
   showLabels = true,
   showLegend = true,
+  tooltipLabels,
 }) => {
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const item: PieBucket = payload[0].payload;
 
-      const tooltipLabelMap: Record<string, string> = {
-        Skipped: "<30s listened",
-        "Full Listen": ">95% listened",
-      };
-
-      const displayLabel = tooltipLabelMap[item.label] || item.label;
+      const displayLabel = tooltipLabels?.[item.label] || item.label;
 
       return (
         <div className="chart-tooltip">
@@ -67,11 +64,11 @@ const PieDiagram: React.FC<PieDiagramProps> = ({
   return (
     <div className="chart-container" style={{ height: `${height}px` }}>
       <ResponsiveContainer width="100%" height="100%">
-        <PieChart margin={{ top: 20, right: 60, bottom: 20, left: 60 }}>
+        <PieChart margin={{ top: 40, right: 60, bottom: 80, left: 60 }}>
           <Pie
             data={data}
             cx="50%"
-            cy="48%"
+            cy="45%"
             outerRadius={outerRadius}
             innerRadius={donut ? innerRadius : 0}
             dataKey="value"

@@ -133,7 +133,7 @@ class Listen(Base):
     import_job: Mapped["ImportJob"] = relationship(back_populates="listens")
 
     ms_played: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    skipped: Mapped[bool | None] = mapped_column(Boolean, nullable=True, default=False)
+    skipped: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
     offline: Mapped[bool | None] = mapped_column(Boolean, nullable=True, default=False)
     platform: Mapped[str | None] = mapped_column(String, nullable=True)
     conn_country: Mapped[str | None] = mapped_column(String, nullable=True)
