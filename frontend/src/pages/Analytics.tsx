@@ -20,19 +20,15 @@ const Analytics: React.FC = () => {
       {/* Information Section */}
       <div className="row g-4 mb-4">
         <div className="col-12">
-          <ContentBlock title="Important note:">
+          <ContentBlock title="Note on analytics:">
             <p className="mb-2">
               The following stats can only be calculated from history imports:
             </p>
 
             <ul className="ps-3 mb-3">
-              <li>Skip Rate (fetched listens display as 0% skipped)</li>
+              <li>Skip Rate</li>
               <li>Completion Rate</li>
-              <li>Listens per device</li>
-              <li>Listens per country</li>
-              <li>
-                Percentage of offline listens (fetched listens count as online)
-              </li>
+              <li>Listens per plattform</li>
             </ul>
 
             <p className="mb-2">
@@ -40,14 +36,14 @@ const Analytics: React.FC = () => {
             </p>
 
             <ul className="ps-3 mb-3">
-              <li>Distribution by listening context</li>
+              <li>Listens per context</li>
             </ul>
 
             <p>
               To ensure the most accurate results, it is recommend importing
               your Spotify history every few weeks. <br />
               Listens are automatically merged, giving you access to the new
-              data (beta).
+              data.
             </p>
           </ContentBlock>
         </div>
