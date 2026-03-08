@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from datetime import datetime, timezone as dt_timezone
 from app.database import get_db
 from app.models import Listen, Track
@@ -36,7 +36,7 @@ def get_total_minutes(
               .join(Track, Listen.track_id == Track.track_id)\
               .filter(
                   Listen.played_at.between(start_dt, end_dt),
-                  Listen.skipped == False
+                  (Listen.skipped == False) | (Listen.skipped == None)
               )
 
     # Handle Alltime Range specifically

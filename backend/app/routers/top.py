@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import func, distinct
+from sqlalchemy import func, distinct, or_
 from app.database import get_db
 from datetime import datetime
 from app.models import (
@@ -42,7 +42,7 @@ def get_top_artists(
             .join(Track, Track.track_id == track_artists.c.track_id)
             .join(Listen, Listen.track_id == Track.track_id)
             .filter(Listen.played_at.between(start_datetime, end_datetime))
-            .filter(Listen.skipped == False)
+            .filter((Listen.skipped == False) | (Listen.skipped == None))
             .group_by(Artist)
             .order_by(func.count(Listen.listen_id).desc())
             .limit(limit)
@@ -85,7 +85,7 @@ def get_top_tracks(
             .join(track_artists, Track.track_id == track_artists.c.track_id)
             .join(Listen, Listen.track_id == Track.track_id)
             .filter(Listen.played_at.between(start_datetime, end_datetime))
-            .filter(Listen.skipped == False)
+            .filter((Listen.skipped == False) | (Listen.skipped == None))
             .group_by(Track.track_id)
             .order_by(func.count(distinct(Listen.listen_id)).desc())
             .limit(limit)
@@ -139,7 +139,7 @@ def get_top_albums(
             .join(track_album, Album.album_id == track_album.c.album_id)
             .join(Listen, Listen.track_id == track_album.c.track_id)
             .filter(Listen.played_at.between(start_datetime, end_datetime))
-            .filter(Listen.skipped == False)
+            .filter((Listen.skipped == False) | (Listen.skipped == None))
             .group_by(Album.album_id)
             .order_by(func.count(distinct(Listen.listen_id)).desc())
             .limit(limit)

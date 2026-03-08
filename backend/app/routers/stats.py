@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func, case
+from sqlalchemy import func, case, or_
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 from app.database import get_db
@@ -39,7 +39,7 @@ def get_listens_count(
     
     count = db.query(Listen).filter(
         Listen.played_at.between(start_dt, end_dt),
-        Listen.skipped == False
+        (Listen.skipped == False) | (Listen.skipped == None)
     ).count()
     
     return CountResponse(plays_count=count)
@@ -94,7 +94,7 @@ def get_total_minutes(
         Listen, Listen.track_id == Track.track_id
     ).filter(
         Listen.played_at.between(start_dt, end_dt),
-        Listen.skipped == False
+        (Listen.skipped == False) | (Listen.skipped == None)
     ).scalar()
     
     total_seconds = total_seconds or 0

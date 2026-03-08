@@ -21,7 +21,7 @@ export const useRecentListens = (limit: number = 50): RecentListensResult => {
     const fetchRecentListens = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/listens/recent?limit=${limit}`);
+        const response = await fetch(`/api/listens/recent?limit=${limit}&timezone=${encodeURIComponent(timeZone)}`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch listens");

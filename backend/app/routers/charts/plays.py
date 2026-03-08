@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from datetime import datetime, timezone as dt_timezone
 from typing import Optional
 from app.database import get_db
@@ -36,7 +36,7 @@ def get_plays_buckets(
               .join(Track, Listen.track_id == Track.track_id)\
               .filter(
                   Listen.played_at.between(start_dt, end_dt),
-                  Listen.skipped == False
+                  (Listen.skipped == False) | (Listen.skipped == None)
               )
     
     # Apply entity filter
@@ -207,7 +207,7 @@ def get_categorical_plays(
     # Base query
     query = db.query(Listen).filter(
         Listen.played_at.between(start_dt, end_dt),
-        Listen.skipped == False
+        (Listen.skipped == False) | (Listen.skipped == None)
     ).join(Track, Listen.track_id == Track.track_id)
     
     # Apply entity filters
