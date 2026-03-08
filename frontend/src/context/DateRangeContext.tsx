@@ -34,16 +34,15 @@ export const DateRangeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [selectedRange, setSelectedRange] = useState<DateRangeKey>("4w");
-  const [timeZone, setTimeZone] = useState<string>("UTC");
-
-  useEffect(() => {
+  const [timeZone] = useState<string>(() => {
     try {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      if (tz) setTimeZone(tz);
+      return tz || "UTC";
     } catch (e) {
       console.error("Could not detect timezone", e);
+      return "UTC";
     }
-  }, []);
+  });
 
   const value = useMemo(
     () => ({
