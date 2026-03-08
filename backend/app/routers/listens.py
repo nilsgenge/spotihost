@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import func, or_
 from app.database import get_db
-from datetime import datetime
+from datetime import datetime, timezone
 from app.schemas import ArtistLink, ListenCreate, SimpleListen, SimpleListenResponse
 from app.models import Listen, Track, Artist
+from app.routers.charts.utils import get_local_timezone
+from zoneinfo import ZoneInfo
 
 router = APIRouter(prefix="/listens", tags=["listens"])
 
@@ -22,14 +25,25 @@ def create_listen(listen: ListenCreate, db: Session = Depends(get_db)):
 
 @router.get("/recent", response_model=SimpleListenResponse)
 def get_recent_listens(
-    limit: int = Query(50, ge=1, le=500), 
+    limit: int = Query(50, ge=1, le=500),
+    timezone_name: str = Query("UTC", description="User IANA timezone"),
     db: Session = Depends(get_db)
 ):
-    """Get the most recent non-skipped listens with track and artist info."""
+    """Get the most recent non-skipped listens from today with track and artist info."""
     try:
+        user_tz = get_local_timezone(timezone_name)
+
+        # We use AT TIME ZONE to convert UTC stored times to user's local time
+        now_utc = datetime.now(timezone.utc)
+
+        today_local_midnight = now_utc.astimezone(user_tz).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+
         listens = (
             db.query(Listen)
-            .filter(Listen.skipped == False)
+            .filter((Listen.skipped == False) | (Listen.skipped == None))
+            .filter(Listen.played_at >= today_local_midnight)
             .options(joinedload(Listen.track).selectinload(Track.artists))
             .order_by(Listen.played_at.desc())
             .limit(limit)
