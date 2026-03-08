@@ -9,7 +9,7 @@ const HistoryBlock = () => {
   if (listens.length === 0 && !loading) {
     return (
       <ContentBlock title={"History"}>
-        <div className="p-3 text-secondary">No recent history</div>
+        <div className="p-3 text-secondary">No listens today</div>
       </ContentBlock>
     );
   }
