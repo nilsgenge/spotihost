@@ -10,30 +10,35 @@
 </div>
 
 # SpotiHost
+
 > A self-hosted analytics tool for Spotify
 
-Import your entire Spotify listening history and analyze it locally. SpotiHost tracks plays, skips and listening patterns with time-series charts. It runs in the background via Docker, automatically fetching new listens in addition to your imports.
-<br>
-<br>
-Deploy the application using Docker and log in with your Spotify account to get started. 
-<br>
-A detailed guide can be found below.
+Import your entire Spotify listening history and analyze it locally. SpotiHost tracks plays, skips and listening patterns with time-series charts. It runs in the background via docker, automatically fetching new listens in addition to your imports.
 
 <details>
 <summary><strong>Recent Changes</strong></summary>
 
-- **2026-03-08:** Improve ReadME
-- **2026-03-08:** Add welcome page
+- **2026-03-08:** Updated Readme
+- **2026-03-08:** Added welcome page and logout button
+- **2026-03-07:** Added platform and context piecharts
+- **2026-03-07:** Added option to choose ports in docker config
+- **2026-02-25:** Implmement seperate docker config for developement
+- **2026-02-24:** Layout improvements to all pages
+- **2026-02-01:** Added Diagrams to track/artist/album pages
 
 <details>
 <summary><strong>Expand further</strong></summary>
 
-- **2026-02-23:** Test
+- **2026-01-27:** Added settings page
+- **2026-01-27:** Added option to upload listening history
+- **2026-01-21:** Added health check for db and backend connection
+- **2026-01-11:** Added dedicated track/album/artist pages
+- **2026-01-08:** Started using alembic for db version management
+- **2026-01-08:** Added top ranking page
 
 </details>
 </details>
 <br>
-
 
 **Table of Contents**
 
@@ -53,8 +58,8 @@ A detailed guide can be found below.
 - Dynamic Rankings: View your top artists, albums, and tracks filtered by specific date ranges.
 - Listening History: Access a complete, searchable log of every song you have ever played.
 
-
 ## Screenshots
+
 <table width="100%">
   <tr>
     <td align="center">
@@ -94,11 +99,14 @@ A detailed guide can be found below.
 </table>
 
 ## Getting Started
+
 **Prerequisites**
+
 - Docker and Docker Compose installed
 - Spotify Developer Account
 
 **Get Spotify Credentials**
+
 1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 2. Click "Create App"
 3. Fill in app name and description
@@ -172,8 +180,6 @@ docker compose up -d --build
 ```
 
 ## Contributing
+
 I appreciate any contributions you this project! Whether you’re reporting a bug, suggesting a new feature, or submitting a pull request. Your input helps shape the project and makes it better for everyone.
 Don’t hesitate to open an issue or share your ideas.
-
-
-
