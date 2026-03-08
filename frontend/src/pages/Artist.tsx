@@ -117,6 +117,7 @@ const Artist: React.FC = () => {
           <div className="col-12 col-lg-6">
             <ContentBlock title="Skip Rate - Alltime">
               <SkipRatePieDiagram
+                height={500}
                 donut={true}
                 filters={{ artistId: spotify_id }}
                 allTime
@@ -126,6 +127,7 @@ const Artist: React.FC = () => {
           <div className="col-12 col-lg-6">
             <ContentBlock title="Completion Rate - Alltime">
               <CompletionRatePieDiagram
+                height={500}
                 donut={true}
                 filters={{ artistId: spotify_id }}
                 allTime

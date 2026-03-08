@@ -162,6 +162,7 @@ const Album: React.FC = () => {
               <SkipRatePieDiagram
                 donut={true}
                 filters={{ albumId: spotify_id }}
+                height={500}
                 allTime
               />
             </ContentBlock>
@@ -171,6 +172,7 @@ const Album: React.FC = () => {
               <CompletionRatePieDiagram
                 donut={true}
                 filters={{ albumId: spotify_id }}
+                height={500}
                 allTime
               />
             </ContentBlock>

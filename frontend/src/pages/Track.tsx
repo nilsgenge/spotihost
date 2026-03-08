@@ -154,6 +154,7 @@ const Track = () => {
               <SkipRatePieDiagram
                 donut={true}
                 filters={{ trackId: spotify_id }}
+                height={500}
                 allTime
               />
             </ContentBlock>
@@ -163,6 +164,7 @@ const Track = () => {
               <CompletionRatePieDiagram
                 donut={true}
                 filters={{ trackId: spotify_id }}
+                height={500}
                 allTime
               />
             </ContentBlock>
