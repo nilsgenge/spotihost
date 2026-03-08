@@ -10,28 +10,42 @@
 </div>
 
 # SpotiHost
-> A selfhosted analysics tool for Spotify
+> A self-hosted analytics tool for Spotify
 
-<p align="center">
-  <img src="assets/dashboard_top.png" alt="Dashboard">
-</p>
+Import your entire Spotify listening history and analyze it locally. SpotiHost tracks plays, skips and listening patterns with time-series charts. It runs in the background via Docker, automatically fetching new listens in addition to your imports.
+<br>
+<br>
+Deploy the application using Docker and log in with your Spotify account to get started. 
+<br>
+A detailed guide can be found below.
 
-## Overview
-SpotiHost is a self-hostable Spotify analytics tool designed to give you complete ownership of your listening data. 
-Unlike standard applications that limit you to a single year of statistics, SpotiHost allows you to import your entire Spotify history, transforming it into a deep, searchable archive of your musical life.
-Explore your habits through detailed time-series visualizations, track your top artists and albums over time, and uncover hidden patterns with advanced metrics like skip rates and track completion rates.
-<br>
-Built with a modern stack of React, TypeScript, and FastAPI, SpotiHost runs automatically in the background, ensuring your dashboard is always up-to-date with your latest listens.
-<br>
-SpotiHost is lightweight enough to run unobtrusively in the background on your local machine or on modest home server hardware.
-<br>
-Getting started is seamless—simply log in with your Spotify account to get started instantly, and deploy the application effortlessly using Docker. A detailed guide can be found below.
+<details>
+<summary><strong>Recent Changes</strong></summary>
 
+- **2026-03-08:** Improve ReadME
+- **2026-03-08:** Add welcome page
+
+<details>
+<summary><strong>Expand further</strong></summary>
+
+- **2026-02-23:** Test
+
+</details>
+</details>
+<br>
+
+
+**Table of Contents**
+
+- [Key Features](#features)
+- [Screenshots](#screenshots)
+- [Getting Started](#getting-started)
+- [Contributing](#contributing)
 
 ## Features
 
 - Docker Deployment: Run the full application stack effortlessly with just a few commands.
-- Spotify Integration: Log in securely with your Spotify account to get started immediately.
+- Spotify Integration: Log in with your Spotify account to get started immediately.
 - Automatic Syncing: Runs in the background to fetch and update your latest listens automatically.
 - Full History Import: Import your entire Spotify library to analyze lifetime statistics, not just recent data.
 - Detailed Metrics: Analyze skip rates and track completion percentages for songs, albums, and artists.
@@ -39,43 +53,65 @@ Getting started is seamless—simply log in with your Spotify account to get sta
 - Dynamic Rankings: View your top artists, albums, and tracks filtered by specific date ranges.
 - Listening History: Access a complete, searchable log of every song you have ever played.
 
+
 ## Screenshots
-<p align="center">
-  <img src="assets/dashboard.png" alt="Dashboard"></img><br>
-  <em>Dashboard</em>
-</p>
-<br>
+<table width="100%">
+  <tr>
+    <td align="center">
+      <img src="assets/v2_dashboard.png" alt="Dashboard" width="60%">
+      <br>
+      <em> Dashboard with quick stats, top artists/albums/tracks, and recent listens.</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/v2_track.png" alt="Track Page" width="60%">
+      <br>
+      <em> Detailed stats for a single track: play counts, skips, completion rate.</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/v2_artist.png" alt="Artist Page" width="60%">
+      <br>
+      <em> Artist overview with total plays, top albums, and listening timeline.</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/v2_album.png" alt="Album Page" width="60%">
+      <br>
+      <em> Album statistics including track breakdown and play distribution.</em>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/v2_diagrams.png" alt="Analytics Page" width="60%">
+      <br>
+      <em> Charts for plays, minutes, skip rate, listening platform, context.</em>
+    </td>
+  </tr>
+</table>
 
-<p align="center">
-  <img src="assets/track.png" alt="Track"></img><br>
-  <em>Track Pages</em>
-</p>
-<br>
-
-<p align="center">
-  <img src="assets/album.png" alt="Album"></img><br>
-  <em>Album Pages</em>
-</p>
-
-## Quick Start
-### Prerequisites
+## Getting Started
+**Prerequisites**
 - Docker and Docker Compose installed
 - Spotify Developer Account
 
-### Get Spotify Credentials
+**Get Spotify Credentials**
 1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 2. Click "Create App"
 3. Fill in app name and description
-4. In the app settings, add a Redirect URI:
+4. In the app settings, add a Redirect URL:
    - For local use: `http://localhost:8000/callback`
    - For deployment on a server: `https://your-domain.com/callback`
 5. Copy the **Client ID** and **Client Secret**
 
-### Configure Environment
+**Configure Environment**
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/spotihost.git
+git clone https://github.com/nilsgenge/spotihost.git
 cd spotihost
 
 # Create your config file
@@ -89,6 +125,7 @@ Edit `.env` with your credentials:
 DB_USER=spotihost_user
 DB_PASSWORD=your_secure_password_here
 DB_NAME=spotihost_db
+DB_PORT=5432
 
 # Spotify API Credentials
 SPOTIFY_CLIENT_ID=your_spotify_client_id_here
@@ -99,7 +136,7 @@ PORT=8000
 SPOTIFY_REDIRECT_URI=http://localhost:8000/callback
 ```
 
-### Start the Application
+**Start the Application**
 
 ```bash
 # Build and start (first time or after updates)
@@ -112,44 +149,27 @@ docker compose up -d
 docker compose down
 ```
 
-### Access SpotiHost
+**Access SpotiHost**
 
 Open your browser and go to: **http://localhost:8000** or configure your own domain.
 
-### Updating
+**Updating**
 
 ```bash
 git pull
 docker compose down
 docker compose up -d --build
 ```
-For bigger updates, you may want to reinstall the app. You can easily import your data again.
 
 ## Troubleshooting
 
-### Database Connection Errors
-
-```bash
-# Check if database is healthy
-docker compose ps
-
-# Restart the app container
-docker compose restart app
-```
-### Reset Everything (Fresh Start)
+**Reset Everything (Fresh Start)**
 
 ```bash
 # Warning: This deletes all your data!
 docker compose down -v
 docker compose up -d --build
 ```
-
-### View Container Status
-
-```bash
-docker compose ps
-```
-Look for spotihost-app and spotihost-db.
 
 ## Contributing
 I appreciate any contributions you this project! Whether you’re reporting a bug, suggesting a new feature, or submitting a pull request. Your input helps shape the project and makes it better for everyone.
