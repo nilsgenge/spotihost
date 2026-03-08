@@ -205,6 +205,22 @@ input[type="number"] {
   color: var(--white);
 }
 
+.profile-dropdown-logout {
+  background-color: transparent;
+  color: var(--danger-red);
+  transition: all 0.2s ease;
+}
+
+.profile-dropdown-logout:hover {
+  background-color: var(--danger-red);
+  color: var(--white);
+}
+
+.profile-dropdown-logout:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 
 /*    TEXT UTILITIES    */
 .text-custom-success {

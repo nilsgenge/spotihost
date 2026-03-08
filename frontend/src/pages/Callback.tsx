@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Callback = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { setAuthenticated } = useAuth();
   const [status, setStatus] = useState("Loading...");
 
   useEffect(() => {
@@ -18,7 +20,8 @@ const Callback = () => {
         .then((res) => {
           if (res.ok) {
             setStatus("Success! Redirecting...");
-            setTimeout(() => navigate("/dashboard"), 2000);
+            setAuthenticated(true);
+            navigate("/dashboard");
           } else {
             setStatus("Authentication failed.");
           }
@@ -30,7 +33,7 @@ const Callback = () => {
     } else {
       setStatus("No code found in URL.");
     }
-  }, [searchParams]);
+  }, [searchParams, navigate, setAuthenticated]);
 
   return <div>{status}</div>;
 };

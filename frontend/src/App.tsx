@@ -18,9 +18,12 @@ import { HealthProvider, useHealth } from "./context/HealthContext";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Analytics from "./pages/Analytics";
+import Welcome from "./pages/Welcome";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
 const AppContent: React.FC = () => {
   const { statusComponent } = useHealth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   const renderLayout = (content: React.ReactNode) => (
     <div className="max-width-page">
@@ -31,35 +34,59 @@ const AppContent: React.FC = () => {
     </div>
   );
 
-  const contentToRender = statusComponent ? (
-    statusComponent
-  ) : (
-    <DateRangeProvider>
-      <Routes>
-        <Route path="/callback" element={<Callback />} />
-        <Route path="/" element={<Navigate to="/dashboard" />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/top" element={<Navigate to="/top/artists" />} />
-        <Route path="/top/:category" element={<Top />} />
-        <Route path="/track/:spotify_id" element={<Track />} />
-        <Route path="/artist/:spotify_id" element={<Artist />} />
-        <Route path="/album/:spotify_id" element={<Album />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/analytics" element={<Analytics />} />
-      </Routes>
-    </DateRangeProvider>
-  );
+  if (isLoading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
+        <span className="text-custom-muted">Loading...</span>
+      </div>
+    );
+  }
 
-  return renderLayout(contentToRender);
+  return (
+    <Routes>
+      <Route path="/callback" element={renderLayout(<Callback />)} />
+      <Route
+        path="/welcome"
+        element={isAuthenticated ? <Navigate to="/dashboard" /> : <Welcome />}
+      />
+      <Route
+        path="/"
+        element={isAuthenticated ? <Navigate to="/dashboard" /> : <Navigate to="/welcome" />}
+      />
+      <Route
+        path="/*"
+        element={
+          isAuthenticated ? (
+            <DateRangeProvider>
+              <Routes>
+                <Route path="/dashboard" element={renderLayout(<Dashboard />)} />
+                <Route path="/top" element={<Navigate to="/top/artists" />} />
+                <Route path="/top/:category" element={renderLayout(<Top />)} />
+                <Route path="/track/:spotify_id" element={renderLayout(<Track />)} />
+                <Route path="/artist/:spotify_id" element={renderLayout(<Artist />)} />
+                <Route path="/album/:spotify_id" element={renderLayout(<Album />)} />
+                <Route path="/profile" element={renderLayout(<Profile />)} />
+                <Route path="/settings" element={renderLayout(<Settings />)} />
+                <Route path="/analytics" element={renderLayout(<Analytics />)} />
+              </Routes>
+            </DateRangeProvider>
+          ) : (
+            <Navigate to="/welcome" />
+          )
+        }
+      />
+    </Routes>
+  );
 };
 
 const App: React.FC = () => {
   return (
     <Router>
-      <HealthProvider>
-        <AppContent />
-      </HealthProvider>
+      <AuthProvider>
+        <HealthProvider>
+          <AppContent />
+        </HealthProvider>
+      </AuthProvider>
     </Router>
   );
 };

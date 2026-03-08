@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Skeleton } from "../ui/Skeleton";
+import { useAuth } from "../../context/AuthContext";
 
 const LoginButton: React.FC = () => {
+  const navigate = useNavigate();
+  const { logout, isLoggingOut } = useAuth();
   const [user, setUser] = useState<any>(null);
   const [loadingAuth, setLoadingAuth] = useState(true);
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -65,6 +68,12 @@ const LoginButton: React.FC = () => {
       console.error("Login failed", error);
       setIsRedirecting(false);
     }
+  };
+
+  // Logout handler
+  const handleLogout = async () => {
+    await logout();
+    navigate("/welcome");
   };
 
   const toggleMenu = () => {
@@ -134,6 +143,14 @@ const LoginButton: React.FC = () => {
               >
                 Profile
               </Link>
+              <hr className="my-2 mx-3 border-secondary" />
+              <button
+                className="profile-dropdown-logout d-block px-4 py-2 w-100 text-start border-0"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? "Logging out..." : "Logout"}
+              </button>
             </div>
           </div>
         )}
