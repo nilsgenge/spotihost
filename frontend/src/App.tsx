@@ -29,7 +29,10 @@ const AppContent: React.FC = () => {
     <div className="max-width-page">
       <div className="container">
         <Navbar />
-        {content}
+        {statusComponent && (
+          <div className="mb-3">{statusComponent}</div>
+        )}
+        {!statusComponent && content}
       </div>
     </div>
   );
@@ -47,7 +50,14 @@ const AppContent: React.FC = () => {
       <Route path="/callback" element={renderLayout(<Callback />)} />
       <Route
         path="/welcome"
-        element={isAuthenticated ? <Navigate to="/dashboard" /> : <Welcome />}
+        element={
+          isAuthenticated ? <Navigate to="/dashboard" /> : (
+            <div className="min-vh-100">
+              {statusComponent}
+              {!statusComponent && <Welcome />}
+            </div>
+          )
+        }
       />
       <Route
         path="/"

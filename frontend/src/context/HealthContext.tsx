@@ -10,6 +10,8 @@ interface HealthContextType {
   isHealthy: boolean;
   isDatabaseHealthy: boolean;
   isBackendHealthy: boolean;
+  isBackendReachable: boolean;
+  networkError: Error | null;
   statusComponent: ReactNode | null;
 }
 
@@ -24,27 +26,56 @@ export const HealthProvider: React.FC<{ children: ReactNode }> = ({
 
   if (healthData.loading) {
     statusComponent = (
-      <div style={{ textAlign: "center", padding: "40px" }}>Loading...</div>
+      <div className="text-center" style={{ padding: "40px" }}>Loading...</div>
     );
-  } else if (!healthData.isBackendHealthy || !healthData.isDatabaseHealthy) {
+  } else if (!healthData.isBackendReachable) {
+    // Backend is completely unreachable (network error)
     statusComponent = (
       <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "10px",
-          padding: "40px 20px",
-        }}
+        className="d-flex flex-column align-items-center gap-3"
+        style={{ padding: "40px 20px" }}
       >
-        {!healthData.isBackendHealthy && (
-          <Status
-            text="Error connecting to backend service."
-            status="deactivated"
-          />
+        <Status
+          text="Backend service is unreachable. Please check if the backend is running."
+          status="deactivated"
+        />
+        {healthData.networkError && (
+          <details className="text-muted small">
+            <summary>Debug info</summary>
+            <code className="d-block mt-2 text-danger small">
+              {healthData.networkError.message}
+            </code>
+          </details>
         )}
-        {!healthData.isDatabaseHealthy && (
-          <Status text="Error connecting to database." status="deactivated" />
+      </div>
+    );
+  } else if (!healthData.isDatabaseHealthy && healthData.health) {
+    // Backend reachable but database is down
+    statusComponent = (
+      <div
+        className="d-flex flex-column align-items-center gap-3"
+        style={{ padding: "40px 20px" }}
+      >
+        <Status
+          text="Database connection failed. Please check if the database is running."
+          status="deactivated"
+        />
+        {healthData.health.checks.database.error && (
+          <details className="text-muted small">
+            <summary>Debug info</summary>
+            <div className="d-flex flex-column gap-2 mt-2">
+              <div>
+                <small className="text-muted">Latency:</small>{" "}
+                <code>{healthData.health.checks.database.latency_ms}ms</code>
+              </div>
+              <div>
+                <small className="text-muted">Error:</small>{" "}
+                <code className="text-danger small">
+                  {healthData.health.checks.database.error}
+                </code>
+              </div>
+            </div>
+          </details>
         )}
       </div>
     );

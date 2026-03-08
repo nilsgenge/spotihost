@@ -4,7 +4,7 @@ import LoginButton from "../blocks/LoginButton";
 import { useHealth } from "../../context/HealthContext";
 
 const Navbar: React.FC = () => {
-  const { isHealthy, loading } = useHealth();
+  const { isBackendReachable, loading } = useHealth();
 
   return (
     <nav className="custom-navbar">
@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
         </NavLink>
       </div>
       <div className="position-absolute end-0 pe-4 d-flex align-items-center">
-        {!loading && isHealthy && <LoginButton />}
+        {!loading && isBackendReachable && <LoginButton />}
       </div>
     </nav>
   );
