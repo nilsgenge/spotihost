@@ -121,20 +121,6 @@ const LoginButton: React.FC = () => {
           <div className="profile-dropdown position-absolute end-0 mt-2 rounded shadow-lg">
             <div className="py-2">
               <Link
-                to="/dashboard"
-                className="profile-dropdown-link d-block px-4 py-2"
-                onClick={closeMenu}
-              >
-                Dashboard
-              </Link>
-              <Link
-                to="/top"
-                className="profile-dropdown-link d-block px-4 py-2"
-                onClick={closeMenu}
-              >
-                Top
-              </Link>
-              <Link
                 to="/settings"
                 className="profile-dropdown-link d-block px-4 py-2"
                 onClick={closeMenu}
