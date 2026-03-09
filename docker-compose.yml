@@ -1,6 +1,9 @@
 # Production Docker Compose
 # Usage: docker compose up -d
 # Access the application at: http://localhost:8000
+#
+# For development with hot reload, use:
+# docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 services:
   db:
@@ -16,7 +19,6 @@ services:
       - "${DB_PORT:-5432}:${DB_PORT:-5432}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    command: postgres -p ${DB_PORT:-5432}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME} -p ${DB_PORT:-5432}"]
       interval: 10s
@@ -26,12 +28,7 @@ services:
       - spotihost-internal
 
   app:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-      args:
-        - VITE_API_URL=${VITE_API_URL:-}
-        - PORT=${PORT:-8000}
+    image: nilsgenge/spotihost:latest
     container_name: spotihost-app
     restart: unless-stopped
     ports:
