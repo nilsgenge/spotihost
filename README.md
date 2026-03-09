@@ -18,6 +18,7 @@ Import your entire Spotify listening history and analyze it locally. SpotiHost t
 <details>
 <summary><strong>Recent Changes</strong></summary>
 
+- **2026-03-09:** Setup build and push action to dockerhub
 - **2026-03-08:** Updated Readme
 - **2026-03-08:** Added welcome page and logout button
 - **2026-03-07:** Added platform and context piecharts
