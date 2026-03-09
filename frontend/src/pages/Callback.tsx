@@ -17,11 +17,15 @@ const Callback = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code }),
       })
-        .then((res) => {
+        .then(async (res) => {
           if (res.ok) {
             setStatus("Success! Redirecting...");
             setAuthenticated(true);
-            navigate("/dashboard");
+            try {
+              await res.json();
+            } catch (e) {}
+            // Delay redirect to allow ingestion to complete
+            setTimeout(() => navigate("/dashboard"), 2000);
           } else {
             setStatus("Authentication failed.");
           }

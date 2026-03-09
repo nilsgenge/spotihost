@@ -534,21 +534,58 @@ def process_item(db: Session, item: Dict[str, Any]):
         raise
 
 
-def ingest_recent_listens():
-    """Fetch recently played tracks from Spotify API and process them."""
+def ingest_recent_listens(retries: int = 3, retry_delay: float = 0.5):
+    """
+    Fetch recently played tracks from Spotify API and process them.
+
+    Args:
+        retries: Number of times to retry if token is not immediately available
+        retry_delay: Seconds to wait between retries
+    """
     db: Session = SessionLocal()
+    token = None
+    last_error = None
+
+    for attempt in range(retries):
+        try:
+            token = get_valid_spotify_token(db)
+            last_error = None
+            break
+        except Exception as e:
+            error_message = str(e)
+            last_error = e
+
+            # Skip ingestion if no user is logged in (no token available)
+            # Only skip for the specific error message from get_valid_spotify_token
+            if "No Spotify token found" in error_message and "Please login first" in error_message:
+                if attempt < retries - 1:
+                    import time
+                    time.sleep(retry_delay)
+                    continue
+                else:
+                    db.close()
+                    return
+            db.close()
+            raise
+
+    if last_error:
+        db.close()
+        raise last_error
+
+    # Ensure token was successfully retrieved
+    if token is None:
+        db.close()
+        raise Exception("Failed to retrieve Spotify token")
 
     try:
-        logger.info("Fetching valid Spotify token...")
-        token = get_valid_spotify_token(db)
 
-        logger.info("Starting Spotify Ingestion...")
         url = "https://api.spotify.com/v1/me/player/recently-played?limit=50"
 
         response = requests.get(
             url,
             headers={"Authorization": f"Bearer {token}"}
         )
+        logger.info(f"Spotify API response status: {response.status_code}")
         response.raise_for_status()
         data = response.json()
         items = data.get("items", [])

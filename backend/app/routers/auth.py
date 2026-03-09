@@ -4,10 +4,15 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 import requests
 import os
+import threading
+import logging
 
 from app.database import get_db
 from app.models import SpotifyToken
 from app.utils.spotify import get_valid_spotify_token
+from app.ingestion import ingest_recent_listens
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -30,7 +35,6 @@ def login():
         f"&scope={SCOPES}"
     )
     
-    print(f"[DEBUG] Auth URL generated: {auth_url}")
     
     return {"auth_url": auth_url}
 
@@ -50,7 +54,7 @@ def logout(db: Session = Depends(get_db)):
 @router.post("/callback")
 def callback(request: CodeRequest, db: Session = Depends(get_db)):
     """
-    Frontend sends the 'code' here. 
+    Frontend sends the 'code' here.
     Backend swaps 'code' for 'access_token' and 'refresh_token'.
     """
     payload = {
@@ -70,7 +74,7 @@ def callback(request: CodeRequest, db: Session = Depends(get_db)):
     expires_at = datetime.now() + timedelta(seconds=data.get("expires_in", 3600))
 
     existing_token = db.query(SpotifyToken).first()
-    
+
     if existing_token:
         existing_token.access_token = data["access_token"]
         existing_token.refresh_token = data["refresh_token"]
@@ -82,9 +86,13 @@ def callback(request: CodeRequest, db: Session = Depends(get_db)):
             expires_at=expires_at
         )
         db.add(new_token)
-    
+
     db.commit()
-    
+
+    # Trigger first ingestion so user does not have an empty dashboard
+    thread = threading.Thread(target=ingest_recent_listens, daemon=True)
+    thread.start()
+
     return {"message": "Authentication successful"}
 
 @router.get("/me")

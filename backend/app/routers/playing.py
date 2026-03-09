@@ -47,9 +47,17 @@ def get_currently_playing(db: Session = Depends(get_db)):
             logger.error(f"Error: {response.status_code}")
             return {"error": f"Failed - StatusCode: {response.status_code}"}
 
-    except requests.exceptions.RequestException as e:
-        logger.exception("Network error")
-        raise HTTPException(status_code=503, detail="Spotify API unreachable")
+    except Exception as e:
+        error_message = str(e)
+        if "No Spotify token found" in error_message and "Please login first" in error_message:
+            logger.debug("No Spotify token found (user not logged in)")
+            raise HTTPException(status_code=401, detail="Not authenticated. Please login first.")
+        elif isinstance(e, requests.exceptions.RequestException):
+            logger.exception("Network error")
+            raise HTTPException(status_code=503, detail="Spotify API unreachable")
+        else:
+            logger.exception("Unexpected error")
+            raise HTTPException(status_code=500, detail=f"Internal server error: {error_message}")
 
 @router.get("/check-rate-limit")
 def check_rate_limit(db: Session = Depends(get_db)):
@@ -92,4 +100,13 @@ def check_rate_limit(db: Session = Depends(get_db)):
             }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        error_message = str(e)
+        if "No Spotify token found" in error_message and "Please login first" in error_message:
+            logger.debug("No Spotify token found (user not logged in)")
+            raise HTTPException(status_code=401, detail="Not authenticated. Please login first.")
+        elif isinstance(e, requests.exceptions.RequestException):
+            logger.exception("Network error")
+            raise HTTPException(status_code=503, detail="Spotify API unreachable")
+        else:
+            logger.exception("Unexpected error")
+            raise HTTPException(status_code=500, detail=f"Internal server error: {error_message}")
