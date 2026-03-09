@@ -45,6 +45,8 @@ Import your entire Spotify listening history and analyze it locally. SpotiHost t
 - [Key Features](#features)
 - [Screenshots](#screenshots)
 - [Getting Started](#getting-started)
+  - [Quick Start with Docker](#quick-start-with-docker)
+  - [Development Mode](#development-mode)
 - [Contributing](#contributing)
 
 ## Features
@@ -100,6 +102,10 @@ Import your entire Spotify listening history and analyze it locally. SpotiHost t
 
 ## Getting Started
 
+### Quick Start with Docker
+
+SpotiHost uses a pre-built Docker image by default. Just clone the repo for configuration files and start the app.
+
 **Prerequisites**
 
 - Docker and Docker Compose installed
@@ -111,7 +117,7 @@ Import your entire Spotify listening history and analyze it locally. SpotiHost t
 2. Click "Create App"
 3. Fill in app name and description
 4. In the app settings, add a Redirect URL:
-   - For local use: `http://localhost:8000/callback`
+   - For local use: `http://127.0.0.1:8000/callback`
    - For deployment on a server: `https://your-domain.com/callback`
 5. Copy the **Client ID** and **Client Secret**
 
@@ -141,16 +147,13 @@ SPOTIFY_CLIENT_SECRET=your_spotify_client_secret_here
 
 # Application Settings
 PORT=8000
-SPOTIFY_REDIRECT_URI=http://localhost:8000/callback
+SPOTIFY_REDIRECT_URI=http://127.0.0.1:8000/callback
 ```
 
 **Start the Application**
 
 ```bash
-# Build and start (first time or after updates)
-docker compose up -d --build
-
-# Subsequent starts
+# Start
 docker compose up -d
 
 # Stop the application
@@ -164,9 +167,33 @@ Open your browser and go to: **http://localhost:8000** or configure your own dom
 **Updating**
 
 ```bash
+# Pull the latest image and restart
+docker compose pull nilsgenge/spotihost
+docker compose up -d
+```
+
+### Development Mode
+
+For local development with hot reload and seperate frontend container:
+
+```bash
+# Clone the repository
+git clone https://github.com/nilsgenge/spotihost.git
+cd spotihost
+
+# Create your config file
+cp .env.example .env
+# Edit .env with your credentials
+
+# Start in development mode (builds from source)
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+```
+
+**Updating in dev mode**
+
+```bash
 git pull
-docker compose down
-docker compose up -d --build
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 ```
 
 ## Troubleshooting
@@ -176,7 +203,7 @@ docker compose up -d --build
 ```bash
 # Warning: This deletes all your data!
 docker compose down -v
-docker compose up -d --build
+docker compose up -d
 ```
 
 ## Contributing
