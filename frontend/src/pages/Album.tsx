@@ -39,55 +39,57 @@ const Album: React.FC = () => {
       />
 
       {/* Hero Section */}
-      <div className="row align-items-center g-4 mb-4">
-        <div className="col-auto">
-          <img
-            src={album.image_url}
-            alt={album.name}
-            className="rounded-3 shadow detail-image"
-          />
-        </div>
-        <div className="col">
-          <div className="d-flex flex-column gap-2">
-            <h1 className="fw-bold mb-0">{album.name}</h1>
+      <div className="page-header">
+        <div className="row align-items-center g-4">
+          <div className="col-auto">
+            <img
+              src={album.image_url}
+              alt={album.name}
+              className="rounded-3 shadow detail-image"
+            />
+          </div>
+          <div className="col">
+            <div className="d-flex flex-column gap-2">
+              <h1 className="fw-bold mb-0">{album.name}</h1>
 
-            <div className="d-flex flex-wrap gap-2">
-              {album.artists.map((artist, index) => (
-                <span key={artist.spotify_id}>
-                  <Link
-                    to={`/artist/${artist.spotify_id}`}
-                    className="hover-underline text-reset"
-                  >
-                    {artist.name}
-                  </Link>
-                  {index < album.artists.length - 1 && ", "}
-                </span>
-              ))}
-            </div>
+              <div className="d-flex flex-wrap gap-2">
+                {album.artists.map((artist, index) => (
+                  <span key={artist.spotify_id}>
+                    <Link
+                      to={`/artist/${artist.spotify_id}`}
+                      className="hover-underline text-reset"
+                    >
+                      {artist.name}
+                    </Link>
+                    {index < album.artists.length - 1 && ", "}
+                  </span>
+                ))}
+              </div>
 
-            <div className="d-flex align-items-center gap-3 mt-2">
-              <SpotifyButton type="album" spotifyId={spotify_id} />
-            </div>
+              <div className="d-flex align-items-center gap-3 mt-2">
+                <SpotifyButton type="album" spotifyId={spotify_id} />
+              </div>
 
-            <div className="d-flex flex-wrap gap-4 mt-3 small">
-              <div>
-                <span className="fw-bold">Released</span>:{" "}
-                {album.release_date.split("-")[0]}
-              </div>
-              <div>
-                <span className="fw-bold">Total Tracks</span>:{" "}
-                {album.total_tracks}
-              </div>
-              <div>
-                <span className="fw-bold">Popularity</span>: {album.popularity}
-                /100
-              </div>
-              <div>
-                <span className="fw-bold">Listens</span>: {album.listen_count}
-              </div>
-              <div>
-                <span className="fw-bold">Type </span>:{" "}
-                {capitalizeFirstChar(album.album_type)}
+              <div className="d-flex flex-wrap gap-4 mt-3 small">
+                <div>
+                  <span className="fw-bold">Released</span>:{" "}
+                  {album.release_date.split("-")[0]}
+                </div>
+                <div>
+                  <span className="fw-bold">Total Tracks</span>:{" "}
+                  {album.total_tracks}
+                </div>
+                <div>
+                  <span className="fw-bold">Popularity</span>:{" "}
+                  {album.popularity}/100
+                </div>
+                <div>
+                  <span className="fw-bold">Listens</span>: {album.listen_count}
+                </div>
+                <div>
+                  <span className="fw-bold">Type </span>:{" "}
+                  {capitalizeFirstChar(album.album_type)}
+                </div>
               </div>
             </div>
           </div>
@@ -98,7 +100,7 @@ const Album: React.FC = () => {
 
       {/* Artists Section */}
       <div className="mb-4">
-        <h2 className="h5 mb-3">Artists</h2>
+        <h2 className="detail-section-header">Artists</h2>
         <div className="d-flex flex-column gap-2">
           {album.artists.map((artist) => (
             <ElementBlock
@@ -107,7 +109,9 @@ const Album: React.FC = () => {
               title={artist.name}
               title_url={`/artist/${artist.spotify_id}`}
               stat={
-                artist.listen_count != 0 ? `${artist.listen_count} Listens` : ""
+                artist.listen_count != 0
+                  ? `${artist.listen_count} Listens`
+                  : ""
               }
             />
           ))}
@@ -116,7 +120,7 @@ const Album: React.FC = () => {
 
       {/* Tracks Section */}
       <div className="mb-4">
-        <h2 className="h5 mb-3">Tracks</h2>
+        <h2 className="detail-section-header">Tracks</h2>
         <div className="d-flex flex-column gap-2">
           {album.tracks.map((track, index) => (
             <ElementBlock
@@ -138,11 +142,11 @@ const Album: React.FC = () => {
 
       {/* Stats Section */}
       <div className="mb-4">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h2 className="h5 mb-0">Extra Stats</h2>
-        </div>
-        <div className="row mb-4 text-center">
-          <DateRangePicker />
+        <h2 className="detail-section-header">Extra Stats</h2>
+        <div className="row page-section">
+          <div className="col date-range-picker">
+            <DateRangePicker />
+          </div>
         </div>
 
         <div className="row g-4">
