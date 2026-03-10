@@ -13,7 +13,10 @@ import DateRangePicker from "../components/blocks/DateRangePicker";
 const Analytics: React.FC = () => {
   return (
     <div className="container">
-      <h1 className="mb-4">Analytics</h1>
+      {/* Header */}
+      <div className="dashboard-header">
+        <h1>Analytics</h1>
+      </div>
 
       <Separator />
 
@@ -51,8 +54,10 @@ const Analytics: React.FC = () => {
 
       <Separator />
 
-      <div className="row mb-4 text-center">
-        <DateRangePicker />
+      <div className="row dashboard-section">
+        <div className="col date-range-picker">
+          <DateRangePicker />
+        </div>
       </div>
 
       <div className="row g-4 mb-4">
