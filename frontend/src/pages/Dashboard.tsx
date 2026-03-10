@@ -28,10 +28,12 @@ const Dashboard: FC = () => {
   return (
     <div className="container">
       {/* Header */}
-      <h1 className="mb-4">Dashboard</h1>
+      <div className="dashboard-header">
+        <h1>Dashboard</h1>
+      </div>
 
-      <div className="row mb-4 text-center">
-        <div className="col">
+      <div className="row dashboard-section">
+        <div className="col date-range-picker">
           <DateRangePicker />
         </div>
       </div>
