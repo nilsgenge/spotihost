@@ -44,7 +44,7 @@ const StatBlock: React.FC<StatBlockProps> = ({
     if (loading) {
       if (icon) {
         const content = (
-          <div className={`${baseClasses} rounded bg-primary text-white`}>
+          <div className={`${baseClasses} rounded text-custom-success`}>
             {icon}
           </div>
         );
@@ -80,7 +80,7 @@ const StatBlock: React.FC<StatBlockProps> = ({
         style={{ backgroundImage: `url(${imageUrl})` }}
       />
     ) : (
-      <div className={`${baseClasses} rounded bg-primary text-white`}>
+      <div className={`${baseClasses} rounded text-custom-success`}>
         {icon}
       </div>
     );
@@ -102,7 +102,7 @@ const StatBlock: React.FC<StatBlockProps> = ({
 
   return (
     <Block>
-      <div className="d-flex align-items-center gap-3 text-truncate">
+      <div className="d-flex align-items-center gap-3">
         {renderVisual()}
 
         <div

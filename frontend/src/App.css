@@ -71,7 +71,6 @@ input[type="number"] {
   border-radius: var(--block-border-radius);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -305,16 +304,27 @@ input[type="number"] {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0;
+  flex: 1;
 }
 
 .stat-fixed.no-title {
   justify-content: center;
 }
 
+/* Target the text container in StatBlock when it doesn't have stat-fixed */
+.block .d-flex > div:last-child {
+  min-width: 0;
+  flex: 1;
+}
+
 .stat-title {
   min-height: 1.25rem;
   color: var(--text-secondary);
   font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .stat-value {
@@ -324,6 +334,9 @@ input[type="number"] {
   gap: 0.5rem;
   font-size: 1.75rem;
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .fw-bold.fs-3 {
@@ -343,12 +356,18 @@ input[type="number"] {
   border: 1px solid rgba(34, 197, 94, 0.25);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  z-index: 1;
 }
 
-.block:hover .icon-square {
-  transform: scale(1.08);
+.block:hover .icon-square:not(.stat-image) {
+  transform: scale(1.05);
   border-color: rgba(34, 197, 94, 0.4);
   box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.22) 0%, rgba(34, 197, 94, 0.1) 100%);
+}
+
+.block:hover .icon-square.stat-image {
+  transform: scale(1.05);
 }
 
 .icon-square.bg-primary {

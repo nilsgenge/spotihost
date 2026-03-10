@@ -47,8 +47,8 @@ const PlayingStatus = () => {
               songName === "Nothing Playing"
                 ? "Nothing Playing"
                 : isPlaying
-                ? "Currently Playing"
-                : "Currently Paused"
+                  ? "Currently Playing"
+                  : "Currently Paused"
             }
             value={songName === "Nothing Playing" ? "-" : songName}
           />
