@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { FaSpotify, FaHeadphones } from "react-icons/fa";
+import Block from "../components/ui/Block";
 
 const Welcome: React.FC = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -19,22 +21,52 @@ const Welcome: React.FC = () => {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center min-vh-100">
-      <div className="text-center">
-        <h1 className="display-3 fw-bold mb-3 text-white">
-          Welcome to SpotiHost
-        </h1>
-        <p className="fs-5 text-custom-muted mb-5">
+    <div className="welcome-container">
+      <div className="welcome-content">
+        <div className="welcome-logo">
+          <div className="welcome-logo-glow"></div>
+          <div className="welcome-logo-glow-outer"></div>
+          <div className="welcome-title-container">
+            <p className="welcome-prefix">Welcome to</p>
+            <h1 className="welcome-title">SpotiHost</h1>
+          </div>
+        </div>
+
+        <p className="welcome-tagline">
           Your personal Spotify listening history tracker
         </p>
+
         <button
-          className="btn btn-primary btn-lg py-3 px-5 fs-4 fw-semibold"
+          className="welcome-login-btn"
           onClick={handleLogin}
           disabled={isRedirecting}
         >
-          {isRedirecting ? "Redirecting..." : "Login with Spotify"}
+          <FaSpotify className="welcome-spotify-icon" />
+          <span>{isRedirecting ? "Redirecting..." : "Login with Spotify"}</span>
         </button>
+
+        <div className="welcome-blocks">
+          <Block fullWidth={false} className="welcome-feature-block">
+            <div className="d-flex align-items-center gap-3">
+              <div className="welcome-block-icon">
+                <FaHeadphones />
+              </div>
+              <div>
+                <div className="welcome-block-title">Track Your Listening</div>
+                <div className="welcome-block-desc">
+                  Detailed analytics & insights
+                </div>
+              </div>
+            </div>
+          </Block>
+        </div>
+
+        <p className="welcome-footer">Start tracking your music today!</p>
       </div>
+
+      <div className="welcome-bg-gradient welcome-bg-1"></div>
+      <div className="welcome-bg-gradient welcome-bg-2"></div>
+      <div className="welcome-bg-gradient welcome-bg-3"></div>
     </div>
   );
 };
