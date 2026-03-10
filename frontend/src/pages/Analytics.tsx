@@ -14,7 +14,7 @@ const Analytics: React.FC = () => {
   return (
     <div className="container">
       {/* Header */}
-      <div className="dashboard-header">
+      <div className="page-header">
         <h1>Analytics</h1>
       </div>
 
@@ -54,7 +54,7 @@ const Analytics: React.FC = () => {
 
       <Separator />
 
-      <div className="row dashboard-section">
+      <div className="row page-section">
         <div className="col date-range-picker">
           <DateRangePicker />
         </div>

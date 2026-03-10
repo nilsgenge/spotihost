@@ -33,18 +33,18 @@ const Top = () => {
   return (
     <div className="container">
       {/* Header */}
-      <div className="dashboard-header">
+      <div className="page-header">
         <h1>Top</h1>
       </div>
 
-      <div className="row dashboard-section">
+      <div className="row page-section">
         <div className="col date-range-picker">
           <DateRangePicker />
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="row dashboard-section">
+      <div className="row page-section">
         <div className="col">
           <div className="d-flex gap-2 flex-wrap">
             {Object.entries(CATEGORIES).map(([key, { label, path }]) => {
