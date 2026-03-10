@@ -18,6 +18,7 @@ import {
   MonthBarDiagram,
   YearBarDiagram,
 } from "../components/charts/PlaysBarDiagrams";
+import Status from "../components/ui/Status";
 
 const Artist: React.FC = () => {
   const { spotify_id } = useParams<{ spotify_id: string }>();
@@ -47,41 +48,43 @@ const Artist: React.FC = () => {
       />
 
       {/* Hero Section */}
-      <div className="row align-items-center g-4 mb-4">
-        <div className="col-auto">
-          <img
-            src={artist.image_url}
-            alt={artist.name}
-            className="rounded-3 shadow detail-image"
-          />
-        </div>
-        <div className="col">
-          <div className="d-flex flex-column gap-2">
-            <h1 className="fw-bold mb-0">{artist.name}</h1>
+      <div className="page-header">
+        <div className="row align-items-center g-4">
+          <div className="col-auto">
+            <img
+              src={artist.image_url}
+              alt={artist.name}
+              className="rounded-3 shadow detail-image"
+            />
+          </div>
+          <div className="col">
+            <div className="d-flex flex-column gap-2">
+              <h1 className="fw-bold mb-0">{artist.name}</h1>
 
-            <div className="d-flex align-items-center gap-3 mt-2">
-              <SpotifyButton type="artist" spotifyId={spotify_id} />
-            </div>
+              <div className="d-flex align-items-center gap-3 mt-2">
+                <SpotifyButton type="artist" spotifyId={spotify_id} />
+              </div>
 
-            <div className="d-flex flex-wrap gap-4 mt-3 small">
-              <div>
-                <strong>Followers</strong>: {formatFollowers(artist.followers)}
-              </div>
-              <div>
-                <strong>Popularity</strong>: {artist.popularity}/100
-              </div>
-              <div>
-                <strong>Listens</strong>: {artist.listen_count}
-              </div>
-            </div>
-
-            {artist.genres && artist.genres.length > 0 && (
               <div className="d-flex flex-wrap gap-4 mt-3 small">
                 <div>
-                  <strong>Genres</strong>: {artist.genres.join(", ")}
+                  <strong>Followers</strong>: {formatFollowers(artist.followers)}
+                </div>
+                <div>
+                  <strong>Popularity</strong>: {artist.popularity}/100
+                </div>
+                <div>
+                  <strong>Listens</strong>: {artist.listen_count}
                 </div>
               </div>
-            )}
+
+              {artist.genres && artist.genres.length > 0 && (
+                <div className="d-flex gap-2 flex-wrap mt-3">
+                  {artist.genres.map((genre) => (
+                    <Status key={genre} text={genre} status="neutral" />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -90,11 +93,11 @@ const Artist: React.FC = () => {
 
       {/* Stats Section */}
       <div className="mb-4">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h2 className="h5 mb-0">Activity</h2>
-        </div>
-        <div className="row mb-4 text-center">
-          <DateRangePicker />
+        <h2 className="detail-section-header">Activity</h2>
+        <div className="row page-section">
+          <div className="col date-range-picker">
+            <DateRangePicker />
+          </div>
         </div>
 
         <div className="row g-4">
@@ -108,12 +111,7 @@ const Artist: React.FC = () => {
             </ContentBlock>
           </div>
 
-          <Separator />
-
           {/* Pie Charts */}
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <h2 className="h5 mb-0">Extra Stats</h2>
-          </div>
           <div className="col-12 col-lg-6">
             <ContentBlock title="Skip Rate - Alltime">
               <SkipRatePieDiagram
@@ -156,10 +154,11 @@ const Artist: React.FC = () => {
 
       <Separator />
 
+      {/* Top Tracks & Albums */}
       <div className="row g-4 mb-4">
         {/* Top Tracks */}
         <div className="col-12 col-lg-6">
-          <h2 className="h4 mb-3">Top Tracks</h2>
+          <h2 className="detail-section-header">Top Tracks</h2>
           <div className="d-flex flex-column gap-2">
             {displayedTracks.map((track) => (
               <ElementBlock
@@ -181,7 +180,7 @@ const Artist: React.FC = () => {
 
         {/* Top Albums */}
         <div className="col-12 col-lg-6">
-          <h2 className="h4 mb-3">Top Albums</h2>
+          <h2 className="detail-section-header">Top Albums</h2>
           <div className="d-flex flex-column gap-2">
             {displayedAlbums.map((album) => (
               <ElementBlock
