@@ -68,6 +68,7 @@ def get_track_details(spotify_id: str, db: Session = Depends(get_db)):
     track_listen_count: int = (
         db.query(func.count(Listen.listen_id))
         .filter(Listen.track_id == local_track.track_id)
+        .filter((Listen.skipped == False) | (Listen.skipped == None))
         .scalar()
         or 0
     )
@@ -81,6 +82,7 @@ def get_track_details(spotify_id: str, db: Session = Depends(get_db)):
             .join(Track, Track.track_id == Listen.track_id)
             .join(track_artists)
             .filter(track_artists.c.artist_id == artist.artist_id)
+            .filter((Listen.skipped == False) | (Listen.skipped == None))
             .scalar()
             or 0
         )
@@ -127,6 +129,7 @@ def get_track_details(spotify_id: str, db: Session = Depends(get_db)):
                             .join(Track, Track.track_id == Listen.track_id)
                             .join(track_album)
                             .filter(track_album.c.album_id == db_album.album_id)
+                            .filter((Listen.skipped == False) | (Listen.skipped == None))
                             .scalar()
                             or 0
                         )
@@ -151,12 +154,13 @@ def get_track_details(spotify_id: str, db: Session = Depends(get_db)):
     # api fallback
     if not final_album:
         db_album = local_track.albums[0]
-        
+
         album_listens: int = (
             db.query(func.count(Listen.listen_id))
             .join(Track, Track.track_id == Listen.track_id)
             .join(track_album)
             .filter(track_album.c.album_id == db_album.album_id)
+            .filter((Listen.skipped == False) | (Listen.skipped == None))
             .scalar()
             or 0
         )

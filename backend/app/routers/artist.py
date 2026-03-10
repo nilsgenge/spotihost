@@ -84,6 +84,7 @@ def get_artist_details(spotify_id: str, db: Session = Depends(get_db)):
         .join(Track, Track.track_id == Listen.track_id)
         .join(track_artists)
         .filter(track_artists.c.artist_id == artist.artist_id)
+        .filter((Listen.skipped == False) | (Listen.skipped == None))
         .scalar()
         or 0
     )
@@ -93,6 +94,7 @@ def get_artist_details(spotify_id: str, db: Session = Depends(get_db)):
         .join(Listen, Track.track_id == Listen.track_id)
         .join(track_artists, track_artists.c.track_id == Track.track_id)
         .filter(track_artists.c.artist_id == artist.artist_id)
+        .filter((Listen.skipped == False) | (Listen.skipped == None))
         .group_by(Track.spotify_id)
         .all()
     )
@@ -105,6 +107,7 @@ def get_artist_details(spotify_id: str, db: Session = Depends(get_db)):
         .join(Listen, Listen.track_id == Track.track_id)
         .join(album_artists, album_artists.c.album_id == Album.album_id)
         .filter(album_artists.c.artist_id == artist.artist_id)
+        .filter((Listen.skipped == False) | (Listen.skipped == None))
         .group_by(Album.spotify_id)
         .all()
     )
