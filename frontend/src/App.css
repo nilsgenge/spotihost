@@ -616,7 +616,7 @@ input[type="number"] {
   margin-bottom: 0.5rem;
 }
 
-/* Date Range Picker - Modern Pill Design */
+/* Date Range Picker */
 .date-range-picker {
   display: flex;
   gap: 0.5rem;
@@ -776,7 +776,7 @@ input[type="number"] {
   transform: translateY(-1px);
 }
 
-/* Top Rankings & History - ElementBlock Modernization */
+/* Top Rankings & History */
 .element-block-modern {
   border: 1px solid rgba(255, 255, 255, 0.03);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
