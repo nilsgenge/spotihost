@@ -450,11 +450,17 @@ input[type="number"] {
 }
 
 .detail-image {
-  width: 180px;
-  height: 180px;
+  width: 300px;
+  height: 300px;
   object-fit: cover;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
+.detail-image:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
 
 /*    SEPARATORS    */
 .separator {
@@ -604,6 +610,15 @@ input[type="number"] {
   margin-bottom: 0.5rem;
 }
 
+/* Detail Page Section Headers */
+.detail-section-header {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  letter-spacing: 0.02em;
+}
+
 /* Page Section */
 .page-section {
   margin-bottom: 1rem;
@@ -703,6 +718,26 @@ input[type="number"] {
   .date-range-picker .btn {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
+  }
+
+  .detail-image {
+    width: 220px;
+    height: 220px;
+  }
+
+  .track-hero {
+    margin: -1rem -1rem 2rem -1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .detail-image {
+    width: 180px;
+    height: 180px;
+  }
+
+  .track-hero {
+    padding: 1.5rem 0;
   }
 }
 
