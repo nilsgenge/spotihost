@@ -9,6 +9,7 @@ import ContentBlock from "../components/ui/ContentBlock";
 import Separator from "../components/ui/Separator";
 import { TotalPlaysLineDiagram } from "../components/charts/PlaysLineDiagrams";
 import DateRangePicker from "../components/blocks/DateRangePicker";
+import { AlbumReleaseYearLineDiagram } from "../components/charts/AlbumYearLineDiagrams";
 
 const Analytics: React.FC = () => {
   return (
@@ -60,6 +61,15 @@ const Analytics: React.FC = () => {
         <div className="col-12">
           <ContentBlock title="Number of Listens">
             <TotalPlaysLineDiagram />
+          </ContentBlock>
+        </div>
+
+        <Separator />
+
+        {/* Pie Charts */}
+        <div className="col-12">
+          <ContentBlock title="Average Album Release Date">
+            <AlbumReleaseYearLineDiagram />
           </ContentBlock>
         </div>
 

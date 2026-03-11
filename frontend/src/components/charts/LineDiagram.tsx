@@ -13,6 +13,7 @@ interface LineDiagramProps {
   data: Bucket[];
   color?: string;
   valueFormatter?: (value: number | null) => string;
+  domain?: [number | "auto", number | ((dataMax: number) => number) | "auto"];
 }
 
 const defaultFormatter = (val: number | null) =>
@@ -22,6 +23,7 @@ export const LineDiagram: React.FC<LineDiagramProps> = ({
   data,
   color = "var(--primary-green)",
   valueFormatter = defaultFormatter,
+  domain,
 }) => {
   const chartData = data.map((bucket) => ({
     ...bucket,
@@ -68,11 +70,12 @@ export const LineDiagram: React.FC<LineDiagramProps> = ({
             axisLine={{ stroke: "var(--chart-axis)" }}
             tickLine={{ stroke: "var(--chart-axis)" }}
             tickFormatter={(val) => (val !== null ? `${val}` : "")}
-            domain={[
-              0,
-              (dataMax: number) => Math.max(5, Math.ceil(dataMax * 1.15)),
-            ]}
-            allowDecimals={false}
+            domain={
+              domain || [
+                0,
+                (dataMax: number) => Math.max(5, Math.ceil(dataMax * 1.15)),
+              ]
+            }
           />
           <Tooltip
             content={<CustomTooltip />}

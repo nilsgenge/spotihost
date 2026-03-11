@@ -11,11 +11,13 @@ from fastapi import APIRouter
 from .minutes import router as minutes_router
 from .plays import router as plays_router
 from .distributions import router as distributions_router
+from .album_year import router as album_year_router
 
 router = APIRouter(prefix="/charts", tags=["charts"])
 
 router.include_router(minutes_router)
 router.include_router(plays_router)
 router.include_router(distributions_router)
+router.include_router(album_year_router)
 
 __all__ = ["router"]
