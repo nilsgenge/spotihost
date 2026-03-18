@@ -6,6 +6,8 @@ import {
   FaTrash,
   FaRedo,
 } from "react-icons/fa";
+import Block from "../ui/Block";
+import StatBlock from "../ui/StatBlock";
 
 interface FileImportStatus {
   id: number;
@@ -257,30 +259,30 @@ const FileImportBlock: React.FC = () => {
 
       {/* Stats Grid */}
       {stats && (
-        <div className="row g-3 mb-4">
-          <div className="col-6 col-md-3 text-center p-3 border border-secondary rounded">
-            <small className="text-custom-muted d-block">Total Imported</small>
-            <strong className="fs-5 text-custom-success">
-              {stats.total_records_imported.toLocaleString()}
-            </strong>
+        <div className="row g-4 mb-4">
+          <div className="col-6 col-md-3">
+            <StatBlock
+              title="Total Imported"
+              value={stats.total_records_imported.toLocaleString()}
+            />
           </div>
-          <div className="col-6 col-md-3 text-center p-3 border border-secondary rounded">
-            <small className="text-custom-muted d-block">Completed</small>
-            <strong className="fs-5 text-custom-success">
-              {stats.completed_jobs}
-            </strong>
+          <div className="col-6 col-md-3">
+            <StatBlock
+              title="Completed"
+              value={stats.completed_jobs.toString()}
+            />
           </div>
-          <div className="col-6 col-md-3 text-center p-3 border border-secondary rounded">
-            <small className="text-custom-muted d-block">Processing</small>
-            <strong className="fs-5 text-primary">
-              {stats.processing_jobs}
-            </strong>
+          <div className="col-6 col-md-3">
+            <StatBlock
+              title="Processing"
+              value={stats.processing_jobs.toString()}
+            />
           </div>
-          <div className="col-6 col-md-3 text-center p-3 border border-secondary rounded">
-            <small className="text-custom-muted d-block">Failed</small>
-            <strong className="fs-5 text-custom-danger">
-              {stats.failed_jobs}
-            </strong>
+          <div className="col-6 col-md-3">
+            <StatBlock
+              title="Failed"
+              value={stats.failed_jobs.toString()}
+            />
           </div>
         </div>
       )}
@@ -330,66 +332,63 @@ const FileImportBlock: React.FC = () => {
           <h6 className="mb-2 text-custom-muted">
             Import Jobs ({files.length})
           </h6>
-          <div className="list-group list-group-flush">
+          <div className="d-flex flex-column gap-2">
             {files.map((file) => {
               const isActive =
                 file.status === "processing" || file.status === "pending";
 
               return (
-                <div
-                  key={file.id}
-                  className="list-group-item bg-transparent border-secondary py-3"
-                >
-                  <div className="d-flex justify-content-between align-items-start mb-2">
-                    <div className="d-flex align-items-center gap-2 flex-grow-1 overflow-hidden">
-                      <div className="flex-shrink-0">
-                        {getStatusIcon(file.status)}
-                      </div>
-
-                      <div className="flex-grow-1 min-w-0">
-                        <div className="fw-bold text-truncate">
-                          {file.filename}
-                        </div>
-                        <small className="text-custom-muted">
-                          {renderStatusText(file)}
-                        </small>
-                      </div>
+                <Block key={file.id}>
+                  <div className="d-flex align-items-center gap-3 w-100 min-w-0">
+                    {/* Status Icon */}
+                    <div className="flex-shrink-0">
+                      {getStatusIcon(file.status)}
                     </div>
 
-                    <div className="d-flex gap-2 flex-shrink-0">
-                      {file.status === "failed" && (
+                    {/* Job Info */}
+                    <div className="flex-grow-1 min-w-0 overflow-hidden">
+                      <div className="fw-bold text-truncate">
+                        {file.filename}
+                      </div>
+                      <small className="text-custom-muted text-truncate d-block">
+                        {renderStatusText(file)}
+                      </small>
+                      {file.status === "failed" && file.error_message && (
+                        <div className="mt-1 text-custom-danger text-truncate small">
+                          {file.error_message}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="text-end flex-shrink-0" style={{ minWidth: "90px" }}>
+                      <div className="d-flex gap-2 justify-content-end">
+                        {file.status === "failed" && (
+                          <button
+                            className="btn btn-sm btn-outline-custom"
+                            onClick={() => retryJob(file.id)}
+                            title="Retry import"
+                          >
+                            <FaRedo />
+                          </button>
+                        )}
+
                         <button
                           className="btn btn-sm btn-outline-custom"
-                          onClick={() => retryJob(file.id)}
-                          title="Retry import"
+                          onClick={() => removeFile(file.id)}
+                          disabled={isActive}
+                          title={
+                            isActive
+                              ? "Cannot delete while processing"
+                              : "Delete job"
+                          }
                         >
-                          <FaRedo />
+                          <FaTrash />
                         </button>
-                      )}
-
-                      <button
-                        className="btn btn-sm btn-outline-custom"
-                        onClick={() => removeFile(file.id)}
-                        disabled={isActive}
-                        title={
-                          isActive
-                            ? "Cannot delete while processing"
-                            : "Delete job"
-                        }
-                      >
-                        <FaTrash />
-                      </button>
+                      </div>
                     </div>
                   </div>
-
-                  {file.status === "failed" && file.error_message && (
-                    <div className="mt-2 p-2 bg-danger bg-opacity-10 rounded border border-danger border-opacity-25">
-                      <small className="text-danger">
-                        {file.error_message}
-                      </small>
-                    </div>
-                  )}
-                </div>
+                </Block>
               );
             })}
           </div>
@@ -397,10 +396,12 @@ const FileImportBlock: React.FC = () => {
       )}
 
       {files.length === 0 && !isUploading && (
-        <div className="text-center text-custom-muted py-4">
-          No import jobs yet. Upload your Spotify listening history to get
-          started.
-        </div>
+        <Block>
+          <div className="text-center text-custom-muted py-2">
+            No import jobs yet. Upload your Spotify listening history to get
+            started.
+          </div>
+        </Block>
       )}
     </div>
   );
