@@ -73,6 +73,7 @@ input[type="number"] {
   flex-direction: column;
   border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 }
 
 .block:hover {
@@ -335,8 +336,12 @@ input[type="number"] {
   font-size: 1.75rem;
   font-weight: 600;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  min-width: 0;
+}
+
+.stat-value span.ms-2,
+.stat-value span.fs-6 {
+  flex-shrink: 0;
 }
 
 .fw-bold.fs-3 {

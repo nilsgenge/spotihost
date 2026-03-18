@@ -72,11 +72,12 @@ const ElementBlock: React.FC<ElementBlockProps> = ({
       to={title_url}
       className="fw-bold text-reset hover-underline text-truncate d-block"
       title={title}
+      style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
     >
       {title}
     </Link>
   ) : (
-    <div className="fw-bold text-truncate" title={title}>
+    <div className="fw-bold text-truncate" title={title} style={{ minWidth: 0 }}>
       {title}
     </div>
   );
@@ -95,7 +96,7 @@ const ElementBlock: React.FC<ElementBlockProps> = ({
 
         <div className="flex-shrink-0">{renderImage()}</div>
 
-        <div className="flex-grow-1 text-start min-w-0 text-truncate">
+        <div className="flex-grow-1 text-start min-w-0 overflow-hidden">
           {titleContent}
 
           {label && label.length > 0 && (
@@ -106,7 +107,7 @@ const ElementBlock: React.FC<ElementBlockProps> = ({
         </div>
 
         {stat && (
-          <div className="text-end">
+          <div className="text-end flex-shrink-0" style={{ minWidth: '80px' }}>
             <div className="text-custom-muted small text-nowrap">{stat}</div>
           </div>
         )}
