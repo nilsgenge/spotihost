@@ -9,7 +9,7 @@ import ContentBlock from "../components/ui/ContentBlock";
 import Separator from "../components/ui/Separator";
 import { TotalPlaysLineDiagram } from "../components/charts/PlaysLineDiagrams";
 import DateRangePicker from "../components/blocks/DateRangePicker";
-import { AlbumReleaseYearLineDiagram } from "../components/charts/AlbumYearLineDiagrams";
+import { AlbumReleaseYearLineDiagram } from "../components/charts/AlbumYearLineDiagram";
 
 const Analytics: React.FC = () => {
   return (
