@@ -120,7 +120,7 @@ const StatBlock: React.FC<StatBlockProps> = ({
               <Skeleton width="100px" height="32px" variant="text" />
             ) : (
               <>
-                {value}
+                <span className="stat-text-truncate">{value}</span>
 
                 {change !== undefined && change !== 0 && (
                   <span className={`${changeColor} fs-6`}>
