@@ -14,6 +14,7 @@ interface LineDiagramProps {
   color?: string;
   valueFormatter?: (value: number | null) => string;
   domain?: [number | "auto", number | ((dataMax: number) => number) | "auto"];
+  tickFormatter?: (value: number | null) => string;
 }
 
 const defaultFormatter = (val: number | null) =>
@@ -24,6 +25,7 @@ export const LineDiagram: React.FC<LineDiagramProps> = ({
   color = "var(--primary-green)",
   valueFormatter = defaultFormatter,
   domain,
+  tickFormatter,
 }) => {
   const chartData = data.map((bucket) => ({
     ...bucket,
@@ -69,7 +71,11 @@ export const LineDiagram: React.FC<LineDiagramProps> = ({
             tick={{ fill: "var(--chart-axis)", fontSize: 12 }}
             axisLine={{ stroke: "var(--chart-axis)" }}
             tickLine={{ stroke: "var(--chart-axis)" }}
-            tickFormatter={(val) => (val !== null ? `${val}` : "")}
+            tickFormatter={
+              tickFormatter
+                ? (val) => tickFormatter(val as number | null)
+                : (val) => (val !== null ? `${val}` : "")
+            }
             domain={
               domain || [
                 0,

@@ -10,6 +10,7 @@ import Separator from "../components/ui/Separator";
 import { TotalPlaysLineDiagram } from "../components/charts/PlaysLineDiagrams";
 import DateRangePicker from "../components/blocks/DateRangePicker";
 import { AlbumReleaseYearLineDiagram } from "../components/charts/AlbumYearLineDiagram";
+import { AvgSongLengthLineDiagram } from "../components/charts/AvgSongLengthLineDiagram";
 
 const Analytics: React.FC = () => {
   return (
@@ -66,10 +67,16 @@ const Analytics: React.FC = () => {
 
         <Separator />
 
-        {/* Pie Charts */}
-        <div className="col-12">
+        {/* Average Charts */}
+        <div className="col-12 col-lg-6">
           <ContentBlock title="Average Album Release Date">
             <AlbumReleaseYearLineDiagram />
+          </ContentBlock>
+        </div>
+
+        <div className="col-12 col-lg-6">
+          <ContentBlock title="Average Song Length">
+            <AvgSongLengthLineDiagram />
           </ContentBlock>
         </div>
 
