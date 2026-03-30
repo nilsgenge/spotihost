@@ -61,3 +61,9 @@ export interface PieChartConfig {
   loadingLabel: string;
   emptyMessage: string;
 }
+
+export interface HeatmapData {
+  days: Record<string, number>;
+  start_date: string;
+  end_date: string;
+}

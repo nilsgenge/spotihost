@@ -1,0 +1,217 @@
+import React from "react";
+import { useHeatmapData } from "../../hooks/useHeatmapData";
+import type { HeatmapData } from "../../types/charts";
+
+const HEATMAP_COLORS = [
+  "rgba(255, 255, 255, 0.04)",
+  "#0e4429",
+  "#006d32",
+  "#26a641",
+  "#39d353",
+];
+
+interface GridCell {
+  date: string;
+  count: number;
+  week: number;
+  dayOfWeek: number;
+}
+
+interface MonthLabel {
+  label: string;
+  week: number;
+}
+
+function formatLocalDate(d: Date): string {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function buildGridCells(data: HeatmapData): GridCell[] {
+  const cells: GridCell[] = [];
+  const start = new Date(data.start_date + "T00:00:00");
+  const end = new Date(data.end_date + "T00:00:00");
+  const current = new Date(start);
+
+  while (current <= end) {
+    const dateStr = formatLocalDate(current);
+    const dayOfWeek = current.getDay();
+    const daysSinceStart = Math.floor(
+      (current.getTime() - start.getTime()) / 86400000,
+    );
+    const week = Math.floor(daysSinceStart / 7);
+
+    cells.push({
+      date: dateStr,
+      count: data.days[dateStr] || 0,
+      week,
+      dayOfWeek,
+    });
+
+    current.setDate(current.getDate() + 1);
+  }
+
+  return cells;
+}
+
+function computeLevels(cells: GridCell[]): {
+  levels: number[];
+  thresholds: number[];
+} {
+  const nonZero = cells.map((c) => c.count).filter((c) => c > 0);
+
+  if (nonZero.length === 0) {
+    return {
+      levels: cells.map(() => 0),
+      thresholds: [0, 0, 0, 0],
+    };
+  }
+
+  nonZero.sort((a, b) => a - b);
+
+  const percentile = (p: number) => {
+    const idx = Math.floor((p / 100) * nonZero.length);
+    return nonZero[Math.min(idx, nonZero.length - 1)];
+  };
+
+  const p25 = percentile(25);
+  const p50 = percentile(50);
+  const p75 = percentile(75);
+
+  const levels = cells.map((c) => {
+    if (c.count === 0) return 0;
+    if (c.count <= p25) return 1;
+    if (c.count <= p50) return 2;
+    if (c.count <= p75) return 3;
+    return 4;
+  });
+
+  return { levels, thresholds: [p25, p50, p75] };
+}
+
+function computeMonthLabels(cells: GridCell[]): MonthLabel[] {
+  const labels: MonthLabel[] = [];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  let lastMonth = -1;
+
+  for (const cell of cells) {
+    if (cell.dayOfWeek !== 0) continue;
+    const month = new Date(cell.date + "T00:00:00").getMonth();
+    if (month !== lastMonth) {
+      labels.push({ label: months[month], week: cell.week });
+      lastMonth = month;
+    }
+  }
+
+  return labels;
+}
+
+export const HeatmapDiagram: React.FC = () => {
+  const { data, loading } = useHeatmapData();
+
+  if (loading) {
+    return (
+      <div className="heatmap-wrapper">
+        <div className="heatmap-loading-grid">
+          {Array.from({ length: 7 * 53 }).map((_, i) => (
+            <div key={i} className="heatmap-cell heatmap-cell-loading" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) return null;
+
+  const cells = buildGridCells(data);
+  const { levels } = computeLevels(cells);
+  const monthLabels = computeMonthLabels(cells);
+
+  const totalPlays = cells.reduce((sum, c) => sum + c.count, 0);
+  const totalDays = cells.length;
+  const avgPerDay = totalDays > 0 ? (totalPlays / totalDays).toFixed(1) : "0";
+
+  const formatTooltip = (cell: GridCell): string => {
+    const date = new Date(cell.date + "T00:00:00");
+    const formatted = date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+    const plays = cell.count === 1 ? "1 play" : `${cell.count} plays`;
+    return `${formatted}: ${plays}`;
+  };
+
+  return (
+    <div className="heatmap-wrapper">
+      <div className="heatmap-summary">
+        {totalPlays.toLocaleString()} plays in the last year &middot;{" "}
+        {avgPerDay} plays/day on average
+      </div>
+
+      <div className="heatmap-scroll-container">
+        <div className="heatmap-day-labels">
+          <span />
+          <span>Mon</span>
+          <span />
+          <span>Wed</span>
+          <span />
+          <span>Fri</span>
+          <span />
+        </div>
+
+        <div className="heatmap-grid-area">
+          <div className="heatmap-month-labels">
+            {monthLabels.map((ml, i) => (
+              <span
+                key={i}
+                style={{ position: "absolute", left: `${ml.week * 17}px` }}
+              >
+                {ml.label}
+              </span>
+            ))}
+          </div>
+
+          <div className="heatmap-grid">
+            {cells.map((cell, i) => (
+              <div
+                key={cell.date}
+                className="heatmap-cell"
+                data-tooltip={formatTooltip(cell)}
+                style={{ backgroundColor: HEATMAP_COLORS[levels[i]] }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="heatmap-legend">
+        <span>Less</span>
+        {HEATMAP_COLORS.map((color, i) => (
+          <div
+            key={i}
+            className="heatmap-legend-cell"
+            style={{ backgroundColor: color }}
+          />
+        ))}
+        <span>More</span>
+      </div>
+    </div>
+  );
+};

@@ -13,6 +13,7 @@ from .plays import router as plays_router
 from .distributions import router as distributions_router
 from .album_year import router as album_year_router
 from .avg_song_length import router as avg_song_length_router
+from .heatmap import router as heatmap_router
 
 router = APIRouter(prefix="/charts", tags=["charts"])
 
@@ -21,5 +22,6 @@ router.include_router(plays_router)
 router.include_router(distributions_router)
 router.include_router(album_year_router)
 router.include_router(avg_song_length_router)
+router.include_router(heatmap_router)
 
 __all__ = ["router"]

@@ -8,6 +8,7 @@ import {
 import ContentBlock from "../components/ui/ContentBlock";
 import Separator from "../components/ui/Separator";
 import { TotalPlaysLineDiagram } from "../components/charts/PlaysLineDiagrams";
+import { HeatmapDiagram } from "../components/charts/HeatmapDiagram";
 import DateRangePicker from "../components/blocks/DateRangePicker";
 import { AlbumReleaseYearLineDiagram } from "../components/charts/AlbumYearLineDiagram";
 import { AvgSongLengthLineDiagram } from "../components/charts/AvgSongLengthLineDiagram";
@@ -67,6 +68,14 @@ const Analytics: React.FC = () => {
         <div className="col-12">
           <ContentBlock title="Number of Listens">
             <TotalPlaysLineDiagram />
+          </ContentBlock>
+        </div>
+
+        <Separator />
+
+        <div className="col-12">
+          <ContentBlock title="Listening Activity" className="heatmap-block">
+            <HeatmapDiagram />
           </ContentBlock>
         </div>
 
