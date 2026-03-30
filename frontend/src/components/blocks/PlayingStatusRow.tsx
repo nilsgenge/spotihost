@@ -38,8 +38,8 @@ const PlayingStatus = () => {
 
   return (
     <>
-      <div className="row mb-4">
-        <div className="col-4">
+      <div className="row mb-4 playing-status-row">
+        <div className="col-12 col-md-4">
           <StatBlock
             url={songUrl}
             imageUrl={imageUrl}
@@ -47,16 +47,16 @@ const PlayingStatus = () => {
               songName === "Nothing Playing"
                 ? "Nothing Playing"
                 : isPlaying
-                ? "Currently Playing"
-                : "Currently Paused"
+                  ? "Currently Playing"
+                  : "Currently Paused"
             }
             value={songName === "Nothing Playing" ? "-" : songName}
           />
         </div>
-        <div className="col-4">
+        <div className="col-12 col-md-4">
           <StatBlock icon={<FaUsers />} title="Artist" value={artistName} />
         </div>
-        <div className="col-4">
+        <div className="col-12 col-md-4">
           <StatBlock
             url={contextUrl}
             icon={<FaFile />}

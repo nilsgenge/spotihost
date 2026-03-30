@@ -32,7 +32,9 @@ const Settings: React.FC = () => {
   if (error) {
     return (
       <div className="container">
-        <h1>Settings</h1>
+        <div className="page-header">
+          <h1>Settings</h1>
+        </div>
         <Separator />
         <div className="alert alert-danger d-flex align-items-center">
           <FaExclamationTriangle className="me-2" />
@@ -44,7 +46,9 @@ const Settings: React.FC = () => {
 
   return (
     <div className="container">
-      <h1>Settings</h1>
+      <div className="page-header">
+        <h1>Settings</h1>
+      </div>
       <Separator />
 
       <div className="row g-4">
