@@ -15,6 +15,7 @@ interface GridCell {
   count: number;
   week: number;
   dayOfWeek: number;
+  empty?: boolean;
 }
 
 interface MonthLabel {
@@ -33,15 +34,28 @@ function buildGridCells(data: HeatmapData): GridCell[] {
   const cells: GridCell[] = [];
   const start = new Date(data.start_date + "T00:00:00");
   const end = new Date(data.end_date + "T00:00:00");
-  const current = new Date(start);
 
+  const startDayOfWeek = start.getDay();
+
+  // Pad with empty cells so the grid aligns to Sunday
+  for (let i = 0; i < startDayOfWeek; i++) {
+    cells.push({
+      date: "",
+      count: 0,
+      week: 0,
+      dayOfWeek: i,
+      empty: true,
+    });
+  }
+
+  const current = new Date(start);
   while (current <= end) {
     const dateStr = formatLocalDate(current);
     const dayOfWeek = current.getDay();
     const daysSinceStart = Math.floor(
       (current.getTime() - start.getTime()) / 86400000,
     );
-    const week = Math.floor(daysSinceStart / 7);
+    const week = Math.floor((daysSinceStart + startDayOfWeek) / 7);
 
     cells.push({
       date: dateStr,
@@ -110,7 +124,7 @@ function computeMonthLabels(cells: GridCell[]): MonthLabel[] {
   let lastMonth = -1;
 
   for (const cell of cells) {
-    if (cell.dayOfWeek !== 0) continue;
+    if (!cell.date) continue;
     const month = new Date(cell.date + "T00:00:00").getMonth();
     if (month !== lastMonth) {
       labels.push({ label: months[month], week: cell.week });
@@ -142,8 +156,9 @@ export const HeatmapDiagram: React.FC = () => {
   const { levels } = computeLevels(cells);
   const monthLabels = computeMonthLabels(cells);
 
-  const totalPlays = cells.reduce((sum, c) => sum + c.count, 0);
-  const totalDays = cells.length;
+  const realCells = cells.filter((c) => !c.empty);
+  const totalPlays = realCells.reduce((sum, c) => sum + c.count, 0);
+  const totalDays = realCells.length;
   const avgPerDay = totalDays > 0 ? (totalPlays / totalDays).toFixed(1) : "0";
 
   const formatTooltip = (cell: GridCell): string => {
@@ -181,7 +196,7 @@ export const HeatmapDiagram: React.FC = () => {
             {monthLabels.map((ml, i) => (
               <span
                 key={i}
-                style={{ position: "absolute", left: `${ml.week * 17}px` }}
+                style={{ left: `calc(${ml.week} * (var(--heatmap-cell) + var(--heatmap-gap)))` }}
               >
                 {ml.label}
               </span>
@@ -191,10 +206,14 @@ export const HeatmapDiagram: React.FC = () => {
           <div className="heatmap-grid">
             {cells.map((cell, i) => (
               <div
-                key={cell.date}
-                className="heatmap-cell"
-                data-tooltip={formatTooltip(cell)}
-                style={{ backgroundColor: HEATMAP_COLORS[levels[i]] }}
+                key={cell.empty ? `empty-${i}` : cell.date}
+                className={`heatmap-cell${cell.empty ? " heatmap-cell-empty" : ""}`}
+                data-tooltip={cell.empty ? undefined : formatTooltip(cell)}
+                style={{
+                  backgroundColor: cell.empty
+                    ? "transparent"
+                    : HEATMAP_COLORS[levels[i]],
+                }}
               />
             ))}
           </div>

@@ -23,12 +23,16 @@ def get_heatmap_data(
     end_of_today = local_now.replace(hour=23, minute=59, second=59, microsecond=999999)
     end_utc = end_of_today.astimezone(dt_timezone.utc)
 
-    # Start 365 days ago, snapped back to previous Sunday for clean grid alignment
-    start_local = (local_now - timedelta(days=365)).replace(
+    # Start on the 1st of the month, 12 months ago (no Sunday snapping)
+    start_year = local_now.year
+    start_month = local_now.month - 11
+    if start_month <= 0:
+        start_month += 12
+        start_year -= 1
+    start_local = local_now.replace(
+        year=start_year, month=start_month, day=1,
         hour=0, minute=0, second=0, microsecond=0
     )
-    days_since_sunday = (start_local.weekday() + 1) % 7
-    start_local = start_local - timedelta(days=days_since_sunday)
     start_utc = start_local.astimezone(dt_timezone.utc)
 
     # Aggregate by day in user's timezone

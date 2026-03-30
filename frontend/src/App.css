@@ -614,6 +614,8 @@ input[type="number"] {
 }
 
 .heatmap-wrapper {
+  --heatmap-cell: 14px;
+  --heatmap-gap: 3px;
   width: 100%;
 }
 
@@ -632,8 +634,8 @@ input[type="number"] {
 
 .heatmap-day-labels {
   display: grid;
-  grid-template-rows: repeat(7, 14px);
-  gap: 3px;
+  grid-template-rows: repeat(7, var(--heatmap-cell));
+  gap: var(--heatmap-gap);
   flex-shrink: 0;
   padding-top: 20px;
 }
@@ -641,12 +643,12 @@ input[type="number"] {
 .heatmap-day-labels span {
   font-size: 0.65rem;
   color: var(--text-secondary);
-  line-height: 14px;
+  line-height: var(--heatmap-cell);
 }
 
 .heatmap-grid-area {
   flex: 1;
-  min-width: 0;
+  min-width: min-content;
 }
 
 .heatmap-month-labels {
@@ -656,6 +658,7 @@ input[type="number"] {
 }
 
 .heatmap-month-labels span {
+  position: absolute;
   font-size: 0.65rem;
   color: var(--text-secondary);
   white-space: nowrap;
@@ -663,18 +666,22 @@ input[type="number"] {
 
 .heatmap-grid {
   display: grid;
-  grid-template-rows: repeat(7, 14px);
+  grid-template-rows: repeat(7, var(--heatmap-cell));
   grid-auto-flow: column;
-  grid-auto-columns: 14px;
-  gap: 3px;
+  grid-auto-columns: var(--heatmap-cell);
+  gap: var(--heatmap-gap);
 }
 
 .heatmap-cell {
-  width: 14px;
-  height: 14px;
+  width: var(--heatmap-cell);
+  height: var(--heatmap-cell);
   border-radius: 2px;
   position: relative;
   cursor: pointer;
+}
+
+.heatmap-cell-empty {
+  cursor: default;
 }
 
 .heatmap-cell:hover {
@@ -708,10 +715,10 @@ input[type="number"] {
 
 .heatmap-loading-grid {
   display: grid;
-  grid-template-rows: repeat(7, 14px);
+  grid-template-rows: repeat(7, var(--heatmap-cell));
   grid-auto-flow: column;
-  grid-auto-columns: 14px;
-  gap: 3px;
+  grid-auto-columns: var(--heatmap-cell);
+  gap: var(--heatmap-gap);
 }
 
 .heatmap-legend {
@@ -725,33 +732,16 @@ input[type="number"] {
 }
 
 .heatmap-legend-cell {
-  width: 14px;
-  height: 14px;
+  width: var(--heatmap-cell);
+  height: var(--heatmap-cell);
   border-radius: 2px;
   display: inline-block;
 }
 
 @media (max-width: 768px) {
-  .heatmap-grid {
-    grid-template-rows: repeat(7, 10px);
-    grid-auto-columns: 10px;
-    gap: 2px;
-  }
-
-  .heatmap-cell {
-    width: 10px;
-    height: 10px;
-  }
-
-  .heatmap-day-labels {
-    grid-template-rows: repeat(7, 10px);
-    gap: 2px;
-  }
-
-  .heatmap-loading-grid {
-    grid-template-rows: repeat(7, 10px);
-    grid-auto-columns: 10px;
-    gap: 2px;
+  .heatmap-wrapper {
+    --heatmap-cell: 10px;
+    --heatmap-gap: 2px;
   }
 }
 
