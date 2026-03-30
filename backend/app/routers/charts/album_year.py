@@ -80,10 +80,10 @@ def get_album_year_buckets(
 
         # Get daily averages
         daily_agg = query.with_entities(
-            func.date_trunc('day', Listen.played_at.op('AT TIME ZONE')('UTC').op('AT TIME ZONE')(user_tz.key)).label('bucket_day'),
+            func.date_trunc('day', Listen.played_at.op('AT TIME ZONE')(user_tz.key)).label('bucket_day'),
             func.round(func.avg(func.extract('year', Album.release_date))).label('avg_year')
         ).group_by(
-            func.date_trunc('day', Listen.played_at.op('AT TIME ZONE')('UTC').op('AT TIME ZONE')(user_tz.key))
+            func.date_trunc('day', Listen.played_at.op('AT TIME ZONE')(user_tz.key))
         ).all()
 
         # Build daily data map with UTC keys
@@ -104,7 +104,7 @@ def get_album_year_buckets(
 
     trunc_expr = func.date_trunc(
         trunc_level,
-        Listen.played_at.op('AT TIME ZONE')('UTC').op('AT TIME ZONE')(user_tz.key)
+        Listen.played_at.op('AT TIME ZONE')(user_tz.key)
     )
 
     agg_results = query.with_entities(

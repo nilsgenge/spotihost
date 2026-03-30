@@ -192,10 +192,10 @@ def get_avg_song_length_buckets(
 
         # Get daily averages
         daily_agg = query.with_entities(
-            func.date_trunc('day', Listen.played_at.op('AT TIME ZONE')('UTC').op('AT TIME ZONE')(user_tz.key)).label('bucket_day'),
+            func.date_trunc('day', Listen.played_at.op('AT TIME ZONE')(user_tz.key)).label('bucket_day'),
             (func.avg(Track.duration) / 60.0).label('avg_minutes')
         ).group_by(
-            func.date_trunc('day', Listen.played_at.op('AT TIME ZONE')('UTC').op('AT TIME ZONE')(user_tz.key))
+            func.date_trunc('day', Listen.played_at.op('AT TIME ZONE')(user_tz.key))
         ).all()
 
         # Build daily data map with UTC keys
@@ -217,7 +217,7 @@ def get_avg_song_length_buckets(
 
     trunc_expr = func.date_trunc(
         trunc_level,
-        Listen.played_at.op('AT TIME ZONE')('UTC').op('AT TIME ZONE')(user_tz.key)
+        Listen.played_at.op('AT TIME ZONE')(user_tz.key)
     )
 
     agg_results = query.with_entities(

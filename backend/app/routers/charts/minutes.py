@@ -67,8 +67,8 @@ def get_total_minutes(
         trunc_level = "month"
 
     trunc_expr = func.date_trunc(
-        trunc_level, 
-        Listen.played_at.op('AT TIME ZONE')('UTC').op('AT TIME ZONE')(timezone)
+        trunc_level,
+        Listen.played_at.op('AT TIME ZONE')(timezone)
     )
 
     agg_results = query.with_entities(
