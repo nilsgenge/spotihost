@@ -690,24 +690,6 @@ input[type="number"] {
   z-index: 2;
 }
 
-.heatmap-cell[data-tooltip]:hover::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: var(--block-dark);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  color: var(--white);
-  font-size: 0.85rem;
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 20;
-}
-
 .heatmap-cell-loading {
   background-color: rgba(255, 255, 255, 0.04);
   animation: skeleton-pulse 1.5s ease-in-out infinite;

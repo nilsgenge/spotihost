@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useHeatmapData } from "../../hooks/useHeatmapData";
 import type { HeatmapData } from "../../types/charts";
 
@@ -137,6 +137,12 @@ function computeMonthLabels(cells: GridCell[]): MonthLabel[] {
 
 export const HeatmapDiagram: React.FC = () => {
   const { data, loading } = useHeatmapData();
+  const [tooltip, setTooltip] = useState<{
+    date: string;
+    plays: string;
+    x: number;
+    y: number;
+  } | null>(null);
 
   if (loading) {
     return (
@@ -161,16 +167,30 @@ export const HeatmapDiagram: React.FC = () => {
   const totalDays = realCells.length;
   const avgPerDay = totalDays > 0 ? (totalPlays / totalDays).toFixed(1) : "0";
 
-  const formatTooltip = (cell: GridCell): string => {
+  const formatDate = (cell: GridCell): string => {
     const date = new Date(cell.date + "T00:00:00");
-    const formatted = date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString("en-US", {
       weekday: "short",
       month: "short",
       day: "numeric",
       year: "numeric",
     });
-    const plays = cell.count === 1 ? "1 play" : `${cell.count} plays`;
-    return `${formatted}: ${plays}`;
+  };
+
+  const formatPlays = (count: number): string => {
+    if (count === 0) return "No Plays";
+    return count === 1 ? "1 play" : `${count} plays`;
+  };
+
+  const handleCellEnter = (e: React.MouseEvent, cell: GridCell) => {
+    if (cell.empty) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltip({
+      date: formatDate(cell),
+      plays: formatPlays(cell.count),
+      x: rect.left + rect.width / 2,
+      y: rect.top - 8,
+    });
   };
 
   return (
@@ -208,17 +228,35 @@ export const HeatmapDiagram: React.FC = () => {
               <div
                 key={cell.empty ? `empty-${i}` : cell.date}
                 className={`heatmap-cell${cell.empty ? " heatmap-cell-empty" : ""}`}
-                data-tooltip={cell.empty ? undefined : formatTooltip(cell)}
                 style={{
                   backgroundColor: cell.empty
                     ? "transparent"
                     : HEATMAP_COLORS[levels[i]],
                 }}
+                onMouseEnter={(e) => handleCellEnter(e, cell)}
+                onMouseLeave={() => setTooltip(null)}
               />
             ))}
           </div>
         </div>
       </div>
+
+      {tooltip && (
+        <div
+          className="chart-tooltip"
+          style={{
+            position: "fixed",
+            left: tooltip.x,
+            top: tooltip.y,
+            transform: "translate(-50%, -100%)",
+            zIndex: 9999,
+            pointerEvents: "none",
+          }}
+        >
+          <div className="chart-tooltip-header">{tooltip.date}</div>
+          <div className="chart-tooltip-value">{tooltip.plays}</div>
+        </div>
+      )}
 
       <div className="heatmap-legend">
         <span>Less</span>
