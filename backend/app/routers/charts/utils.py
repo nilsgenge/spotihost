@@ -79,7 +79,7 @@ def generate_buckets(
     end_local = end_dt_utc.astimezone(user_tz)
 
     if range_key == "1d":
-        for dt in rrule.rrule(rrule.HOURLY, dtstart=start_local, until=end_local):
+        for dt in rrule.rrule(rrule.HOURLY, dtstart=start_local + timedelta(hours=1), until=end_local):
             key_utc = dt.astimezone(timezone.utc).replace(minute=0, second=0, microsecond=0)
             buckets.append({
                 "label": dt.strftime("%H:%M"),
