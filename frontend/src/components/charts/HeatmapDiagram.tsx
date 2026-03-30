@@ -216,7 +216,9 @@ export const HeatmapDiagram: React.FC = () => {
             {monthLabels.map((ml, i) => (
               <span
                 key={i}
-                style={{ left: `calc(${ml.week} * (var(--heatmap-cell) + var(--heatmap-gap)))` }}
+                style={{
+                  left: `calc(${ml.week} * (var(--heatmap-cell) + var(--heatmap-gap)))`,
+                }}
               >
                 {ml.label}
               </span>
