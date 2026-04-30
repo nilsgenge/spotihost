@@ -1,0 +1,64 @@
+:root {
+  /* Primary Colors */
+  --primary-green: #22c55e;
+  --danger-red: #dc2626;
+
+  /* Backgrounds */
+  --dark-background: #121212;
+  --block-dark: #18181C;
+
+  /* Text Colors */
+  --white: #ffffff;
+  --text-secondary: #6c757d;
+  --text-soft: #9ca3af;
+
+  /* Chart Specific Colors */
+  --chart-grid: rgba(255, 255, 255, 0.08);
+  --chart-axis: var(--text-secondary);
+  --cursor-line: var(--text-soft);
+  --chart-cursor-fill: rgba(255, 255, 255, 0.03);
+
+  /* Layout */
+  --navbar-height: 15px;
+  --block-border-radius: 0.5rem;
+  --max-page-width: 1200px;
+}
+
+:root {
+  --bs-body-bg: var(--dark-background);
+  --bs-body-color: var(--white);
+  --bs-primary: var(--primary-green);
+  --bs-secondary: var(--text-secondary);
+}
+
+
+/*    BASE STYLES    */
+body {
+  padding-top: var(--navbar-height);
+  background-color: var(--dark-background);
+  background-image: radial-gradient(circle at 10% 10%, rgba(34, 197, 94, 0.03) 0%, transparent 40%),
+                    radial-gradient(circle at 90% 90%, rgba(34, 197, 94, 0.02) 0%, transparent 40%);
+  background-attachment: fixed;
+}
+
+.container {
+  margin-top: 0;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+.max-width-page {
+  max-width: var(--max-page-width);
+  margin: 0 auto;
+}
+
+/* Remove number input arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
