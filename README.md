@@ -60,6 +60,7 @@ Import your entire Spotify listening history and analyze it locally. SpotiHost t
 - Interactive Charts: Visualize trends with line charts tracking minutes and plays over any time range.
 - Dynamic Rankings: View your top artists, albums, and tracks filtered by specific date ranges.
 - Listening History: Access a complete, searchable log of every song you have ever played.
+- Search Functionality: Search for any song, artist, album you have ever played and see the data in seconds.
 
 ## Screenshots
 
