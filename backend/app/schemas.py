@@ -174,3 +174,16 @@ class AdvancedArtist(BaseModel):
     albums: List[SimpleAlbum]
     tracks: List[SimpleTrack]
 
+
+class SearchResultItem(BaseModel):
+    spotify_id: str
+    name: str
+    image_url: str
+    type: str
+    secondary_info: str = ""
+
+class SearchResponse(BaseModel):
+    tracks: List[SearchResultItem] = []
+    artists: List[SearchResultItem] = []
+    albums: List[SearchResultItem] = []
+

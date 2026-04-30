@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import LoginButton from "../blocks/LoginButton";
+import SearchBar from "../ui/SearchBar";
 import { useHealth } from "../../context/HealthContext";
 
 const Navbar: React.FC = () => {
@@ -11,7 +12,7 @@ const Navbar: React.FC = () => {
       <NavLink className="navbar-brand fs-3" to="/dashboard">
         SpotiHost
       </NavLink>
-      <div className="position-absolute start-50 translate-middle-x d-flex gap-4">
+      <div className="d-flex gap-4 mx-auto">
         <NavLink
           className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
           to="/dashboard"
@@ -32,7 +33,10 @@ const Navbar: React.FC = () => {
           Analytics
         </NavLink>
       </div>
-      <div className="position-absolute end-0 pe-4 d-flex align-items-center">
+      <div className="d-none d-md-block me-3" style={{ width: "280px" }}>
+        <SearchBar />
+      </div>
+      <div className="d-flex align-items-center">
         {!loading && isBackendReachable && <LoginButton />}
       </div>
     </nav>

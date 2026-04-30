@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Table, DateTime, Date, UniqueConstraint
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Table, DateTime, Date, UniqueConstraint, Index
 from app.database import Base
 from sqlalchemy import String, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -29,6 +29,10 @@ album_artists = Table(
 class Artist(Base):
     __tablename__ = "artists"
 
+    __table_args__ = (
+        Index('ix_artists_name_trgm', 'name', postgresql_using='gin', postgresql_ops={'name': 'gin_trgm_ops'}),
+    )
+
     artist_id: Mapped[int] = mapped_column(primary_key=True, index=True)
     spotify_id: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     name: Mapped[str] = mapped_column(String, nullable=False)
@@ -49,6 +53,10 @@ class Artist(Base):
 
 class Album(Base):
     __tablename__ = "albums"
+
+    __table_args__ = (
+        Index('ix_albums_name_trgm', 'name', postgresql_using='gin', postgresql_ops={'name': 'gin_trgm_ops'}),
+    )
 
     album_id: Mapped[int] = mapped_column(primary_key=True, index=True)
     spotify_id: Mapped[str] = mapped_column(String, unique=True, nullable=False)
@@ -76,6 +84,10 @@ class Album(Base):
 
 class Track(Base):
     __tablename__ = "tracks"
+
+    __table_args__ = (
+        Index('ix_tracks_name_trgm', 'name', postgresql_using='gin', postgresql_ops={'name': 'gin_trgm_ops'}),
+    )
 
     track_id: Mapped[int] = mapped_column(primary_key=True, index=True)
     spotify_id: Mapped[str] = mapped_column(String, unique=True, nullable=False)

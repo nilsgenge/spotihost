@@ -11,7 +11,7 @@ from app.scheduler import start_scheduler, stop_scheduler, schedule_ingestion
 from app.ingestion import get_ingest_interval_minutes
 from app.routers import (
     listens, database_stats, top, playing, auth, track,
-    album, artist, health, settings, imports, stats
+    album, artist, health, settings, imports, stats, search
 )
 from app.routers.charts import router as charts_router
 
@@ -61,6 +61,7 @@ app.include_router(health.router, prefix="/api")
 app.include_router(settings.router, prefix="/api")
 app.include_router(imports.router, prefix="/api")
 app.include_router(stats.router, prefix="/api")
+app.include_router(search.router, prefix="/api")
 app.include_router(charts_router, prefix="/api")
 
 

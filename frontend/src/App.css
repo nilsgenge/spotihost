@@ -235,6 +235,127 @@ input[type="number"] {
 }
 
 
+/*    SEARCH    */
+.search-container {
+  position: relative;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  color: var(--white);
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  width: 100%;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  background-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--text-secondary);
+  pointer-events: none;
+  font-size: 0.85rem;
+}
+
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: var(--block-dark);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--block-border-radius);
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1050;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  color: var(--white);
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.search-result-item:hover,
+.search-result-item.active {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.search-result-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-result-image svg {
+  font-size: 0.7rem;
+}
+
+.search-result-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-result-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.search-result-secondary {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.search-result-type {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  background-color: rgba(255, 255, 255, 0.06);
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.search-empty,
+.search-loading {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+
 /*    TEXT UTILITIES    */
 .text-custom-success {
   color: var(--primary-green);

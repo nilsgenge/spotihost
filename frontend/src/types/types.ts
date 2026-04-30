@@ -94,3 +94,17 @@ export interface HealthCheck {
     };
   };
 }
+
+export interface SearchResultItem {
+  spotify_id: string;
+  name: string;
+  image_url: string;
+  type: "track" | "artist" | "album";
+  secondary_info: string;
+}
+
+export interface SearchResponse {
+  tracks: SearchResultItem[];
+  artists: SearchResultItem[];
+  albums: SearchResultItem[];
+}
