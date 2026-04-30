@@ -561,20 +561,6 @@
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
 }
 
-/*    SEPARATORS    */
-.separator {
-  border: none;
-  height: 1px;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%
-  );
-  margin: 2rem 0;
-  opacity: 1;
-}
-
-
 /*    CHARTS & DIAGRAMS    */
 .chart-container {
   width: 100%;
