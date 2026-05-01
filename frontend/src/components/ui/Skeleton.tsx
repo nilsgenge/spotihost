@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./Skeleton.module.scss";
 
 interface SkeletonProps {
   width?: string;
@@ -13,7 +14,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   className = "",
   variant = "rectangular",
 }) => {
-  const baseClasses = "skeleton-pulse";
+  const baseClasses = styles.skeletonPulse;
   const variantClasses = {
     text: "rounded",
     circular: "rounded-circle",

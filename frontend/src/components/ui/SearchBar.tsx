@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import { useSearch } from "../../hooks/useSearch";
 import type { SearchResultItem } from "../../types/types";
+import styles from "./SearchBar.module.scss";
 
 const SearchBar: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -101,12 +102,12 @@ const SearchBar: React.FC = () => {
     <Link
       key={`${item.type}-${item.spotify_id}`}
       to={`/${item.type}/${item.spotify_id}`}
-      className={`search-result-item ${activeIndex === index ? "active" : ""}`}
+      className={`${styles.searchResultItem} ${activeIndex === index ? styles.active : ""}`}
       onClick={handleSelect}
       onMouseEnter={() => setActiveIndex(index)}
     >
       <div
-        className="search-result-image"
+        className={styles.searchResultImage}
         style={
           item.image_url
             ? { backgroundImage: `url(${item.image_url})` }
@@ -115,28 +116,28 @@ const SearchBar: React.FC = () => {
       >
         {!item.image_url && <FaSearch className="text-secondary" />}
       </div>
-      <div className="search-result-text">
-        <div className="search-result-name text-truncate">{item.name}</div>
+      <div className={styles.searchResultText}>
+        <div className={`${styles.searchResultName} text-truncate`}>{item.name}</div>
         {item.secondary_info && (
-          <div className="search-result-secondary text-truncate">
+          <div className={`${styles.searchResultSecondary} text-truncate`}>
             {item.secondary_info}
           </div>
         )}
       </div>
-      <span className="search-result-type">{item.type}</span>
+      <span className={styles.searchResultType}>{item.type}</span>
     </Link>
   );
 
   const showDropdown = isOpen && hasQuery;
 
   return (
-    <div className="search-container" ref={containerRef}>
-      <div className="search-input-wrapper">
-        <FaSearch className="search-icon" />
+    <div className={styles.searchContainer} ref={containerRef}>
+      <div className={styles.searchInputWrapper}>
+        <FaSearch className={styles.searchIcon} />
         <input
           ref={inputRef}
           type="text"
-          className="search-input"
+          className={styles.searchInput}
           placeholder="Search tracks, artists, albums..."
           value={query}
           onChange={handleInputChange}
@@ -146,10 +147,10 @@ const SearchBar: React.FC = () => {
       </div>
 
       {showDropdown && (
-        <div className="search-dropdown">
-          {loading && <div className="search-loading">Searching...</div>}
+        <div className={styles.searchDropdown}>
+          {loading && <div className={styles.searchLoading}>Searching...</div>}
           {!loading && totalItems === 0 && (
-            <div className="search-empty">No results found</div>
+            <div className={styles.searchEmpty}>No results found</div>
           )}
           {!loading && flatResults.map((item, i) => renderResult(item, i))}
         </div>

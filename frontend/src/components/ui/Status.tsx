@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./Status.module.scss";
 
 interface StatusTextProps {
   text: string;
@@ -6,14 +7,14 @@ interface StatusTextProps {
 }
 
 const Status: React.FC<StatusTextProps> = ({ text, status }) => {
-  const bgColor =
+  const colorClass =
     status == "activated"
-      ? "status-color-activated"
+      ? styles.activated
       : status == "deactivated"
-        ? "status-color-deactivated"
-        : "status-color-neutral";
+        ? styles.deactivated
+        : styles.neutral;
 
-  return <div className={`status ${bgColor}`}>{text}</div>;
+  return <div className={`${styles.status} ${colorClass}`}>{text}</div>;
 };
 
 export default Status;
