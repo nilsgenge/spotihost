@@ -60,114 +60,6 @@
 }
 
 
-/*    NAVBAR    */
-.custom-navbar {
-  background-color: var(--block-dark);
-  border-radius: var(--block-border-radius);
-  padding: 1.5rem;
-  padding-right: 1rem;
-  margin-bottom: 1.5rem;
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.custom-navbar .navbar-brand {
-  font-size: 1.75rem;
-  color: var(--white);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.custom-navbar .navbar-brand:hover {
-  color: var(--primary-green);
-}
-
-.custom-navbar .nav-link {
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-  text-decoration: none;
-  transition: color 0.2s ease;
-  position: relative;
-}
-
-.custom-navbar .nav-link:hover {
-  color: var(--primary-green);
-}
-
-.custom-navbar .nav-link.active {
-  color: var(--primary-green) !important;
-  font-weight: 600;
-}
-
-.custom-navbar .nav-link.active::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--primary-green);
-  border-radius: 2px;
-}
-
-.profile-container {
-  position: relative;
-}
-
-.profile-clickable {
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.profile-clickable:hover {
-  transform: scale(1.03);
-}
-
-.profile-clickable .profile-name {
-  transition: text-shadow 0.2s ease;
-}
-
-.profile-clickable:hover .profile-name {
-  text-shadow: 0 0 8px rgba(30, 215, 96, 0.8);
-}
-
-.profile-dropdown {
-  background-color: var(--block-dark);
-  border: 1px solid var(--text-secondary);
-  min-width: 200px;
-  z-index: 1000;
-}
-
-.profile-dropdown-link {
-  color: var(--white);
-  text-decoration: none;
-  transition: background-color 0.2s ease;
-}
-
-.profile-dropdown-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: var(--white);
-}
-
-.profile-dropdown-logout {
-  background-color: transparent;
-  color: var(--danger-red);
-  transition: all 0.2s ease;
-}
-
-.profile-dropdown-logout:hover {
-  background-color: var(--danger-red);
-  color: var(--white);
-}
-
-.profile-dropdown-logout:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 
 
 /*    TEXT UTILITIES    */
@@ -388,12 +280,6 @@
   background-repeat: no-repeat;
 }
 
-.profile-img {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  border: 2px solid var(--primary-green);
-}
 
 .detail-image {
   width: 300px;

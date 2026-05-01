@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Skeleton } from "../ui/Skeleton";
 import { useAuth } from "../../context/AuthContext";
+import styles from "./LoginButton.module.scss";
 
 const LoginButton: React.FC = () => {
   const navigate = useNavigate();
@@ -98,10 +99,10 @@ const LoginButton: React.FC = () => {
 
   if (user) {
     return (
-      <div className="profile-container" ref={menuRef}>
+      <div className={styles.profileContainer} ref={menuRef}>
         {/* Profile name + image */}
         <div
-          className="profile-clickable d-flex align-items-center gap-2"
+          className={`${styles.profileClickable} d-flex align-items-center gap-2`}
           onClick={toggleMenu}
           role="button"
           tabIndex={0}
@@ -112,7 +113,7 @@ const LoginButton: React.FC = () => {
           }}
         >
           <span
-            className="fw-bold text-truncate text-white profile-name"
+            className={`fw-bold text-truncate text-white ${styles.profileName}`}
             title={user.name}
             style={{ maxWidth: "100px" }}
           >
@@ -121,31 +122,31 @@ const LoginButton: React.FC = () => {
           <img
             src={user.image}
             alt="Profile"
-            className="rounded-circle profile-img"
+            className={`rounded-circle ${styles.profileImg}`}
           />
         </div>
 
         {/* Dropdown Menu */}
         {isMenuOpen && (
-          <div className="profile-dropdown position-absolute end-0 mt-2 rounded shadow-lg">
+          <div className={`${styles.profileDropdown} position-absolute end-0 mt-2 rounded shadow-lg`}>
             <div className="py-2">
               <Link
                 to="/settings"
-                className="profile-dropdown-link d-block px-4 py-2"
+                className={`${styles.profileDropdownLink} d-block px-4 py-2`}
                 onClick={closeMenu}
               >
                 Settings
               </Link>
               <Link
                 to="/profile"
-                className="profile-dropdown-link d-block px-4 py-2"
+                className={`${styles.profileDropdownLink} d-block px-4 py-2`}
                 onClick={closeMenu}
               >
                 Profile
               </Link>
               <hr className="my-2 mx-3 border-secondary" />
               <button
-                className="profile-dropdown-logout d-block px-4 py-2 w-100 text-start border-0"
+                className={`${styles.profileDropdownLogout} d-block px-4 py-2 w-100 text-start border-0`}
                 onClick={handleLogout}
                 disabled={isLoggingOut}
               >
