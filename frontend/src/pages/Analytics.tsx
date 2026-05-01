@@ -58,7 +58,7 @@ const Analytics: React.FC = () => {
       <Separator />
 
       <div className="row page-section">
-        <div className="col date-range-picker">
+        <div className="col">
           <DateRangePicker />
         </div>
       </div>

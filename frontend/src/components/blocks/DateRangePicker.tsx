@@ -10,7 +10,7 @@ const DateRangePicker: React.FC = () => {
   const { selectedRange, setSelectedRange } = useDateRange();
 
   return (
-    <div className="d-flex gap-2 flex-wrap">
+    <div className={styles.container}>
       {Object.entries(dateRanges).map(([key, { label }]) => (
         <React.Fragment key={key}>
           {key === "alltime" && (

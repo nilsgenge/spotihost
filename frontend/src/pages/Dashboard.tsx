@@ -33,7 +33,7 @@ const Dashboard: FC = () => {
       </div>
 
       <div className="row page-section">
-        <div className="col date-range-picker">
+        <div className="col">
           <DateRangePicker />
         </div>
       </div>
