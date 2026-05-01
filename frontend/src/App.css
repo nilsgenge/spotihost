@@ -61,47 +61,6 @@
 
 
 
-/*    ELEMENTS & MEDIA    */
-.element-cover {
-  width: 3.2rem;
-  height: 3.2rem;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  flex-shrink: 0;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  transition: all 0.25s ease;
-}
-
-.block:hover .element-cover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-  transform: scale(1.05);
-}
-
-/* Element block links styling */
-.block a {
-  transition: color 0.2s ease;
-}
-
-.block a.text-reset:hover {
-  color: var(--primary-green);
-}
-
-/* Artist links in element blocks */
-.block .text-custom-muted a {
-  color: var(--text-soft);
-}
-
-.block .text-custom-muted a:hover {
-  color: var(--primary-green);
-}
-
-.element-image {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
 
 
 .detail-image {

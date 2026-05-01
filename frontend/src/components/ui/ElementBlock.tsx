@@ -3,6 +3,7 @@ import { FaQuestion } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Block from "./Block";
 import type { ArtistLink } from "../../types/types";
+import styles from "./ElementBlock.module.scss";
 
 interface ElementBlockProps {
   image?: string;
@@ -33,9 +34,9 @@ const ElementBlock: React.FC<ElementBlockProps> = ({
       <div
         role="img"
         aria-label={ariaLabel}
-        className={`element-cover rounded-2 element-image ${
+        className={`${styles.elementCover} ${styles.elementImage} rounded-2${
           !image
-            ? "bg-primary text-white d-flex align-items-center justify-content-center"
+            ? " bg-primary text-white d-flex align-items-center justify-content-center"
             : ""
         }`}
         style={imageStyle}
