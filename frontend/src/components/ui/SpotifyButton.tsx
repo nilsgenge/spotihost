@@ -1,3 +1,5 @@
+import styles from "./SpotifyButton.module.scss";
+
 interface SpotifyButtonProps {
   type: "track" | "album" | "artist";
   spotifyId: string | undefined;
@@ -16,7 +18,7 @@ export const SpotifyButton = ({
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="spotify-btn"
+      className={styles.spotifyBtn}
       aria-label="Open in Spotify"
     >
       <svg

@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./DateRangePicker.module.scss";
 import {
   useDateRange,
   dateRanges,
@@ -13,7 +14,7 @@ const DateRangePicker: React.FC = () => {
       {Object.entries(dateRanges).map(([key, { label }]) => (
         <React.Fragment key={key}>
           {key === "alltime" && (
-            <span className="date-range-separator">|</span>
+            <span className={styles.dateRangeSeparator}>|</span>
           )}
           <button
             className={`btn ${

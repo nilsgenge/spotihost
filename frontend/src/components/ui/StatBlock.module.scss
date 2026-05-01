@@ -1,0 +1,101 @@
+.iconSquare {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.18) 0%, rgba(34, 197, 94, 0.08) 100%);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+
+  svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  span {
+    font-size: 1.2rem;
+  }
+
+  &:global(.bg-primary) {
+    background: linear-gradient(135deg, var(--primary-green) 0%, #16a34a 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+  }
+}
+
+.statImage {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+:global(.block):hover .iconSquare {
+  transform: scale(1.05);
+}
+
+:global(.block):hover .iconSquare:not(.statImage) {
+  border-color: rgba(34, 197, 94, 0.4);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.22) 0%, rgba(34, 197, 94, 0.1) 100%);
+}
+
+:global(.block):hover .iconSquare:global(.bg-primary) {
+  box-shadow: 0 6px 18px rgba(34, 197, 94, 0.35);
+}
+
+.statContent {
+  min-width: 0;
+  flex: 1;
+}
+
+.statFixed {
+  min-height: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  flex: 1;
+}
+
+.noTitle {
+  justify-content: center;
+}
+
+.statTitle {
+  min-height: 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statValue {
+  min-height: 2.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  :global(span.ms-2),
+  :global(span.fs-6) {
+    flex-shrink: 0;
+  }
+}
+
+.statTextTruncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}

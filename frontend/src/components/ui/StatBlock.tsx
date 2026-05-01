@@ -2,6 +2,7 @@ import React from "react";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import Block from "./Block";
 import { Skeleton } from "./Skeleton";
+import styles from "./StatBlock.module.scss";
 
 interface StatBlockProps {
   icon?: React.ReactNode;
@@ -35,8 +36,7 @@ const StatBlock: React.FC<StatBlockProps> = ({
         : "text-custom-danger"
       : "text-custom-success";
 
-  const baseClasses =
-    "icon-square d-flex align-items-center justify-content-center";
+  const baseClasses = `${styles.iconSquare} d-flex align-items-center justify-content-center`;
 
   const renderVisual = () => {
     if (!imageUrl && !icon && !loading) return null;
@@ -76,7 +76,7 @@ const StatBlock: React.FC<StatBlockProps> = ({
 
     const content = imageUrl ? (
       <div
-        className={`${baseClasses} rounded-2 stat-image`}
+        className={`${baseClasses} rounded-2 ${styles.statImage}`}
         style={{ backgroundImage: `url(${imageUrl})` }}
       />
     ) : (
@@ -107,20 +107,20 @@ const StatBlock: React.FC<StatBlockProps> = ({
 
         <div
           className={[
-            fixedHeight ? "stat-fixed" : "",
-            fixedHeight && !hasTitle ? "no-title" : "",
-          ].join(" ")}
+            fixedHeight ? styles.statFixed : styles.statContent,
+            fixedHeight && !hasTitle ? styles.noTitle : "",
+          ].filter(Boolean).join(" ")}
         >
           {hasTitle && (
-            <div className="text-custom-muted f-5 stat-title">{title}</div>
+            <div className={`text-custom-muted f-5 ${styles.statTitle}`}>{title}</div>
           )}
 
-          <div className="fw-bold fs-3 stat-value">
+          <div className={styles.statValue}>
             {loading ? (
               <Skeleton width="100px" height="32px" variant="text" />
             ) : (
               <>
-                <span className="stat-text-truncate">{value}</span>
+                <span className={styles.statTextTruncate}>{value}</span>
 
                 {change !== undefined && change !== 0 && (
                   <span className={`${changeColor} fs-6`}>

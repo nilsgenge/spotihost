@@ -47,20 +47,6 @@
   color: var(--white);
 }
 
-.spotify-btn {
-  color: var(--text-secondary);
-  transition: color 0.2s ease, transform 0.2s ease;
-  display: inline-flex;
-  text-decoration: none;
-}
-
-.spotify-btn:hover {
-  color: var(--white);
-  transform: scale(1.05);
-}
-
-
-
 
 /*    TEXT UTILITIES    */
 .text-custom-success {
@@ -123,117 +109,6 @@
 
 .block a.fw-bold:hover {
   color: var(--primary-green);
-}
-
-
-/*    STAT BLOCKS    */
-.stat-fixed {
-  min-height: 4rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-  flex: 1;
-}
-
-.stat-fixed.no-title {
-  justify-content: center;
-}
-
-/* Target the text container in StatBlock when it doesn't have stat-fixed */
-.block .d-flex > div:last-child {
-  min-width: 0;
-  flex: 1;
-}
-
-.stat-title {
-  min-height: 1.25rem;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.stat-value {
-  min-height: 2.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.75rem;
-  font-weight: 600;
-  overflow: hidden;
-  min-width: 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.stat-value span.ms-2,
-.stat-value span.fs-6 {
-  flex-shrink: 0;
-}
-
-.stat-value .stat-text-truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  min-width: 0;
-}
-
-.fw-bold.fs-3 {
-  font-size: 1.75rem !important;
-  font-weight: 600 !important;
-}
-
-.icon-square {
-  width: 2.5rem;
-  height: 2.5rem;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.18) 0%, rgba(34, 197, 94, 0.08) 100%);
-  border: 1px solid rgba(34, 197, 94, 0.25);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  z-index: 1;
-}
-
-.block:hover .icon-square:not(.stat-image) {
-  transform: scale(1.05);
-  border-color: rgba(34, 197, 94, 0.4);
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.22) 0%, rgba(34, 197, 94, 0.1) 100%);
-}
-
-.block:hover .icon-square.stat-image {
-  transform: scale(1.05);
-}
-
-.icon-square.bg-primary {
-  background: linear-gradient(135deg, var(--primary-green) 0%, #16a34a 100%);
-  border: none;
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
-}
-
-.block:hover .icon-square.bg-primary {
-  box-shadow: 0 6px 18px rgba(34, 197, 94, 0.35);
-}
-
-.icon-square svg {
-  width: 1.2rem;
-  height: 1.2rem;
-}
-
-.icon-square span {
-  font-size: 1.2rem;
-}
-
-.stat-image {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 
 
@@ -445,16 +320,6 @@
   color: white;
 }
 
-/* Vertical dash separator in date range picker */
-.date-range-separator {
-  color: var(--text-secondary);
-  font-weight: 300;
-  margin: 0 0.25rem;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  height: 2.2rem;
-}
 
 /* Section Spacing */
 .page-section {
