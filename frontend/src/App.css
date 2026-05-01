@@ -150,16 +150,6 @@
   transform: none;
 }
 
-/*    BREADCRUMBS    */
-.breadcrumb {
-  background-color: transparent;
-  padding: 0;
-  margin-bottom: 1rem;
-}
-
-.breadcrumb-item + .breadcrumb-item::before {
-  color: var(--text-soft);
-}
 
 
 /*    PAGE STYLING    */

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import styles from "./Breadcrumbs.module.scss";
 
 interface BreadcrumbProps {
   item1: {
@@ -11,7 +12,7 @@ interface BreadcrumbProps {
 
 export const TrackBreadcrumb = ({ item1, item2 }: BreadcrumbProps) => {
   return (
-    <nav aria-label="breadcrumb">
+    <nav aria-label="breadcrumb" className={styles.breadcrumbNav}>
       <ol className="breadcrumb mb-3">
         <li className="breadcrumb-item">
           <Link to="/dashboard" className="text-soft hover-underline">
