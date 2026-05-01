@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { Bucket } from "../../types/charts";
+import styles from "./chart.module.scss";
 
 interface LineDiagramProps {
   data: Bucket[];
@@ -36,9 +37,9 @@ export const LineDiagram: React.FC<LineDiagramProps> = ({
     if (active && payload && payload.length) {
       const bucket: Bucket = payload[0].payload;
       return (
-        <div className="chart-tooltip">
-          <div className="chart-tooltip-header">{bucket.label}</div>
-          <div className="chart-tooltip-value" style={{ color: color }}>
+        <div className={styles.chartTooltip}>
+          <div className={styles.chartTooltipHeader}>{bucket.label}</div>
+          <div className={styles.chartTooltipValue} style={{ color: color }}>
             {valueFormatter(bucket.value)}
           </div>
         </div>
@@ -48,7 +49,7 @@ export const LineDiagram: React.FC<LineDiagramProps> = ({
   };
 
   return (
-    <div className="chart-container">
+    <div className={styles.chartContainer}>
       <ResponsiveContainer width="100%">
         <LineChart
           data={chartData}

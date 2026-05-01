@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useHeatmapData } from "../../hooks/useHeatmapData";
 import type { HeatmapData } from "../../types/charts";
+import styles from "./HeatmapDiagram.module.scss";
+import chartStyles from "./chart.module.scss";
 
 const HEATMAP_COLORS = [
   "rgba(255, 255, 255, 0.04)",
@@ -146,10 +148,10 @@ export const HeatmapDiagram: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="heatmap-wrapper">
-        <div className="heatmap-loading-grid">
+      <div className={styles.heatmapWrapper}>
+        <div className={styles.heatmapLoadingGrid}>
           {Array.from({ length: 7 * 53 }).map((_, i) => (
-            <div key={i} className="heatmap-cell heatmap-cell-loading" />
+            <div key={i} className={`${styles.heatmapCell} ${styles.heatmapCellLoading}`} />
           ))}
         </div>
       </div>
@@ -194,14 +196,14 @@ export const HeatmapDiagram: React.FC = () => {
   };
 
   return (
-    <div className="heatmap-wrapper">
-      <div className="heatmap-summary">
+    <div className={styles.heatmapWrapper}>
+      <div className={styles.heatmapSummary}>
         {totalPlays.toLocaleString()} plays in the last year &middot;{" "}
         {avgPerDay} plays/day on average
       </div>
 
-      <div className="heatmap-scroll-container">
-        <div className="heatmap-day-labels">
+      <div className={styles.heatmapScrollContainer}>
+        <div className={styles.heatmapDayLabels}>
           <span />
           <span>Mon</span>
           <span />
@@ -211,8 +213,8 @@ export const HeatmapDiagram: React.FC = () => {
           <span />
         </div>
 
-        <div className="heatmap-grid-area">
-          <div className="heatmap-month-labels">
+        <div className={styles.heatmapGridArea}>
+          <div className={styles.heatmapMonthLabels}>
             {monthLabels.map((ml, i) => (
               <span
                 key={i}
@@ -225,11 +227,11 @@ export const HeatmapDiagram: React.FC = () => {
             ))}
           </div>
 
-          <div className="heatmap-grid">
+          <div className={styles.heatmapGrid}>
             {cells.map((cell, i) => (
               <div
                 key={cell.empty ? `empty-${i}` : cell.date}
-                className={`heatmap-cell${cell.empty ? " heatmap-cell-empty" : ""}`}
+                className={`${styles.heatmapCell}${cell.empty ? ` ${styles.heatmapCellEmpty}` : ""}`}
                 style={{
                   backgroundColor: cell.empty
                     ? "transparent"
@@ -245,7 +247,7 @@ export const HeatmapDiagram: React.FC = () => {
 
       {tooltip && (
         <div
-          className="chart-tooltip"
+          className={chartStyles.chartTooltip}
           style={{
             position: "fixed",
             left: tooltip.x,
@@ -255,17 +257,17 @@ export const HeatmapDiagram: React.FC = () => {
             pointerEvents: "none",
           }}
         >
-          <div className="chart-tooltip-header">{tooltip.date}</div>
-          <div className="chart-tooltip-value">{tooltip.plays}</div>
+          <div className={chartStyles.chartTooltipHeader}>{tooltip.date}</div>
+          <div className={chartStyles.chartTooltipValue}>{tooltip.plays}</div>
         </div>
       )}
 
-      <div className="heatmap-legend">
+      <div className={styles.heatmapLegend}>
         <span>Less</span>
         {HEATMAP_COLORS.map((color, i) => (
           <div
             key={i}
-            className="heatmap-legend-cell"
+            className={styles.heatmapLegendCell}
             style={{ backgroundColor: color }}
           />
         ))}
