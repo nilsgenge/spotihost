@@ -149,10 +149,12 @@ export const HeatmapDiagram: React.FC = () => {
   if (loading) {
     return (
       <div className={styles.heatmapWrapper}>
-        <div className={styles.heatmapLoadingGrid}>
-          {Array.from({ length: 7 * 53 }).map((_, i) => (
-            <div key={i} className={`${styles.heatmapCell} ${styles.heatmapCellLoading}`} />
-          ))}
+        <div className={styles.heatmapScrollContainer}>
+          <div className={styles.heatmapLoadingGrid}>
+            {Array.from({ length: 7 * 53 }).map((_, i) => (
+              <div key={i} className={`${styles.heatmapCell} ${styles.heatmapCellLoading}`} />
+            ))}
+          </div>
         </div>
       </div>
     );
