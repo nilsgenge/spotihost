@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import detailStyles from "../styles/detail.module.scss";
+import pageStyles from "../styles/page.module.scss";
 import { useTrackDetails } from "../hooks/useTrackDetails";
 import ElementBlock from "../components/ui/ElementBlock";
 import Separator from "../components/ui/Separator";
@@ -45,7 +46,7 @@ const Track = () => {
       />
 
       {/* Hero Section */}
-      <div className="page-header">
+      <div className={pageStyles.pageHeader}>
         <div className="row align-items-center g-4">
           <div className="col-auto">
             <img
@@ -133,7 +134,7 @@ const Track = () => {
 
       {/* Stats Section */}
       <div className="mb-4">
-        <div className="row page-section">
+        <div className={`row ${pageStyles.pageSection}`}>
           <div className="col date-range-picker">
             <DateRangePicker />
           </div>

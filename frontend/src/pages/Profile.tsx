@@ -1,9 +1,10 @@
 import Separator from "../components/ui/Separator";
+import pageStyles from "../styles/page.module.scss";
 
 const Profile = () => {
   return (
     <div className="container">
-      <div className="page-header">
+      <div className={pageStyles.pageHeader}>
         <h1>Profile</h1>
       </div>
 

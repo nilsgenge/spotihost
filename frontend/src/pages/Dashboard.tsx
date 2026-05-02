@@ -1,4 +1,5 @@
 import { type FC } from "react";
+import pageStyles from "../styles/page.module.scss";
 import { useNavigate } from "react-router-dom";
 import { useDateRange } from "../context/DateRangeContext";
 
@@ -28,11 +29,11 @@ const Dashboard: FC = () => {
   return (
     <div className="container">
       {/* Header */}
-      <div className="page-header">
+      <div className={pageStyles.pageHeader}>
         <h1>Dashboard</h1>
       </div>
 
-      <div className="row page-section">
+      <div className={`row ${pageStyles.pageSection}`}>
         <div className="col">
           <DateRangePicker />
         </div>

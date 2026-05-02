@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import detailStyles from "../styles/detail.module.scss";
+import pageStyles from "../styles/page.module.scss";
 import { useArtistDetails } from "../hooks/useArtistDetails";
 import Separator from "../components/ui/Separator";
 import { SpotifyButton } from "../components/ui/SpotifyButton";
@@ -49,7 +50,7 @@ const Artist: React.FC = () => {
       />
 
       {/* Hero Section */}
-      <div className="page-header">
+      <div className={pageStyles.pageHeader}>
         <div className="row align-items-center g-4">
           <div className="col-auto">
             <img
@@ -95,7 +96,7 @@ const Artist: React.FC = () => {
       {/* Stats Section */}
       <div className="mb-4">
         <h2 className={detailStyles.detailSectionHeader}>Activity</h2>
-        <div className="row page-section">
+        <div className={`row ${pageStyles.pageSection}`}>
           <div className="col date-range-picker">
             <DateRangePicker />
           </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import pageStyles from "../styles/page.module.scss";
 import {
   CompletionRatePieDiagram,
   SkipRatePieDiagram,
@@ -17,7 +18,7 @@ const Analytics: React.FC = () => {
   return (
     <div className="container">
       {/* Header */}
-      <div className="page-header">
+      <div className={pageStyles.pageHeader}>
         <h1>Analytics</h1>
       </div>
 
@@ -57,7 +58,7 @@ const Analytics: React.FC = () => {
 
       <Separator />
 
-      <div className="row page-section">
+      <div className={`row ${pageStyles.pageSection}`}>
         <div className="col">
           <DateRangePicker />
         </div>

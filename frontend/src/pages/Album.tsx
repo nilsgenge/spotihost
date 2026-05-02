@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
 import detailStyles from "../styles/detail.module.scss";
+import pageStyles from "../styles/page.module.scss";
 import { useAlbumDetails } from "../hooks/useAlbumDetails";
 import ElementBlock from "../components/ui/ElementBlock";
 import Separator from "../components/ui/Separator";
@@ -40,7 +41,7 @@ const Album: React.FC = () => {
       />
 
       {/* Hero Section */}
-      <div className="page-header">
+      <div className={pageStyles.pageHeader}>
         <div className="row align-items-center g-4">
           <div className="col-auto">
             <img
@@ -144,7 +145,7 @@ const Album: React.FC = () => {
       {/* Stats Section */}
       <div className="mb-4">
         <h2 className={detailStyles.detailSectionHeader}>Extra Stats</h2>
-        <div className="row page-section">
+        <div className={`row ${pageStyles.pageSection}`}>
           <div className="col date-range-picker">
             <DateRangePicker />
           </div>
