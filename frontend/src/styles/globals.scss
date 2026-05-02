@@ -21,7 +21,7 @@
   /* Layout */
   --navbar-height: 15px;
   --block-border-radius: 0.5rem;
-  --max-page-width: 1200px;
+  --max-page-width: 1300px;
 }
 
 :root {
@@ -100,4 +100,34 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/*    BOOTSTRAP OVERRIDES    */
+.bg-primary,
+.btn-primary {
+  background-color: var(--primary-green) !important;
+  border-color: var(--primary-green) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus {
+  background-color: var(--primary-green) !important;
+  border-color: var(--primary-green) !important;
+  opacity: 0.9;
+}
+
+.btn-outline-custom {
+  border-color: var(--primary-green);
+  color: var(--primary-green);
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-custom:hover,
+.btn-outline-custom:active,
+.btn-outline-custom:focus {
+  background-color: var(--primary-green);
+  border-color: var(--primary-green);
+  color: var(--white);
 }
