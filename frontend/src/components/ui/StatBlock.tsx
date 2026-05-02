@@ -8,7 +8,7 @@ interface StatBlockProps {
   icon?: React.ReactNode;
   imageUrl?: string;
   title?: string;
-  value: string | undefined | null;
+  value: React.ReactNode;
   change?: number;
   label?: string;
   url?: string | null;
@@ -101,7 +101,7 @@ const StatBlock: React.FC<StatBlockProps> = ({
   };
 
   return (
-    <Block>
+    <Block className={styles.statBlockWrapper}>
       <div className="d-flex align-items-center gap-3">
         {renderVisual()}
 
@@ -111,9 +111,11 @@ const StatBlock: React.FC<StatBlockProps> = ({
             fixedHeight && !hasTitle ? styles.noTitle : "",
           ].filter(Boolean).join(" ")}
         >
-          {hasTitle && (
+          {hasTitle ? (
             <div className={`text-custom-muted f-5 ${styles.statTitle}`}>{title}</div>
-          )}
+          ) : fixedHeight ? (
+            <div className={`${styles.statTitle} ${styles.titlePlaceholder}`} aria-hidden />
+          ) : null}
 
           <div className={styles.statValue}>
             {loading ? (
@@ -123,7 +125,7 @@ const StatBlock: React.FC<StatBlockProps> = ({
                 <span className={styles.statTextTruncate}>{value}</span>
 
                 {change !== undefined && change !== 0 && (
-                  <span className={`${changeColor} fs-6`}>
+                  <span className={`${changeColor} fs-6 ${styles.hideOnMobile}`}>
                     {change > 0 ? (
                       <FaArrowUp size={12} />
                     ) : (
@@ -134,7 +136,7 @@ const StatBlock: React.FC<StatBlockProps> = ({
                 )}
 
                 {label && (
-                  <span className="text-custom-muted fs-6 ms-2">{label}</span>
+                  <span className={`text-custom-muted fs-6 ms-2 ${styles.hideOnMobile}`}>{label}</span>
                 )}
               </>
             )}

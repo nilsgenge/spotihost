@@ -71,10 +71,10 @@ const Dashboard: FC = () => {
           />
         </div>
 
-        <div className="col-12 col-md-6">
+        <div className="col-6 col-md-6">
           <StatsDatabaseEntriesBlock />
         </div>
-        <div className="col-12 col-md-6">
+        <div className="col-6 col-md-6">
           <StatsLastActiveBlock />
         </div>
       </div>
