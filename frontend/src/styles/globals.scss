@@ -20,6 +20,7 @@
 
   /* Layout */
   --navbar-height: 15px;
+  --mobile-nav-height: 60px;
   --block-border-radius: 0.5rem;
   --max-page-width: 1300px;
 }
@@ -34,11 +35,22 @@
 
 /*    BASE STYLES    */
 body {
-  padding-top: var(--navbar-height);
   background-color: var(--dark-background);
   background-image: radial-gradient(circle at 10% 10%, rgba(34, 197, 94, 0.03) 0%, transparent 40%),
                     radial-gradient(circle at 90% 90%, rgba(34, 197, 94, 0.02) 0%, transparent 40%);
   background-attachment: fixed;
+}
+
+@media (min-width: 768px) {
+  body {
+    padding-top: var(--navbar-height);
+  }
+}
+
+@media (max-width: 767.98px) {
+  body {
+    padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 .container {

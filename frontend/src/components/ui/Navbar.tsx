@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
   const { isBackendReachable, loading } = useHealth();
 
   return (
-    <nav className={styles.navbar}>
+    <nav className={`${styles.navbar} d-none d-md-flex`}>
       <NavLink className="navbar-brand fs-3" to="/dashboard">
         SpotiHost
       </NavLink>

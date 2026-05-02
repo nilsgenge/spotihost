@@ -1,0 +1,31 @@
+.mobileNav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1040;
+  height: var(--mobile-nav-height);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  display: flex;
+  background-color: var(--block-dark);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 1.5rem;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--white);
+  }
+}
+
+.active {
+  color: var(--primary-green);
+}
