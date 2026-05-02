@@ -64,7 +64,7 @@ const PieDiagram: React.FC<PieDiagramProps> = ({
 
   return (
     <div className={styles.chartContainer} style={{ height: `${height}px` }}>
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
         <PieChart margin={{ top: 40, right: 60, bottom: 80, left: 60 }}>
           <Pie
             data={data}
