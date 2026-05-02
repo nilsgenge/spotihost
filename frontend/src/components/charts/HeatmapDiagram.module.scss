@@ -1,0 +1,111 @@
+.heatmapWrapper {
+  --heatmap-cell: 14px;
+  --heatmap-gap: 3px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    --heatmap-cell: 10px;
+    --heatmap-gap: 2px;
+  }
+}
+
+.heatmapSummary {
+  font-size: 0.875rem;
+  color: var(--text-soft);
+  margin-bottom: 0.75rem;
+}
+
+.heatmapScrollContainer {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.heatmapDayLabels {
+  display: grid;
+  grid-template-rows: repeat(7, var(--heatmap-cell));
+  gap: var(--heatmap-gap);
+  flex-shrink: 0;
+  padding-top: 20px;
+
+  span {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    line-height: var(--heatmap-cell);
+  }
+}
+
+.heatmapGridArea {
+  flex: 1;
+  min-width: min-content;
+}
+
+.heatmapMonthLabels {
+  position: relative;
+  height: 20px;
+  margin-bottom: 2px;
+
+  span {
+    position: absolute;
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+}
+
+.heatmapGrid {
+  display: grid;
+  grid-template-rows: repeat(7, var(--heatmap-cell));
+  grid-auto-flow: column;
+  grid-auto-columns: var(--heatmap-cell);
+  gap: var(--heatmap-gap);
+}
+
+.heatmapCell {
+  width: var(--heatmap-cell);
+  height: var(--heatmap-cell);
+  border-radius: 2px;
+  position: relative;
+  cursor: pointer;
+
+  &:hover {
+    outline: 2px solid rgba(255, 255, 255, 0.6);
+    outline-offset: -1px;
+    z-index: 2;
+  }
+}
+
+.heatmapCellEmpty {
+  cursor: default;
+}
+
+.heatmapCellLoading {
+  background-color: rgba(255, 255, 255, 0.04);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.heatmapLoadingGrid {
+  display: grid;
+  grid-template-rows: repeat(7, var(--heatmap-cell));
+  grid-auto-flow: column;
+  grid-auto-columns: var(--heatmap-cell);
+  gap: var(--heatmap-gap);
+}
+
+.heatmapLegend {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  justify-content: flex-end;
+}
+
+.heatmapLegendCell {
+  width: var(--heatmap-cell);
+  height: var(--heatmap-cell);
+  border-radius: 2px;
+  display: inline-block;
+}

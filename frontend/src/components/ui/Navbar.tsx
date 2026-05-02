@@ -3,12 +3,13 @@ import { NavLink } from "react-router-dom";
 import LoginButton from "../blocks/LoginButton";
 import SearchBar from "../ui/SearchBar";
 import { useHealth } from "../../context/HealthContext";
+import styles from "./Navbar.module.scss";
 
 const Navbar: React.FC = () => {
   const { isBackendReachable, loading } = useHealth();
 
   return (
-    <nav className="custom-navbar">
+    <nav className={styles.navbar}>
       <NavLink className="navbar-brand fs-3" to="/dashboard">
         SpotiHost
       </NavLink>

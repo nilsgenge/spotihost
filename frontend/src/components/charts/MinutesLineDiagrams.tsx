@@ -1,4 +1,5 @@
 import { LineDiagram } from "./LineDiagram";
+import styles from "./chart.module.scss";
 import {
   useTotalMinutes,
   useArtistMinutes,
@@ -7,14 +8,14 @@ import {
 } from "../../hooks/useMinutesCharts";
 
 const EmptyState: React.FC<{ message: string }> = ({ message }) => (
-  <div className="chart-container d-flex flex-column align-items-center justify-content-center text-secondary">
+  <div className={`${styles.chartContainer} d-flex flex-column align-items-center justify-content-center text-secondary`}>
     <i className="bi bi-music-note-beamed fs-1 mb-3 opacity-50"></i>
     <span className="text-soft">{message}</span>
   </div>
 );
 
 const LoadingState: React.FC<{ label?: string }> = ({ label }) => (
-  <div className="chart-container d-flex align-items-center justify-content-center text-secondary">
+  <div className={`${styles.chartContainer} d-flex align-items-center justify-content-center text-secondary`}>
     <div className="me-2" role="status" />
     {label && <span className="text-soft">{label}</span>}
   </div>

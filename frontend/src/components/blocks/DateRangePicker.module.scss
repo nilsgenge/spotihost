@@ -1,0 +1,54 @@
+.container {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+
+  :global(.btn) {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-soft);
+
+    &:hover {
+      color: var(--primary-green);
+      background: rgba(34, 197, 94, 0.05);
+    }
+  }
+
+  :global(.btn-primary) {
+    background: transparent;
+    border: 1px solid var(--primary-green);
+    color: var(--white);
+    box-shadow: none;
+
+    &:hover {
+      background: var(--primary-green);
+      color: white;
+    }
+  }
+
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+
+    :global(.btn) {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+.dateRangeSeparator {
+  color: var(--text-secondary);
+  font-weight: 300;
+  margin: 0 0.25rem;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  height: 2.2rem;
+}

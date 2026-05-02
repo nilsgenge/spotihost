@@ -7,6 +7,7 @@ import {
   Legend,
 } from "recharts";
 import type { PieBucket } from "../../types/charts";
+import styles from "./chart.module.scss";
 
 interface PieDiagramProps {
   data: PieBucket[];
@@ -20,14 +21,14 @@ interface PieDiagramProps {
 }
 
 const CustomLegend = (props: any) => (
-  <div className="chart-legend">
+  <div className={styles.chartLegend}>
     {props.payload.map((entry: any, index: number) => (
-      <div key={index} className="chart-legend-item">
+      <div key={index} className={styles.chartLegendItem}>
         <div
-          className="chart-legend-color"
+          className={styles.chartLegendColor}
           style={{ backgroundColor: entry.color }}
         />
-        <span className="chart-legend-label">{entry.payload.label}</span>
+        <span className={styles.chartLegendLabel}>{entry.payload.label}</span>
       </div>
     ))}
   </div>
@@ -50,9 +51,9 @@ const PieDiagram: React.FC<PieDiagramProps> = ({
       const displayLabel = tooltipLabels?.[item.label] || item.label;
 
       return (
-        <div className="chart-tooltip">
-          <div className="chart-tooltip-header">{displayLabel}</div>
-          <div className="chart-tooltip-value" style={{ color: item.color }}>
+        <div className={styles.chartTooltip}>
+          <div className={styles.chartTooltipHeader}>{displayLabel}</div>
+          <div className={styles.chartTooltipValue} style={{ color: item.color }}>
             {item.value.toLocaleString()} plays ({item.percentage}%)
           </div>
         </div>
@@ -62,7 +63,7 @@ const PieDiagram: React.FC<PieDiagramProps> = ({
   };
 
   return (
-    <div className="chart-container" style={{ height: `${height}px` }}>
+    <div className={styles.chartContainer} style={{ height: `${height}px` }}>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart margin={{ top: 40, right: 60, bottom: 80, left: 60 }}>
           <Pie

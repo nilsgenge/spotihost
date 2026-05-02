@@ -1,0 +1,11 @@
+.spotifyBtn {
+  color: var(--text-secondary);
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: inline-flex;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--white);
+    transform: scale(1.05);
+  }
+}

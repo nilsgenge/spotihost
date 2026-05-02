@@ -2,6 +2,7 @@ import React from "react";
 import Block from "./Block";
 import { Skeleton } from "./Skeleton";
 import type { CSSProperties } from "react";
+import styles from "./ContentBlock.module.scss";
 
 export interface ContentBlockProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ export interface ContentBlockProps {
   error?: string | null;
   style?: CSSProperties;
   className?: string;
+  overflowVisible?: boolean;
 }
 
 const ContentBlock: React.FC<ContentBlockProps> = ({
@@ -25,6 +27,7 @@ const ContentBlock: React.FC<ContentBlockProps> = ({
   error = null,
   style,
   className = "",
+  overflowVisible = false,
 }) => {
   let displayTitle = title;
   let displayChildren = children;
@@ -52,10 +55,10 @@ const ContentBlock: React.FC<ContentBlockProps> = ({
   };
 
   return (
-    <Block fullWidth className={className} style={style}>
+    <Block fullWidth className={className} style={style} overflowVisible={overflowVisible}>
       <div className="d-flex flex-column h-100">
         <div className="mb-3">
-          <h4 className="fs-6 mb-1">{displayTitle}</h4>
+          <h4 className={`fs-6 mb-1 ${styles.title}`}>{displayTitle}</h4>
           {description && (
             <small className="text-custom-muted">{description}</small>
           )}
@@ -68,7 +71,7 @@ const ContentBlock: React.FC<ContentBlockProps> = ({
         {buttonLabel && onButtonClick && (
           <div className="d-flex justify-content-end">
             <button
-              className="btn btn-primary btn-sm"
+              className={`btn-sm ${styles.actionButton}`}
               onClick={handleClick}
               disabled={loading}
             >

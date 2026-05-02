@@ -1,5 +1,7 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
+import detailStyles from "../styles/detail.module.scss";
+import pageStyles from "../styles/page.module.scss";
 import { useAlbumDetails } from "../hooks/useAlbumDetails";
 import ElementBlock from "../components/ui/ElementBlock";
 import Separator from "../components/ui/Separator";
@@ -39,13 +41,13 @@ const Album: React.FC = () => {
       />
 
       {/* Hero Section */}
-      <div className="page-header">
+      <div className={pageStyles.pageHeader}>
         <div className="row align-items-center g-4">
           <div className="col-auto">
             <img
               src={album.image_url}
               alt={album.name}
-              className="rounded-3 shadow detail-image"
+              className={`rounded-3 shadow ${detailStyles.detailImage}`}
             />
           </div>
           <div className="col">
@@ -100,7 +102,7 @@ const Album: React.FC = () => {
 
       {/* Artists Section */}
       <div className="mb-4">
-        <h2 className="detail-section-header">Artists</h2>
+        <h2 className={detailStyles.detailSectionHeader}>Artists</h2>
         <div className="d-flex flex-column gap-2">
           {album.artists.map((artist) => (
             <ElementBlock
@@ -120,7 +122,7 @@ const Album: React.FC = () => {
 
       {/* Tracks Section */}
       <div className="mb-4">
-        <h2 className="detail-section-header">Tracks</h2>
+        <h2 className={detailStyles.detailSectionHeader}>Tracks</h2>
         <div className="d-flex flex-column gap-2">
           {album.tracks.map((track, index) => (
             <ElementBlock
@@ -142,8 +144,8 @@ const Album: React.FC = () => {
 
       {/* Stats Section */}
       <div className="mb-4">
-        <h2 className="detail-section-header">Extra Stats</h2>
-        <div className="row page-section">
+        <h2 className={detailStyles.detailSectionHeader}>Extra Stats</h2>
+        <div className={`row ${pageStyles.pageSection}`}>
           <div className="col date-range-picker">
             <DateRangePicker />
           </div>

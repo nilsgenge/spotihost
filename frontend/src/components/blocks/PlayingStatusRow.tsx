@@ -1,4 +1,5 @@
 import StatBlock from "../ui/StatBlock";
+import styles from "./PlayingStatusRow.module.scss";
 
 import { usePlayerDetails } from "../../hooks/usePlayerDetails";
 import { FaFile, FaUsers } from "react-icons/fa";
@@ -38,7 +39,7 @@ const PlayingStatus = () => {
 
   return (
     <>
-      <div className="row mb-4 playing-status-row">
+      <div className={`row mb-4 ${styles.playingStatusRow}`}>
         <div className="col-12 col-md-4">
           <StatBlock
             url={songUrl}

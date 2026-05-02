@@ -1,4 +1,5 @@
 import React from "react";
+import pageStyles from "../styles/page.module.scss";
 import { FaExclamationTriangle } from "react-icons/fa";
 import Separator from "../components/ui/Separator";
 import ContentBlock from "../components/ui/ContentBlock";
@@ -32,7 +33,7 @@ const Settings: React.FC = () => {
   if (error) {
     return (
       <div className="container">
-        <div className="page-header">
+        <div className={pageStyles.pageHeader}>
           <h1>Settings</h1>
         </div>
         <Separator />
@@ -46,7 +47,7 @@ const Settings: React.FC = () => {
 
   return (
     <div className="container">
-      <div className="page-header">
+      <div className={pageStyles.pageHeader}>
         <h1>Settings</h1>
       </div>
       <Separator />

@@ -1,0 +1,11 @@
+.breadcrumbNav {
+  :global(.breadcrumb) {
+    background-color: transparent;
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+
+  :global(.breadcrumb-item + .breadcrumb-item::before) {
+    color: var(--text-soft);
+  }
+}

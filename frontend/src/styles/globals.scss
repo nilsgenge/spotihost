@@ -1,0 +1,133 @@
+:root {
+  /* Primary Colors */
+  --primary-green: #22c55e;
+  --danger-red: #dc2626;
+
+  /* Backgrounds */
+  --dark-background: #121212;
+  --block-dark: #18181C;
+
+  /* Text Colors */
+  --white: #ffffff;
+  --text-secondary: #6c757d;
+  --text-soft: #9ca3af;
+
+  /* Chart Specific Colors */
+  --chart-grid: rgba(255, 255, 255, 0.08);
+  --chart-axis: var(--text-secondary);
+  --cursor-line: var(--text-soft);
+  --chart-cursor-fill: rgba(255, 255, 255, 0.03);
+
+  /* Layout */
+  --navbar-height: 15px;
+  --block-border-radius: 0.5rem;
+  --max-page-width: 1300px;
+}
+
+:root {
+  --bs-body-bg: var(--dark-background);
+  --bs-body-color: var(--white);
+  --bs-primary: var(--primary-green);
+  --bs-secondary: var(--text-secondary);
+}
+
+
+/*    BASE STYLES    */
+body {
+  padding-top: var(--navbar-height);
+  background-color: var(--dark-background);
+  background-image: radial-gradient(circle at 10% 10%, rgba(34, 197, 94, 0.03) 0%, transparent 40%),
+                    radial-gradient(circle at 90% 90%, rgba(34, 197, 94, 0.02) 0%, transparent 40%);
+  background-attachment: fixed;
+}
+
+.container {
+  margin-top: 0;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+.max-width-page {
+  max-width: var(--max-page-width);
+  margin: 0 auto;
+}
+
+/*    TEXT UTILITIES    */
+.text-custom-success { color: var(--primary-green); }
+.text-custom-danger  { color: var(--danger-red); }
+.text-custom-muted   { color: var(--text-secondary); }
+.text-soft           { color: var(--text-soft); }
+
+.truncate {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.hover-underline {
+  text-decoration: none;
+  position: relative;
+  transition: color 0.2s ease;
+  color: var(--text-soft);
+
+  &:hover { color: var(--primary-green); }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-green);
+    transition: width 0.2s ease;
+    border-radius: 1px;
+  }
+
+  &:hover::after { width: 100%; }
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Remove number input arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/*    BOOTSTRAP OVERRIDES    */
+.bg-primary,
+.btn-primary {
+  background-color: var(--primary-green) !important;
+  border-color: var(--primary-green) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus {
+  background-color: var(--primary-green) !important;
+  border-color: var(--primary-green) !important;
+  opacity: 0.9;
+}
+
+.btn-outline-custom {
+  border-color: var(--primary-green);
+  color: var(--primary-green);
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-custom:hover,
+.btn-outline-custom:active,
+.btn-outline-custom:focus {
+  background-color: var(--primary-green);
+  border-color: var(--primary-green);
+  color: var(--white);
+}

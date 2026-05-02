@@ -1,5 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
+import detailStyles from "../styles/detail.module.scss";
+import pageStyles from "../styles/page.module.scss";
 import { useArtistDetails } from "../hooks/useArtistDetails";
 import Separator from "../components/ui/Separator";
 import { SpotifyButton } from "../components/ui/SpotifyButton";
@@ -48,13 +50,13 @@ const Artist: React.FC = () => {
       />
 
       {/* Hero Section */}
-      <div className="page-header">
+      <div className={pageStyles.pageHeader}>
         <div className="row align-items-center g-4">
           <div className="col-auto">
             <img
               src={artist.image_url}
               alt={artist.name}
-              className="rounded-3 shadow detail-image"
+              className={`rounded-3 shadow ${detailStyles.detailImage}`}
             />
           </div>
           <div className="col">
@@ -93,8 +95,8 @@ const Artist: React.FC = () => {
 
       {/* Stats Section */}
       <div className="mb-4">
-        <h2 className="detail-section-header">Activity</h2>
-        <div className="row page-section">
+        <h2 className={detailStyles.detailSectionHeader}>Activity</h2>
+        <div className={`row ${pageStyles.pageSection}`}>
           <div className="col date-range-picker">
             <DateRangePicker />
           </div>
@@ -158,7 +160,7 @@ const Artist: React.FC = () => {
       <div className="row g-4 mb-4">
         {/* Top Tracks */}
         <div className="col-12 col-lg-6">
-          <h2 className="detail-section-header">Top Tracks</h2>
+          <h2 className={detailStyles.detailSectionHeader}>Top Tracks</h2>
           <div className="d-flex flex-column gap-2">
             {displayedTracks.map((track) => (
               <ElementBlock
@@ -180,7 +182,7 @@ const Artist: React.FC = () => {
 
         {/* Top Albums */}
         <div className="col-12 col-lg-6">
-          <h2 className="detail-section-header">Top Albums</h2>
+          <h2 className={detailStyles.detailSectionHeader}>Top Albums</h2>
           <div className="d-flex flex-column gap-2">
             {displayedAlbums.map((album) => (
               <ElementBlock

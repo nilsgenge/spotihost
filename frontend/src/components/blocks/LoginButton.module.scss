@@ -1,0 +1,63 @@
+.profileContainer {
+  position: relative;
+}
+
+.profileClickable {
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.03);
+  }
+
+  .profileName {
+    transition: text-shadow 0.2s ease;
+  }
+
+  &:hover .profileName {
+    text-shadow: 0 0 8px rgba(30, 215, 96, 0.8);
+  }
+}
+
+.profileDropdown {
+  background-color: var(--block-dark);
+  border: 1px solid var(--text-secondary);
+  min-width: 200px;
+  z-index: 1000;
+}
+
+.profileDropdownLink {
+  color: var(--white);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+  }
+}
+
+.profileDropdownLogout {
+  background-color: transparent;
+  color: var(--danger-red);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--danger-red);
+    color: var(--white);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.profileImg {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border: 2px solid var(--primary-green);
+}

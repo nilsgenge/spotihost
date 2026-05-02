@@ -9,6 +9,7 @@ import {
   LabelList,
 } from "recharts";
 import type { Bucket } from "../../types/charts";
+import styles from "./chart.module.scss";
 
 interface BarDiagramProps {
   data: Bucket[];
@@ -27,9 +28,9 @@ export const BarDiagram: React.FC<BarDiagramProps> = ({
     if (active && payload && payload.length) {
       const bucket: Bucket = payload[0].payload;
       return (
-        <div className="chart-tooltip">
-          <div className="chart-tooltip-header">{bucket.label}</div>
-          <div className="chart-tooltip-value" style={{ color }}>
+        <div className={styles.chartTooltip}>
+          <div className={styles.chartTooltipHeader}>{bucket.label}</div>
+          <div className={styles.chartTooltipValue} style={{ color }}>
             {valueFormatter(bucket.value || 0)}
           </div>
         </div>
@@ -62,7 +63,7 @@ export const BarDiagram: React.FC<BarDiagramProps> = ({
   const cursorFill = "var(--chart-cursor-fill, rgba(255, 255, 255, 0.05))";
 
   return (
-    <div className="chart-container" style={{ height: `${height}px` }}>
+    <div className={styles.chartContainer} style={{ height: `${height}px` }}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}

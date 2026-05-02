@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaSpotify, FaHeadphones } from "react-icons/fa";
 import Block from "../components/ui/Block";
+import styles from "./Welcome.module.scss";
 
 const Welcome: React.FC = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -21,39 +22,39 @@ const Welcome: React.FC = () => {
   };
 
   return (
-    <div className="welcome-container">
-      <div className="welcome-content">
-        <div className="welcome-logo">
-          <div className="welcome-logo-glow"></div>
-          <div className="welcome-logo-glow-outer"></div>
-          <div className="welcome-title-container">
-            <p className="welcome-prefix">Welcome to</p>
-            <h1 className="welcome-title">SpotiHost</h1>
+    <div className={styles.welcomeContainer}>
+      <div className={styles.welcomeContent}>
+        <div className={styles.welcomeLogo}>
+          <div className={styles.welcomeLogoGlow}></div>
+          <div className={styles.welcomeLogoGlowOuter}></div>
+          <div className={styles.welcomeTitleContainer}>
+            <p className={styles.welcomePrefix}>Welcome to</p>
+            <h1 className={styles.welcomeTitle}>SpotiHost</h1>
           </div>
         </div>
 
-        <p className="welcome-tagline">
+        <p className={styles.welcomeTagline}>
           Your personal Spotify listening history tracker
         </p>
 
         <button
-          className="welcome-login-btn"
+          className={styles.welcomeLoginBtn}
           onClick={handleLogin}
           disabled={isRedirecting}
         >
-          <FaSpotify className="welcome-spotify-icon" />
+          <FaSpotify className={styles.welcomeSpotifyIcon} />
           <span>{isRedirecting ? "Redirecting..." : "Login with Spotify"}</span>
         </button>
 
-        <div className="welcome-blocks">
-          <Block fullWidth={false} className="welcome-feature-block">
+        <div className={styles.welcomeBlocks}>
+          <Block fullWidth={false} className={styles.welcomeFeatureBlock}>
             <div className="d-flex align-items-center gap-3">
-              <div className="welcome-block-icon">
+              <div className={styles.welcomeBlockIcon}>
                 <FaHeadphones />
               </div>
               <div>
-                <div className="welcome-block-title">Track Your Listening</div>
-                <div className="welcome-block-desc">
+                <div className={styles.welcomeBlockTitle}>Track Your Listening</div>
+                <div className={styles.welcomeBlockDesc}>
                   Detailed analytics & insights
                 </div>
               </div>
@@ -61,12 +62,12 @@ const Welcome: React.FC = () => {
           </Block>
         </div>
 
-        <p className="welcome-footer">Start tracking your music today!</p>
+        <p className={styles.welcomeFooter}>Start tracking your music today!</p>
       </div>
 
-      <div className="welcome-bg-gradient welcome-bg-1"></div>
-      <div className="welcome-bg-gradient welcome-bg-2"></div>
-      <div className="welcome-bg-gradient welcome-bg-3"></div>
+      <div className={`${styles.welcomeBgGradient} ${styles.welcomeBg1}`}></div>
+      <div className={`${styles.welcomeBgGradient} ${styles.welcomeBg2}`}></div>
+      <div className={`${styles.welcomeBgGradient} ${styles.welcomeBg3}`}></div>
     </div>
   );
 };
