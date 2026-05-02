@@ -1,5 +1,5 @@
 import StatBlock from "../ui/StatBlock";
-import styles from "./PlayingStatusRow.module.scss";
+import ElementBlock from "../ui/ElementBlock";
 
 import { usePlayerDetails } from "../../hooks/usePlayerDetails";
 import { FaFile, FaUsers } from "react-icons/fa";
@@ -37,21 +37,23 @@ const PlayingStatus = () => {
 
   if (isLoading) return;
 
+  const nothingPlaying = songName === "Nothing Playing";
+
   return (
     <>
-      <div className={`row mb-4 ${styles.playingStatusRow}`}>
+      <div className="row mb-4 d-none d-md-flex">
         <div className="col-12 col-md-4">
           <StatBlock
             url={songUrl}
             imageUrl={imageUrl}
             title={
-              songName === "Nothing Playing"
+              nothingPlaying
                 ? "Nothing Playing"
                 : isPlaying
                   ? "Currently Playing"
                   : "Currently Paused"
             }
-            value={songName === "Nothing Playing" ? "-" : songName}
+            value={nothingPlaying ? "-" : songName}
           />
         </div>
         <div className="col-12 col-md-4">
@@ -71,7 +73,18 @@ const PlayingStatus = () => {
         </div>
       </div>
 
-      <div className="row mb-4">
+      {!nothingPlaying && (
+        <div className="d-md-none mb-4">
+          <ElementBlock
+            image={imageUrl}
+            title={songName}
+            title_url={songUrl}
+            label={[{ name: artistName }]}
+          />
+        </div>
+      )}
+
+      <div className="row mb-4 d-none d-md-flex">
         <div className="col d-flex gap-2 flex-wrap">
           <Status
             text="Shuffle"
@@ -85,6 +98,27 @@ const PlayingStatus = () => {
           {isExplicit && <Status text="Explicit" status="neutral" />}
         </div>
       </div>
+
+      {!nothingPlaying && (
+        <div className="row mb-4 d-md-none">
+          <div className="col d-flex gap-2 flex-wrap">
+            <Status
+              text={isPlaying ? "Now Playing" : "Paused"}
+              status={isPlaying ? "activated" : "deactivated"}
+            />
+            <Status
+              text="Shuffle"
+              status={shuffleState.valueOf() ? "activated" : "deactivated"}
+            />
+            <Status
+              text="Repeat"
+              status={repeatState == "off" ? "deactivated" : "activated"}
+            />
+            <Status text={deviceType.valueOf()} status="neutral" />
+            {isExplicit && <Status text="Explicit" status="neutral" />}
+          </div>
+        </div>
+      )}
 
       <Seperator />
     </>
