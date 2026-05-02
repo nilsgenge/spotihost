@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import detailStyles from "../styles/detail.module.scss";
 import { useTrackDetails } from "../hooks/useTrackDetails";
 import ElementBlock from "../components/ui/ElementBlock";
 import Separator from "../components/ui/Separator";
@@ -50,7 +51,7 @@ const Track = () => {
             <img
               src={track.image_url}
               alt={track.name}
-              className="rounded-3 shadow detail-image"
+              className={`rounded-3 shadow ${detailStyles.detailImage}`}
             />
           </div>
           <div className="col">
@@ -98,7 +99,7 @@ const Track = () => {
       {/* Artists & Album Section */}
       <div className="row g-4 mb-4">
         <div className={`col-12 ${artistOuterColClass}`}>
-          <h2 className="detail-section-header">Artists</h2>
+          <h2 className={detailStyles.detailSectionHeader}>Artists</h2>
           <div className="row g-2">
             {track.artists.map((artist) => (
               <div className={artistItemColClass} key={artist.spotify_id}>
@@ -114,7 +115,7 @@ const Track = () => {
         </div>
 
         <div className={`col-12 ${albumOuterColClass}`}>
-          <h2 className="detail-section-header">Appears on</h2>
+          <h2 className={detailStyles.detailSectionHeader}>Appears on</h2>
           <div className="d-flex flex-column gap-2">
             <ElementBlock
               key={track.album.spotify_id}
