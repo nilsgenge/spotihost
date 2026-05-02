@@ -1,21 +1,3 @@
-/*    BLOCKS & CARDS    */
-.block {
-  background: linear-gradient(135deg, var(--block-dark) 0%, rgba(24, 24, 28, 0.95) 100%);
-  color: var(--white);
-  border-radius: var(--block-border-radius);
-  display: flex;
-  flex-direction: column;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-}
-
-.block:hover {
-  border-color: rgba(34, 197, 94, 0.2);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-}
-
 
 /*    BUTTONS    */
 .bg-primary,
@@ -49,53 +31,7 @@
 
 
 
-/* Clickable item indicator */
-.block a.fw-bold {
-  color: #e5e7eb;
-  transition: color 0.2s ease;
-}
 
-.block a.fw-bold:hover {
-  color: var(--primary-green);
-}
-
-
-
-
-
-
-/* Content Block Headers */
-.block h4 {
-  font-weight: 600;
-  color: #ffffff;
-  letter-spacing: 0.02em;
-}
-
-/* Content Block Buttons */
-.block .btn-primary {
-  background: linear-gradient(135deg, var(--primary-green) 0%, #16a34a 100%);
-  border: none;
-  padding: 0.5rem 1.25rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
-}
-
-.block .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
-}
-
-/*    HEATMAP (external modifiers on ContentBlock)    */
-.heatmap-block {
-  overflow: visible !important;
-}
-
-.heatmap-block:hover {
-  transform: none;
-}
 
 
 

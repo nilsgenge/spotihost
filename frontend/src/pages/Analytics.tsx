@@ -75,7 +75,7 @@ const Analytics: React.FC = () => {
         <Separator />
 
         <div className="col-12">
-          <ContentBlock title="Listening Activity" className="heatmap-block">
+          <ContentBlock title="Listening Activity" overflowVisible>
             <HeatmapDiagram />
           </ContentBlock>
         </div>

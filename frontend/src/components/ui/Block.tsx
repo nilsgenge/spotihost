@@ -1,10 +1,12 @@
 import React, { type ReactNode, type CSSProperties } from "react";
+import styles from "./Block.module.scss";
 
 interface BlockProps {
   children: ReactNode;
   fullWidth?: boolean;
   style?: CSSProperties;
   className?: string;
+  overflowVisible?: boolean;
 }
 
 const Block: React.FC<BlockProps> = ({
@@ -12,12 +14,19 @@ const Block: React.FC<BlockProps> = ({
   fullWidth = true,
   style,
   className = "",
+  overflowVisible = false,
 }) => {
-  const widthClass = fullWidth ? "w-100" : "";
-
   return (
     <div
-      className={`block p-3 rounded ${widthClass} ${className}`.trim()}
+      data-block
+      className={[
+        styles.block,
+        "p-3",
+        "rounded",
+        fullWidth ? "w-100" : "",
+        overflowVisible ? styles.overflowVisible : "",
+        className,
+      ].filter(Boolean).join(" ")}
       style={style}
     >
       {children}

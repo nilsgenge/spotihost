@@ -16,7 +16,7 @@
   background-repeat: no-repeat;
 }
 
-:global(.block):hover .elementCover {
+[data-block]:hover .elementCover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
   transform: scale(1.05);
 }

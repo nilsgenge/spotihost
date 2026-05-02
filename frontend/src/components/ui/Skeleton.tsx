@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./Skeleton.module.scss";
+import blockStyles from "./Block.module.scss";
 
 interface SkeletonProps {
   width?: string;
@@ -30,7 +31,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
 };
 
 export const StatBlockSkeleton = () => (
-  <div className="block p-3 rounded w-100">
+  <div data-block className={`${blockStyles.block} p-3 rounded w-100`}>
     <div className="d-flex align-items-center gap-3">
       <Skeleton variant="circular" width="40px" height="40px" />
       <div className="flex-grow-1">
@@ -42,7 +43,7 @@ export const StatBlockSkeleton = () => (
 );
 
 export const ElementBlockSkeleton = () => (
-  <div className="block p-3 rounded w-100">
+  <div data-block className={`${blockStyles.block} p-3 rounded w-100`}>
     <div className="d-flex align-items-center gap-3">
       <Skeleton variant="rectangular" width="51.2px" height="51.2px" />
       <div className="flex-grow-1">

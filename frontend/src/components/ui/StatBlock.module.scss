@@ -34,17 +34,17 @@
   background-repeat: no-repeat;
 }
 
-:global(.block):hover .iconSquare {
+[data-block]:hover .iconSquare {
   transform: scale(1.05);
 }
 
-:global(.block):hover .iconSquare:not(.statImage) {
+[data-block]:hover .iconSquare:not(.statImage) {
   border-color: rgba(34, 197, 94, 0.4);
   box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
   background: linear-gradient(135deg, rgba(34, 197, 94, 0.22) 0%, rgba(34, 197, 94, 0.1) 100%);
 }
 
-:global(.block):hover .iconSquare:global(.bg-primary) {
+[data-block]:hover .iconSquare:global(.bg-primary) {
   box-shadow: 0 6px 18px rgba(34, 197, 94, 0.35);
 }
 
