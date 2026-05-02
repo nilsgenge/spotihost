@@ -2,6 +2,7 @@
   background: linear-gradient(135deg, var(--block-dark) 0%, rgba(24, 24, 28, 0.95) 100%);
   color: var(--white);
   border-radius: var(--block-border-radius);
+  padding: var(--space-block-padding);
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(255, 255, 255, 0.05);

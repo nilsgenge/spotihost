@@ -21,6 +21,20 @@
     font-size: 1.2rem;
   }
 
+  @media (max-width: 768px) {
+    width: 2rem;
+    height: 2rem;
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    span {
+      font-size: 1rem;
+    }
+  }
+
   &:global(.bg-primary) {
     background: linear-gradient(135deg, var(--primary-green) 0%, #16a34a 100%);
     border: none;
@@ -90,6 +104,11 @@
   :global(span.ms-2),
   :global(span.fs-6) {
     flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.25rem;
+    min-height: 1.75rem;
   }
 }
 
