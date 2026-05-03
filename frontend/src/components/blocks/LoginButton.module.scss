@@ -25,6 +25,7 @@
   background-color: var(--block-dark);
   border: 1px solid var(--text-secondary);
   min-width: 200px;
+  max-width: calc(100vw - 1rem);
   z-index: 1000;
 }
 
