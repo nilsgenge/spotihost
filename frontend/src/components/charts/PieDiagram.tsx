@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   PieChart,
   Pie,
@@ -34,6 +35,19 @@ const CustomLegend = (props: any) => (
   </div>
 );
 
+const useIsMobile = (): boolean => {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return isMobile;
+};
+
 const PieDiagram: React.FC<PieDiagramProps> = ({
   data,
   height = 400,
@@ -44,6 +58,10 @@ const PieDiagram: React.FC<PieDiagramProps> = ({
   showLegend = true,
   tooltipLabels,
 }) => {
+  const isMobile = useIsMobile();
+  const chartMargin = isMobile
+    ? { top: 20, right: 10, bottom: 60, left: 10 }
+    : { top: 40, right: 60, bottom: 80, left: 60 };
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const item: PieBucket = payload[0].payload;
@@ -65,7 +83,7 @@ const PieDiagram: React.FC<PieDiagramProps> = ({
   return (
     <div className={styles.chartContainer} style={{ height: `${height}px` }}>
       <ResponsiveContainer width="100%" height="100%">
-        <PieChart margin={{ top: 40, right: 60, bottom: 80, left: 60 }}>
+        <PieChart margin={chartMargin}>
           <Pie
             data={data}
             cx="50%"

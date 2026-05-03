@@ -14,6 +14,11 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
   }
+
+  &:active {
+    transform: translateY(-1px);
+    border-color: rgba(34, 197, 94, 0.2);
+  }
 }
 
 .overflowVisible {
