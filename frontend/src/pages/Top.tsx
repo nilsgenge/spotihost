@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
 import pageStyles from "../styles/page.module.scss";
+import styles from "./Top.module.scss";
 import { Link } from "react-router-dom";
 import { useDateRange } from "../context/DateRangeContext";
 import DateRangePicker from "../components/blocks/DateRangePicker";
@@ -47,7 +48,7 @@ const Top = () => {
       {/* Tab Navigation */}
       <div className={`row ${pageStyles.pageSection}`}>
         <div className="col">
-          <div className="d-flex gap-2 flex-wrap">
+          <div className={`d-flex gap-2 flex-wrap ${styles.categoryTabs}`}>
             {Object.entries(CATEGORIES).map(([key, { label, path }]) => {
               const isActive = activeCategory === key;
               return (
