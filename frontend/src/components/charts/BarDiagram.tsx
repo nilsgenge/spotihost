@@ -64,7 +64,13 @@ export const BarDiagram: React.FC<BarDiagramProps> = ({
 
   return (
     <div className={styles.chartContainer} style={{ height: `${height}px` }}>
-      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        minWidth={0}
+        minHeight={0}
+        initialDimension={{ width: 1, height: 1 }}
+      >
         <BarChart
           data={data}
           margin={{ top: 30, right: 10, left: 10, bottom: 5 }}

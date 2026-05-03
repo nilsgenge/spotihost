@@ -50,7 +50,13 @@ export const LineDiagram: React.FC<LineDiagramProps> = ({
 
   return (
     <div className={styles.chartContainer}>
-      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        minWidth={0}
+        minHeight={0}
+        initialDimension={{ width: 1, height: 1 }}
+      >
         <LineChart
           data={chartData}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
