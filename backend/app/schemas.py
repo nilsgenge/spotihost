@@ -129,6 +129,7 @@ class SimpleArtist(BaseModel):
     listen_count: int
 
 class SimpleListen(BaseModel):
+    listen_id: int
     track_id: int
     track_spotify_id: str
     played_at: str

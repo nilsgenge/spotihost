@@ -69,9 +69,10 @@ def get_recent_listens(
 
             formatted_listens.append(
                 SimpleListen(
+                    listen_id=listen.listen_id,
                     track_id=listen.track_id,
                     track_spotify_id=track.spotify_id,
-                    played_at=listen.played_at.isoformat(), 
+                    played_at=listen.played_at.isoformat(),
                     track_name=track.name,
                     cover_url=track.image_url_small,
                     artists=artists_info
