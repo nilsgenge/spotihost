@@ -1,6 +1,7 @@
 import { type FC } from "react";
 import { FaUndo, FaCheck } from "react-icons/fa";
 import ContentBlock from "../ui/ContentBlock";
+import styles from "./SettingsItem.module.scss";
 
 interface SettingItemProps {
   id: string;
@@ -34,17 +35,18 @@ const SettingItem: FC<SettingItemProps> = ({
   return (
     <div className="h-100">
       <ContentBlock title={label} className="w-100">
-        <div className="d-flex justify-content-between align-items-center w-100">
+        <div className={styles.row}>
           <div className="text-start">
-            <small className="text-custom-muted">{description}</small>
+            <small className={`text-custom-muted ${styles.description}`}>
+              {description}
+            </small>
           </div>
 
-          <div className="d-flex gap-2">
+          <div className={styles.controls}>
             <input
               id={id}
               type={type}
-              className="form-control text-end"
-              style={{ width: "100px" }}
+              className={`form-control ${styles.input}`}
               value={value}
               onChange={(e) => onChange(e.target.value)}
               onBlur={onSave}
@@ -60,17 +62,17 @@ const SettingItem: FC<SettingItemProps> = ({
             />
 
             {isSaving && (
-              <div className="text-primary" role="status">
+              <div className="text-primary align-self-center" role="status">
                 <span className="visually-hidden">Saving...</span>
               </div>
             )}
 
             {isSaved && !isSaving && (
-              <FaCheck className="text-custom-success" />
+              <FaCheck className="text-custom-success align-self-center" />
             )}
 
             <button
-              className="btn btn-sm btn-outline-custom"
+              className={`btn btn-sm btn-outline-custom ${styles.resetButton}`}
               onClick={onReset}
               disabled={isSaving}
               title="Reset to default"

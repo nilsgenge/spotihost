@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import Block from "../ui/Block";
 import StatBlock from "../ui/StatBlock";
+import styles from "./FileImportBlock.module.scss";
 
 interface FileImportStatus {
   id: number;
@@ -289,7 +290,7 @@ const FileImportBlock: React.FC = () => {
 
       {/* Drag and Drop Zone */}
       <div
-        className={`border rounded p-4 text-center mb-3 ${
+        className={`border rounded p-4 text-center mb-3 ${styles.dropZone} ${
           isDragging ? "border-primary" : "border-secondary"
         } ${isUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
         onDragOver={handleDragOver}
@@ -298,20 +299,24 @@ const FileImportBlock: React.FC = () => {
         onClick={() =>
           !isUploading && document.getElementById("file-input")?.click()
         }
-        style={{ background: "rgba(255, 255, 255, 0.02)" }}
       >
         <FaUpload
-          className={`fs-1 text-custom-muted mb-2 ${
+          className={`fs-1 text-custom-muted mb-2 ${styles.dropIcon} ${
             isUploading ? "animate-pulse" : ""
           }`}
         />
-        <p className="mb-0 text-custom-muted">
+        <p className={`mb-0 text-custom-muted ${styles.dropText}`}>
           {isUploading ? (
             "Uploading..."
           ) : (
             <>
-              Drag and drop files here or{" "}
-              <span className="text-primary">click to browse</span>
+              <span className="d-none d-md-inline">
+                Drag and drop files here or{" "}
+              </span>
+              <span className="text-primary">
+                <span className="d-none d-md-inline">click to browse</span>
+                <span className="d-md-none">Tap to upload JSON</span>
+              </span>
             </>
           )}
         </p>
@@ -329,7 +334,7 @@ const FileImportBlock: React.FC = () => {
       {/* File List */}
       {files.length > 0 && (
         <>
-          <h6 className="mb-2 text-custom-muted">
+          <h6 className={`mb-2 text-custom-muted ${styles.sectionTitle}`}>
             Import Jobs ({files.length})
           </h6>
           <div className="d-flex flex-column gap-2">
@@ -338,7 +343,7 @@ const FileImportBlock: React.FC = () => {
                 file.status === "processing" || file.status === "pending";
 
               return (
-                <Block key={file.id}>
+                <Block key={file.id} className={styles.jobItem}>
                   <div className="d-flex align-items-center gap-3 w-100 min-w-0">
                     {/* Status Icon */}
                     <div className="flex-shrink-0">
@@ -347,25 +352,25 @@ const FileImportBlock: React.FC = () => {
 
                     {/* Job Info */}
                     <div className="flex-grow-1 min-w-0 overflow-hidden">
-                      <div className="fw-bold text-truncate">
+                      <div className={`fw-bold text-truncate ${styles.filename}`}>
                         {file.filename}
                       </div>
-                      <small className="text-custom-muted text-truncate d-block">
+                      <small className={`text-custom-muted text-truncate d-block ${styles.statusText}`}>
                         {renderStatusText(file)}
                       </small>
                       {file.status === "failed" && file.error_message && (
-                        <div className="mt-1 text-custom-danger text-truncate small">
+                        <div className={`mt-1 text-custom-danger text-truncate small ${styles.statusText}`}>
                           {file.error_message}
                         </div>
                       )}
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="text-end flex-shrink-0" style={{ minWidth: "90px" }}>
+                    <div className="text-end flex-shrink-0">
                       <div className="d-flex gap-2 justify-content-end">
                         {file.status === "failed" && (
                           <button
-                            className="btn btn-sm btn-outline-custom"
+                            className={`btn btn-sm btn-outline-custom ${styles.actionButton}`}
                             onClick={() => retryJob(file.id)}
                             title="Retry import"
                           >
@@ -374,7 +379,7 @@ const FileImportBlock: React.FC = () => {
                         )}
 
                         <button
-                          className="btn btn-sm btn-outline-custom"
+                          className={`btn btn-sm btn-outline-custom ${styles.actionButton}`}
                           onClick={() => removeFile(file.id)}
                           disabled={isActive}
                           title={

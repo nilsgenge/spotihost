@@ -1,0 +1,43 @@
+.dropZone {
+  background: rgba(255, 255, 255, 0.02);
+  transition: border-color 0.2s ease;
+
+  @media (max-width: 768px) {
+    padding: 1.25rem 0.75rem !important;
+
+    .dropIcon {
+      font-size: 1.75rem !important;
+    }
+
+    .dropText {
+      font-size: 0.85rem;
+    }
+  }
+}
+
+.jobItem {
+  @media (max-width: 768px) {
+    .filename {
+      font-size: 0.9rem;
+    }
+
+    .statusText {
+      font-size: 0.75rem;
+    }
+
+    .actionButton {
+      width: 2.5rem;
+      height: 2.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+  }
+}
+
+.sectionTitle {
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
+}
