@@ -11,13 +11,21 @@
     margin-bottom: 0.5rem;
 
     @media (max-width: 768px) {
-      font-size: 2rem;
+      font-size: 1.5rem;
     }
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 1rem;
   }
 }
 
 .pageSection {
   margin-bottom: 1.75rem;
+
+  @media (max-width: 768px) {
+    margin-bottom: 1rem;
+  }
 
   :global(.btn) {
     padding: 0.4rem 1rem;

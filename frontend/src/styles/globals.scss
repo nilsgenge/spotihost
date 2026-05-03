@@ -20,8 +20,26 @@
 
   /* Layout */
   --navbar-height: 15px;
+  --mobile-nav-height: 60px;
   --block-border-radius: 0.5rem;
   --max-page-width: 1300px;
+
+  /* Spacing tokens (desktop defaults; mobile overrides below) */
+  --space-block-padding: 1rem;
+  --space-block-gap: 1.5rem;
+  --space-separator: 2rem;
+  --space-page-x: 0.75rem;
+  --chart-height: 400px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --space-block-padding: 0.75rem;
+    --space-block-gap: 1rem;
+    --space-separator: 0.75rem;
+    --space-page-x: 0.4rem;
+    --chart-height: 240px;
+  }
 }
 
 :root {
@@ -34,17 +52,38 @@
 
 /*    BASE STYLES    */
 body {
-  padding-top: var(--navbar-height);
   background-color: var(--dark-background);
   background-image: radial-gradient(circle at 10% 10%, rgba(34, 197, 94, 0.03) 0%, transparent 40%),
                     radial-gradient(circle at 90% 90%, rgba(34, 197, 94, 0.02) 0%, transparent 40%);
   background-attachment: fixed;
 }
 
+@media (min-width: 768px) {
+  body {
+    padding-top: var(--navbar-height);
+  }
+}
+
+@media (max-width: 767.98px) {
+  body {
+    padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 .container {
   margin-top: 0;
   padding-top: 1rem;
   padding-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+    padding-left: var(--space-page-x);
+    padding-right: var(--space-page-x);
+    --bs-gutter-x: calc(var(--space-page-x) * 2);
+  }
 }
 
 .max-width-page {

@@ -1,0 +1,54 @@
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+}
+
+.description {
+  font-size: 0.85rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
+}
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    gap: 0.5rem;
+  }
+}
+
+.input {
+  width: 100px;
+  text-align: end;
+
+  @media (max-width: 768px) {
+    flex: 1;
+    width: auto;
+    height: 2.75rem;
+    font-size: 1rem;
+  }
+}
+
+.resetButton {
+  @media (max-width: 768px) {
+    flex: 0 0 2.75rem;
+    height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

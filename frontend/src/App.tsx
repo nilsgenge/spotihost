@@ -6,8 +6,10 @@ import {
   Navigate,
 } from "react-router-dom";
 import Navbar from "./components/ui/Navbar";
+import MobileNav from "./components/ui/MobileNav";
 import Dashboard from "./pages/Dashboard";
 import Top from "./pages/Top";
+import Search from "./pages/Search";
 import { DateRangeProvider } from "./context/DateRangeContext";
 import Callback from "./pages/Callback";
 import Artist from "./pages/Artist";
@@ -77,7 +79,9 @@ const AppContent: React.FC = () => {
                 <Route path="/profile" element={renderLayout(<Profile />)} />
                 <Route path="/settings" element={renderLayout(<Settings />)} />
                 <Route path="/analytics" element={renderLayout(<Analytics />)} />
+                <Route path="/search" element={renderLayout(<Search />)} />
               </Routes>
+              <MobileNav />
             </DateRangeProvider>
           ) : (
             <Navigate to="/welcome" />

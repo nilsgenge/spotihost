@@ -1,0 +1,7 @@
+.categoryTabs {
+  @media (max-width: 768px) {
+    :global(.btn) {
+      flex: 1 1 0;
+    }
+  }
+}

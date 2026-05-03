@@ -25,6 +25,7 @@
   background-color: var(--block-dark);
   border: 1px solid var(--text-secondary);
   min-width: 200px;
+  max-width: calc(100vw - 1rem);
   z-index: 1000;
 }
 
@@ -36,6 +37,12 @@
   &:hover {
     background-color: rgba(255, 255, 255, 0.1);
     color: var(--white);
+  }
+
+  @media (max-width: 768px) {
+    min-height: 2.75rem;
+    display: flex !important;
+    align-items: center;
   }
 }
 
@@ -52,6 +59,12 @@
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    min-height: 2.75rem;
+    display: flex !important;
+    align-items: center;
   }
 }
 

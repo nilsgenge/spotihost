@@ -5,7 +5,7 @@ export type RankingType = "artists" | "tracks" | "albums";
 
 export interface ArtistLink {
   name: string;
-  url: string;
+  url?: string;
 }
 
 export interface SimpleArtist {

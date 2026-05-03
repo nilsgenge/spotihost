@@ -19,7 +19,12 @@ const StatsDatabaseEntriesBlock = () => {
     <StatBlock
       icon={<FaDatabase />}
       title="Database Size"
-      value={totalEntries.toString() + " Entries"}
+      value={
+        <>
+          {totalEntries.toString()}
+          <span className="d-none d-md-inline"> Entries</span>
+        </>
+      }
       loading={loading}
     />
   );

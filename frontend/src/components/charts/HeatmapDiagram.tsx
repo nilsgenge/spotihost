@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useHeatmapData } from "../../hooks/useHeatmapData";
 import type { HeatmapData } from "../../types/charts";
 import styles from "./HeatmapDiagram.module.scss";
@@ -139,6 +139,7 @@ function computeMonthLabels(cells: GridCell[]): MonthLabel[] {
 
 export const HeatmapDiagram: React.FC = () => {
   const { data, loading } = useHeatmapData();
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const [tooltip, setTooltip] = useState<{
     date: string;
     plays: string;
@@ -146,13 +147,26 @@ export const HeatmapDiagram: React.FC = () => {
     y: number;
   } | null>(null);
 
+  useEffect(() => {
+    if (!tooltip) return;
+    const onDocClick = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setTooltip(null);
+      }
+    };
+    document.addEventListener("click", onDocClick);
+    return () => document.removeEventListener("click", onDocClick);
+  }, [tooltip]);
+
   if (loading) {
     return (
       <div className={styles.heatmapWrapper}>
-        <div className={styles.heatmapLoadingGrid}>
-          {Array.from({ length: 7 * 53 }).map((_, i) => (
-            <div key={i} className={`${styles.heatmapCell} ${styles.heatmapCellLoading}`} />
-          ))}
+        <div className={styles.heatmapScrollContainer}>
+          <div className={styles.heatmapLoadingGrid}>
+            {Array.from({ length: 7 * 53 }).map((_, i) => (
+              <div key={i} className={`${styles.heatmapCell} ${styles.heatmapCellLoading}`} />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -184,8 +198,7 @@ export const HeatmapDiagram: React.FC = () => {
     return count === 1 ? "1 play" : `${count} plays`;
   };
 
-  const handleCellEnter = (e: React.MouseEvent, cell: GridCell) => {
-    if (cell.empty) return;
+  const showTooltipFor = (e: React.SyntheticEvent, cell: GridCell) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setTooltip({
       date: formatDate(cell),
@@ -195,8 +208,24 @@ export const HeatmapDiagram: React.FC = () => {
     });
   };
 
+  const handleCellEnter = (e: React.MouseEvent, cell: GridCell) => {
+    if (cell.empty) return;
+    showTooltipFor(e, cell);
+  };
+
+  const handleCellPointerUp = (e: React.PointerEvent, cell: GridCell) => {
+    if (cell.empty) return;
+    if (e.pointerType === "mouse") return;
+    const formatted = formatDate(cell);
+    if (tooltip && tooltip.date === formatted) {
+      setTooltip(null);
+    } else {
+      showTooltipFor(e, cell);
+    }
+  };
+
   return (
-    <div className={styles.heatmapWrapper}>
+    <div className={styles.heatmapWrapper} ref={wrapperRef}>
       <div className={styles.heatmapSummary}>
         {totalPlays.toLocaleString()} plays in the last year &middot;{" "}
         {avgPerDay} plays/day on average
@@ -239,6 +268,7 @@ export const HeatmapDiagram: React.FC = () => {
                 }}
                 onMouseEnter={(e) => handleCellEnter(e, cell)}
                 onMouseLeave={() => setTooltip(null)}
+                onPointerUp={(e) => handleCellPointerUp(e, cell)}
               />
             ))}
           </div>

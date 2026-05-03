@@ -22,7 +22,14 @@ const DateRangePicker: React.FC = () => {
             }`}
             onClick={() => setSelectedRange(key as DateRangeKey)}
           >
-            {label}
+            {key === "alltime" ? (
+              <>
+                <span className={styles.fullLabel}>{label}</span>
+                <span className={styles.shortLabel}>ALL</span>
+              </>
+            ) : (
+              label
+            )}
           </button>
         </React.Fragment>
       ))}

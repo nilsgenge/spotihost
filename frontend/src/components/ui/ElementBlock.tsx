@@ -108,7 +108,7 @@ const ElementBlock: React.FC<ElementBlockProps> = ({
         </div>
 
         {stat && (
-          <div className="text-end flex-shrink-0" style={{ minWidth: '80px' }}>
+          <div className={`text-end flex-shrink-0 ${styles.elementStat}`}>
             <div className="text-custom-muted small text-nowrap">{stat}</div>
           </div>
         )}

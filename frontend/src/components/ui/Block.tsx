@@ -21,7 +21,6 @@ const Block: React.FC<BlockProps> = ({
       data-block
       className={[
         styles.block,
-        "p-3",
         "rounded",
         fullWidth ? "w-100" : "",
         overflowVisible ? styles.overflowVisible : "",
