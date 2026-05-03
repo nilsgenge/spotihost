@@ -248,7 +248,7 @@ const FileImportBlock: React.FC = () => {
   return (
     <div>
       {error && (
-        <div className="alert alert-danger alert-dismissible mb-3">
+        <div className={`alert alert-danger alert-dismissible mb-3 ${styles.errorAlert}`}>
           {error}
           <button
             type="button"

@@ -38,6 +38,12 @@
     background-color: rgba(255, 255, 255, 0.1);
     color: var(--white);
   }
+
+  @media (max-width: 768px) {
+    min-height: 2.75rem;
+    display: flex !important;
+    align-items: center;
+  }
 }
 
 .profileDropdownLogout {
@@ -53,6 +59,12 @@
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    min-height: 2.75rem;
+    display: flex !important;
+    align-items: center;
   }
 }
 
